@@ -16,6 +16,9 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Ysfkaya\FilamentPhoneInput\Forms\PhoneInput;
+use Ysfkaya\FilamentPhoneInput\Infolists\PhoneEntry;
+use Ysfkaya\FilamentPhoneInput\PhoneInputNumberType;
 
 class UserResource extends Resource
 {
@@ -34,10 +37,23 @@ class UserResource extends Resource
                     ->email()
                     ->required()
                     ->maxLength(255),
+                PhoneInput::make('phone')
+                    ->defaultCountry('KE')
+                    ->required()
+                    ->displayNumberFormat(PhoneInputNumberType::E164)
+                    ->focusNumberFormat(PhoneInputNumberType::E164),
                 Forms\Components\DateTimePicker::make('email_verified_at'),
                 Forms\Components\TextInput::make('password')
                     ->password()
                     ->required()
+                    ->confirmed()
+                    ->hiddenOn('edit')
+                    ->maxLength(255),
+                Forms\Components\TextInput::make('password_confirmation')
+                    ->label('Confirm Password')
+                    ->password()
+                    ->required()
+                    ->hiddenOn('edit')
                     ->maxLength(255),
                 Forms\Components\Textarea::make('two_factor_secret')
                     ->columnSpanFull(),
@@ -60,6 +76,8 @@ class UserResource extends Resource
                 Tables\Columns\TextColumn::make('name')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('email')
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('phone')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
@@ -95,12 +113,14 @@ class UserResource extends Resource
         return $infolist
             ->schema([
                 Section::make('Primary Info')
-                    ->columns(3)
+                    ->columns(4)
                     ->schema([
                         TextEntry::make('name'),
                         TextEntry::make('email'),
+                        PhoneEntry::make('phone')->displayFormat(PhoneInputNumberType::INTERNATIONAL),
                         TextEntry::make('roles.name'),
                         Fieldset::make('Verification')
+                            ->columns(2)
                             ->schema([
                                 TextEntry::make('email_verified_at')
                                     ->label('Email')
