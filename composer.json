@@ -9,11 +9,13 @@
     "license": "MIT",
     "require": {
         "php": "^8.2",
+        "barryvdh/laravel-dompdf": "^2.1",
         "filament/filament": "^3.2",
         "laravel/framework": "^11.0",
         "laravel/jetstream": "^5.0",
         "laravel/sanctum": "^4.0",
         "laravel/tinker": "^2.9",
+        "laraveldaily/laravel-invoices": "4.0",
         "livewire/livewire": "^3.0",
         "spatie/laravel-sluggable": "^3.6",
         "ysfkaya/filament-phone-input": "^2.3"
