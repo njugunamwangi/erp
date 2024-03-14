@@ -40,8 +40,8 @@ class UserResource extends Resource
                 PhoneInput::make('phone')
                     ->defaultCountry('KE')
                     ->required()
-                    ->displayNumberFormat(PhoneInputNumberType::E164)
-                    ->focusNumberFormat(PhoneInputNumberType::E164),
+                    ->displayNumberFormat(PhoneInputNumberType::INTERNATIONAL)
+                    ->focusNumberFormat(PhoneInputNumberType::INTERNATIONAL),
                 Forms\Components\DateTimePicker::make('email_verified_at'),
                 Forms\Components\TextInput::make('password')
                     ->password()
@@ -117,7 +117,8 @@ class UserResource extends Resource
                     ->schema([
                         TextEntry::make('name'),
                         TextEntry::make('email'),
-                        PhoneEntry::make('phone')->displayFormat(PhoneInputNumberType::INTERNATIONAL),
+                        PhoneEntry::make('phone')
+                            ->displayFormat(PhoneInputNumberType::INTERNATIONAL),
                         TextEntry::make('roles.name'),
                         Fieldset::make('Verification')
                             ->columns(2)
