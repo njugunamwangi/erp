@@ -4,6 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -33,6 +34,7 @@ class User extends Authenticatable
         'email',
         'password',
         'phone',
+        'lead_id',
     ];
 
     /**
@@ -71,5 +73,9 @@ class User extends Authenticatable
 
     public function quotes(): HasMany {
         return $this->hasMany(Quote::class);
+    }
+
+    public function lead(): BelongsTo {
+        return $this->belongsTo(Lead::class);
     }
 }
