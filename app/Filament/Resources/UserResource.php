@@ -14,6 +14,7 @@ use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Infolist;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -58,6 +59,7 @@ class UserResource extends Resource
                     ->maxLength(255),
                 Select::make('lead_id')
                     ->relationship('lead', 'lead')
+                    ->label('Lead Source')
                     ->searchable()
                     ->preload(),
                 Forms\Components\Textarea::make('two_factor_secret')
@@ -84,6 +86,9 @@ class UserResource extends Resource
                     ->searchable(),
                 Tables\Columns\TextColumn::make('phone')
                     ->searchable(),
+                TextColumn::make('lead.lead')
+                    ->searchable()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
