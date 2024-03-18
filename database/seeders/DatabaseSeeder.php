@@ -17,6 +17,7 @@ class DatabaseSeeder extends Seeder
         $this->call(StageSeeder::class);
         $this->call(TagSeeder::class);
         $this->call(VerticalSeeder::class);
+        $this->call(RoleSeeder::class);
         $this->call(AdminSeeder::class);
 
         User::factory(9)->create();

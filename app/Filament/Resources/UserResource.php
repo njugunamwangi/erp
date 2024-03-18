@@ -75,6 +75,10 @@ class UserResource extends Resource
                     ->searchable()
                     ->preload()
                     ->default(Stage::where('is_default', true)->first()?->id),
+                Select::make('roles')
+                    ->relationship('roles', 'name')
+                    ->searchable()
+                    ->preload(),
                 Forms\Components\Textarea::make('two_factor_secret')
                     ->columnSpanFull(),
                 Forms\Components\Textarea::make('two_factor_recovery_codes')
