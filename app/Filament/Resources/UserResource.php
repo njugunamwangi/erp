@@ -62,6 +62,11 @@ class UserResource extends Resource
                     ->label('Lead Source')
                     ->searchable()
                     ->preload(),
+                Select::make('tags')
+                    ->relationship('tags', 'tag')
+                    ->multiple()
+                    ->searchable()
+                    ->preload(),
                 Forms\Components\Textarea::make('two_factor_secret')
                     ->columnSpanFull(),
                 Forms\Components\Textarea::make('two_factor_recovery_codes')
@@ -79,9 +84,18 @@ class UserResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->modifyQueryUsing(function ($query) {
+                return $query->with('tags');
+            })
             ->columns([
                 Tables\Columns\TextColumn::make('name')
-                    ->searchable(),
+                    ->searchable()
+                    ->formatStateUsing(function ($record) {
+                        $tagsList = view('components.filament.tag-list', ['tags' => $record->tags])->render();
+
+                        return $record->name . ' ' . $tagsList;
+                    })
+                    ->html(),
                 Tables\Columns\TextColumn::make('email')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('phone')
@@ -123,13 +137,18 @@ class UserResource extends Resource
         return $infolist
             ->schema([
                 Section::make('Primary Info')
-                    ->columns(4)
+                    ->columns(3)
                     ->schema([
                         TextEntry::make('name'),
                         TextEntry::make('email'),
                         PhoneEntry::make('phone')
                             ->displayFormat(PhoneInputNumberType::INTERNATIONAL),
-                        TextEntry::make('roles.name'),
+                        Fieldset::make('Tags & Roles')
+                            ->columns(2)
+                            ->schema([
+                                TextEntry::make('roles.name'),
+                                TextEntry::make('tags.tag'),
+                            ]),
                         Fieldset::make('Verification')
                             ->columns(2)
                             ->schema([
