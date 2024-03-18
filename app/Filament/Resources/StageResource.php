@@ -64,7 +64,7 @@ class StageResource extends Resource
                         ->hidden(fn($record) => $record->is_default)
                         ->requiresConfirmation(function (Tables\Actions\Action $action, $record) {
                             $action->modalDescription('Are you sure you want to set this as the default pipeline stage?');
-                            $action->modalHeading('Set "' . $record->name . '" as Default');
+                            $action->modalHeading('Set "' . $record->stage . '" as Default');
 
                             return $action;
                         })
