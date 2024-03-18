@@ -6,6 +6,7 @@ use App\Filament\Resources\UserResource\Pages;
 use App\Filament\Resources\UserResource\RelationManagers;
 use App\Models\User;
 use Filament\Forms;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Form;
 use Filament\Infolists\Components\Fieldset;
 use Filament\Infolists\Components\Section;
@@ -55,6 +56,10 @@ class UserResource extends Resource
                     ->required()
                     ->hiddenOn('edit')
                     ->maxLength(255),
+                Select::make('lead_id')
+                    ->relationship('lead', 'lead')
+                    ->searchable()
+                    ->preload(),
                 Forms\Components\Textarea::make('two_factor_secret')
                     ->columnSpanFull(),
                 Forms\Components\Textarea::make('two_factor_recovery_codes')
