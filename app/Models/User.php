@@ -80,6 +80,10 @@ class User extends Authenticatable
         return $this->belongsTo(Lead::class);
     }
 
+    public function stage(): BelongsTo {
+        return $this->belongsTo(Stage::class);
+    }
+
     public function tags(): BelongsToMany {
         return $this->belongsToMany(Tag::class);
     }

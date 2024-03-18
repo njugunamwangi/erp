@@ -16,6 +16,7 @@ class AdminSeeder extends Seeder
         User::create([
             'name' => 'Ndachi',
             'email' => 'info@ndachi.dev',
+            'phone' => fake()->phoneNumber(),
             'password' => bcrypt('Password')
         ]);
     }

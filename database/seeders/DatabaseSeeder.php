@@ -13,7 +13,12 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        $this->call(AdminSeeder::class);
         $this->call(LeadSeeder::class);
+        $this->call(StageSeeder::class);
+        $this->call(TagSeeder::class);
+        $this->call(VerticalSeeder::class);
+        $this->call(AdminSeeder::class);
+
+        User::factory(9)->create();
     }
 }
