@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\UserResource\Pages;
 use App\Filament\Resources\UserResource\RelationManagers;
+use App\Models\Stage;
 use App\Models\User;
 use Filament\Forms;
 use Filament\Forms\Components\Select;
@@ -67,6 +68,13 @@ class UserResource extends Resource
                     ->multiple()
                     ->searchable()
                     ->preload(),
+                Forms\Components\Select::make('pipeline_stage_id')
+                    ->relationship('stage', 'stage', function ($query) {
+                        $query->orderBy('position', 'asc');
+                    })
+                    ->searchable()
+                    ->preload()
+                    ->default(Stage::where('is_default', true)->first()?->id),
                 Forms\Components\Textarea::make('two_factor_secret')
                     ->columnSpanFull(),
                 Forms\Components\Textarea::make('two_factor_recovery_codes')
