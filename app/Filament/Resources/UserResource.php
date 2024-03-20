@@ -18,6 +18,7 @@ use Filament\Infolists\Infolist;
 use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
@@ -135,41 +136,43 @@ class UserResource extends Resource
                 Tables\Filters\TrashedFilter::make(),
             ])
             ->actions([
-                Tables\Actions\ViewAction::make(),
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\Action::make('Move to Stage')
-                    ->visible(fn(User $user) => !$user->hasRole(Role::ADMIN))
-                    ->icon('heroicon-m-pencil-square')
-                    ->modalDescription(fn (User $record) => 'Move ' . $record->name . ' to another stage')
-                    ->modalIcon('heroicon-o-puzzle-piece')
-                    ->form([
-                        Forms\Components\Select::make('stage_id')
-                            ->label('Status')
-                            ->searchable()
-                            ->options(Stage::pluck('stage', 'id')->toArray())
-                            ->default(function (User $record) {
-                                $currentPosition = $record->stage->position;
+                ActionGroup::make([
+                    Tables\Actions\ViewAction::make(),
+                    Tables\Actions\EditAction::make(),
+                    Tables\Actions\Action::make('Move to Stage')
+                        ->visible(fn(User $user) => !$user->hasRole(Role::ADMIN))
+                        ->icon('heroicon-m-puzzle-piece')
+                        ->modalDescription(fn (User $record) => 'Move ' . $record->name . ' to another stage')
+                        ->modalIcon('heroicon-o-puzzle-piece')
+                        ->form([
+                            Forms\Components\Select::make('stage_id')
+                                ->label('Status')
+                                ->searchable()
+                                ->options(Stage::pluck('stage', 'id')->toArray())
+                                ->default(function (User $record) {
+                                    $currentPosition = $record->stage->position;
 
-                                return Stage::where('position', '>', $currentPosition)->first()?->id;
-                            }),
-                        Forms\Components\Textarea::make('notes')
-                            ->label('Notes')
-                    ])
-                    ->action(function (User $customer, array $data): void {
-                        $customer->stage_id = $data['stage_id'];
-                        $customer->save();
+                                    return Stage::where('position', '>', $currentPosition)->first()?->id;
+                                }),
+                            Forms\Components\Textarea::make('notes')
+                                ->label('Notes')
+                        ])
+                        ->action(function (User $customer, array $data): void {
+                            $customer->stage_id = $data['stage_id'];
+                            $customer->save();
 
-                        $customer->pipelines()->create([
-                            'stage_id' => $data['stage_id'],
-                            'notes' => $data['notes'],
-                            'user_id' => $customer->id
-                        ]);
+                            $customer->pipelines()->create([
+                                'stage_id' => $data['stage_id'],
+                                'notes' => $data['notes'],
+                                'user_id' => $customer->id
+                            ]);
 
-                        Notification::make()
-                            ->title('Pipeline Updated')
-                            ->success()
-                            ->send();
-                    }),
+                            Notification::make()
+                                ->title('Pipeline Updated')
+                                ->success()
+                                ->send();
+                        }),
+                ])
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
