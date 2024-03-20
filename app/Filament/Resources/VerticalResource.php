@@ -17,8 +17,7 @@ class VerticalResource extends Resource
 {
     protected static ?string $model = Vertical::class;
 
-    protected static ?string $navigationGroup = 'Customer Relations';
-
+    protected static ?string $navigationGroup = 'Settings';
 
     public static function form(Form $form): Form
     {
@@ -35,8 +34,6 @@ class VerticalResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('vertical')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('slug')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('deleted_at')
                     ->dateTime()

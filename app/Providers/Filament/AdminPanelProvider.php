@@ -61,8 +61,8 @@ class AdminPanelProvider extends PanelProvider
                     ->icon('heroicon-o-user-group')
                     ->collapsed(),
                 NavigationGroup::make()
-                    ->label('User Management')
-                    ->icon('heroicon-o-users')
+                    ->label('Settings')
+                    ->icon('heroicon-o-cog-8-tooth')
                     ->collapsed(),
             ])
             ->maxContentWidth(MaxWidth::Full)
