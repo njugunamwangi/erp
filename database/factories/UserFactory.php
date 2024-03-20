@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Lead;
 use App\Models\Stage;
 use App\Models\Team;
 use App\Models\User;
@@ -38,6 +39,7 @@ class UserFactory extends Factory
             'remember_token' => Str::random(10),
             'profile_photo_path' => null,
             'current_team_id' => null,
+            'lead_id' => fake()->randomElement(Lead::all()->pluck('id')),
             'stage_id' => Stage::where('is_default', true)->first()->id
         ];
     }

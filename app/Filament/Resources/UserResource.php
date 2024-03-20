@@ -14,6 +14,7 @@ use Filament\Forms\Form;
 use Filament\Infolists\Components\Fieldset;
 use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
+use Filament\Infolists\Components\ViewEntry;
 use Filament\Infolists\Infolist;
 use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
@@ -260,13 +261,27 @@ class UserResource extends Resource
                                     }),
                             ]),
                     ]),
+                Section::make('Lead & Stage information')
+                    ->hidden(fn($record) => $record->hasRole(Role::ADMIN))
+                    ->schema([
+                        TextEntry::make('lead.lead'),
+                        TextEntry::make('stage.stage'),
+                    ]),
+                Section::make('Pipeline Stage History and Notes')
+                    ->hidden(fn($record) => $record->hasRole(Role::ADMIN))
+                    ->schema([
+                        ViewEntry::make('pipelines')
+                            ->label('')
+                            ->view('components.filament.pipeline-stage-history-list')
+                    ])
+                    ->collapsible()
             ]);
     }
 
     public static function getRelations(): array
     {
         return [
-            PipelinesRelationManager::class,
+            // PipelinesRelationManager::class,
         ];
     }
 
