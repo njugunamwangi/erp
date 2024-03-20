@@ -82,6 +82,10 @@ class User extends Authenticatable
         return $this->hasMany(Pipeline::class);
     }
 
+    public function documents(): HasMany {
+        return $this->hasMany(Document::class);
+    }
+
     public function lead(): BelongsTo {
         return $this->belongsTo(Lead::class);
     }

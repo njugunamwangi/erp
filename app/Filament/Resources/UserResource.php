@@ -14,18 +14,21 @@ use Filament\Forms\Components\Section as ComponentsSection;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Form;
 use Filament\Infolists\Components\Fieldset;
+use Filament\Infolists\Components\RepeatableEntry;
 use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Components\ViewEntry;
 use Filament\Infolists\Infolist;
 use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
+use Filament\Support\Colors\Color;
 use Filament\Tables;
 use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Facades\Storage;
 use Ysfkaya\FilamentPhoneInput\Forms\PhoneInput;
 use Ysfkaya\FilamentPhoneInput\Infolists\PhoneEntry;
 use Ysfkaya\FilamentPhoneInput\PhoneInputNumberType;
@@ -287,6 +290,22 @@ class UserResource extends Resource
                     ->schema([
                         TextEntry::make('lead.lead'),
                         TextEntry::make('stage.stage'),
+                    ]),
+                Section::make('Documents')
+                    ->hidden(fn($record) => $record->documents->isEmpty())
+                    ->schema([
+                        RepeatableEntry::make('documents')
+                            ->hiddenLabel()
+                            ->schema([
+                                TextEntry::make('file_path')
+                                    ->label('Document')
+                                    ->formatStateUsing(fn() => "Download Document")
+                                    ->url(fn($record) => Storage::url($record->file_path), true)
+                                    ->badge()
+                                    ->color(Color::Blue),
+                                TextEntry::make('comments'),
+                            ])
+                            ->columns()
                     ]),
                 Section::make('Pipeline Stage History and Notes')
                     ->hidden(fn($record) => $record->hasRole(Role::ADMIN))
