@@ -9,6 +9,8 @@ use App\Models\Role;
 use App\Models\Stage;
 use App\Models\User;
 use Filament\Forms;
+use Filament\Forms\Components\Grid;
+use Filament\Forms\Components\Section as ComponentsSection;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Form;
 use Filament\Infolists\Components\Fieldset;
@@ -38,63 +40,82 @@ class UserResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('name')
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('email')
-                    ->email()
-                    ->required()
-                    ->maxLength(255),
-                PhoneInput::make('phone')
-                    ->defaultCountry('KE')
-                    ->required()
-                    ->displayNumberFormat(PhoneInputNumberType::INTERNATIONAL)
-                    ->focusNumberFormat(PhoneInputNumberType::INTERNATIONAL),
-                Forms\Components\DateTimePicker::make('email_verified_at'),
-                Forms\Components\TextInput::make('password')
-                    ->password()
-                    ->required()
-                    ->confirmed()
-                    ->hiddenOn('edit')
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('password_confirmation')
-                    ->label('Confirm Password')
-                    ->password()
-                    ->required()
-                    ->hiddenOn('edit')
-                    ->maxLength(255),
-                Select::make('lead_id')
-                    ->relationship('lead', 'lead')
-                    ->label('Lead Source')
-                    ->searchable()
-                    ->preload(),
-                Select::make('tags')
-                    ->relationship('tags', 'tag')
-                    ->multiple()
-                    ->searchable()
-                    ->preload(),
-                Forms\Components\Select::make('pipeline_stage_id')
-                    ->relationship('stage', 'stage', function ($query) {
-                        $query->orderBy('position', 'asc');
-                    })
-                    ->searchable()
-                    ->preload()
-                    ->default(Stage::where('is_default', true)->first()?->id),
-                Select::make('roles')
-                    ->relationship('roles', 'name')
-                    ->searchable()
-                    ->preload(),
-                Forms\Components\Textarea::make('two_factor_secret')
-                    ->columnSpanFull(),
-                Forms\Components\Textarea::make('two_factor_recovery_codes')
-                    ->columnSpanFull(),
-                Forms\Components\DateTimePicker::make('two_factor_confirmed_at'),
-                Forms\Components\TextInput::make('current_team_id')
-                    ->numeric()
-                    ->default('NULL'),
-                Forms\Components\TextInput::make('profile_photo_path')
-                    ->maxLength(2048)
-                    ->default('NULL'),
+                ComponentsSection::make('User Details')
+                    ->schema([
+                        Grid::make(2)
+                            ->schema([
+                                Forms\Components\TextInput::make('name')
+                                    ->required()
+                                    ->maxLength(255),
+                                Forms\Components\TextInput::make('email')
+                                    ->email()
+                                    ->required()
+                                    ->maxLength(255),
+                            ]),
+                        Grid::make(2)
+                            ->schema([
+                                PhoneInput::make('phone')
+                                    ->defaultCountry('KE')
+                                    ->required()
+                                    ->displayNumberFormat(PhoneInputNumberType::INTERNATIONAL)
+                                    ->focusNumberFormat(PhoneInputNumberType::INTERNATIONAL),
+                                Select::make('roles')
+                                    ->relationship('roles', 'name')
+                                    ->searchable()
+                                    ->preload(),
+                            ]),
+                        Grid::make(2)
+                            ->schema([
+                                Forms\Components\TextInput::make('password')
+                                    ->password()
+                                    ->required()
+                                    ->confirmed()
+                                    ->hiddenOn('edit')
+                                    ->maxLength(255),
+                                Forms\Components\TextInput::make('password_confirmation')
+                                    ->label('Confirm Password')
+                                    ->password()
+                                    ->required()
+                                    ->hiddenOn('edit')
+                                    ->maxLength(255),
+                            ])
+                    ]),
+                ComponentsSection::make('Tertiary Details')
+                    ->columns(3)
+                    ->schema([
+                        Select::make('lead_id')
+                            ->relationship('lead', 'lead')
+                            ->label('Lead Source')
+                            ->searchable()
+                            ->preload(),
+                        Select::make('tags')
+                            ->relationship('tags', 'tag')
+                            ->multiple()
+                            ->searchable()
+                            ->preload(),
+                        Select::make('stage_id')
+                            ->relationship('stage', 'stage', function ($query) {
+                                $query->orderBy('position', 'asc');
+                            })
+                            ->searchable()
+                            ->preload()
+                            ->default(Stage::where('is_default', true)->first()?->id),
+                    ]),
+                ComponentsSection::make('Documents')
+                    ->visibleOn('edit')
+                    ->schema([
+                        Forms\Components\Repeater::make('documents')
+                            ->relationship('documents')
+                            ->hiddenLabel()
+                            ->reorderable(false)
+                            ->addActionLabel('Add Document')
+                            ->schema([
+                                Forms\Components\FileUpload::make('file_path')
+                                    ->required(),
+                                Forms\Components\Textarea::make('comments'),
+                            ])
+                            ->columns()
+                    ])
             ]);
     }
 
