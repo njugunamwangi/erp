@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\UserResource\Pages;
 use App\Filament\Resources\UserResource\RelationManagers;
+use App\Filament\Resources\UserResource\RelationManagers\PipelinesRelationManager;
 use App\Models\Role;
 use App\Models\Stage;
 use App\Models\User;
@@ -247,7 +248,7 @@ class UserResource extends Resource
     public static function getRelations(): array
     {
         return [
-            //
+            PipelinesRelationManager::class,
         ];
     }
 
