@@ -17,4 +17,8 @@ class Stage extends Model
     public function users(): HasMany {
         return $this->hasMany(User::class);
     }
+
+    public function pipelines(): HasMany {
+        return $this->hasMany(Pipeline::class);
+    }
 }

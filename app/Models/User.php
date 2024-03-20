@@ -78,6 +78,10 @@ class User extends Authenticatable
         return $this->hasMany(Quote::class);
     }
 
+    public function pipelines(): HasMany {
+        return $this->hasMany(Pipeline::class);
+    }
+
     public function lead(): BelongsTo {
         return $this->belongsTo(Lead::class);
     }
