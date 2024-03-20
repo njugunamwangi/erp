@@ -144,6 +144,7 @@ class UserResource extends Resource
                     ->form([
                         Forms\Components\Select::make('stage_id')
                             ->label('Status')
+                            ->searchable()
                             ->options(Stage::pluck('stage', 'id')->toArray())
                             ->default(function (User $record) {
                                 $currentPosition = $record->stage->position;
