@@ -24,13 +24,7 @@ class TagResource extends Resource
     public static function form(Form $form): Form
     {
         return $form
-            ->schema([
-                Forms\Components\TextInput::make('tag')
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\ColorPicker::make('color')
-                    ->default('NULL'),
-            ]);
+            ->schema(Tag::getForm());
     }
 
     public static function table(Table $table): Table

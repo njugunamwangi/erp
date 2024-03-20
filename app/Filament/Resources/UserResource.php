@@ -7,6 +7,7 @@ use App\Filament\Resources\UserResource\RelationManagers;
 use App\Filament\Resources\UserResource\RelationManagers\PipelinesRelationManager;
 use App\Models\Role;
 use App\Models\Stage;
+use App\Models\Tag;
 use App\Models\User;
 use Filament\Forms;
 use Filament\Forms\Components\Grid;
@@ -95,6 +96,7 @@ class UserResource extends Resource
                             ->relationship('tags', 'tag')
                             ->multiple()
                             ->searchable()
+                            ->createOptionForm(Tag::getForm())
                             ->preload(),
                         Select::make('stage_id')
                             ->relationship('stage', 'stage', function ($query) {
