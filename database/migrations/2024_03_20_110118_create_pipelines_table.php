@@ -17,7 +17,7 @@ return new class extends Migration
             $table->id();
             $table->foreignIdFor(User::class)->constrained();
             $table->foreignIdFor(Stage::class)->nullable()->constrained();
-            $table->longText('notes');
+            $table->longText('notes')->nullable();
             $table->timestamps();
         });
     }
