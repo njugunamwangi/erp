@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Filament\Forms\Components\TextInput;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -20,5 +21,13 @@ class Stage extends Model
 
     public function pipelines(): HasMany {
         return $this->hasMany(Pipeline::class);
+    }
+
+    public static function getForm(): array {
+        return [
+            TextInput::make('stage')
+                ->required()
+                ->maxLength(255),
+        ];
     }
 }

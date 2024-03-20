@@ -20,15 +20,10 @@ class LeadResource extends Resource
 
     protected static ?string $navigationGroup = 'Customer Relations';
 
-
     public static function form(Form $form): Form
     {
         return $form
-            ->schema([
-                Forms\Components\TextInput::make('lead')
-                    ->required()
-                    ->maxLength(255),
-            ]);
+            ->schema(Lead::getForm());
     }
 
     public static function table(Table $table): Table

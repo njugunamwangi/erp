@@ -24,11 +24,7 @@ class StageResource extends Resource
     public static function form(Form $form): Form
     {
         return $form
-            ->schema([
-                Forms\Components\TextInput::make('stage')
-                    ->required()
-                    ->maxLength(255),
-            ]);
+            ->schema(Stage::getForm());
     }
 
     public static function table(Table $table): Table

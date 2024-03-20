@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\UserResource\Pages;
 use App\Filament\Resources\UserResource\RelationManagers;
 use App\Filament\Resources\UserResource\RelationManagers\PipelinesRelationManager;
+use App\Models\Lead;
 use App\Models\Role;
 use App\Models\Stage;
 use App\Models\Tag;
@@ -91,6 +92,8 @@ class UserResource extends Resource
                             ->relationship('lead', 'lead')
                             ->label('Lead Source')
                             ->searchable()
+                            ->createOptionForm(Lead::getForm())
+                            ->editOptionForm(Lead::getForm())
                             ->preload(),
                         Select::make('tags')
                             ->relationship('tags', 'tag')
@@ -103,6 +106,8 @@ class UserResource extends Resource
                                 $query->orderBy('position', 'asc');
                             })
                             ->searchable()
+                            ->createOptionForm(Stage::getForm())
+                            ->editOptionForm(Stage::getForm())
                             ->preload()
                             ->default(Stage::where('is_default', true)->first()?->id),
                     ]),
