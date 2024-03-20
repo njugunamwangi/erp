@@ -37,6 +37,12 @@ class ListUsers extends ListRecords
                 });
         }
 
+        $tabs['archived'] = Tab::make('Archived')
+            ->badge(User::onlyTrashed()->count())
+            ->modifyQueryUsing(function ($query) {
+                return $query->onlyTrashed();
+            });
+
         return $tabs;
     }
 }

@@ -133,14 +133,19 @@ class UserResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                Tables\Filters\TrashedFilter::make(),
+                // Tables\Filters\TrashedFilter::make(),
             ])
             ->actions([
                 ActionGroup::make([
-                    Tables\Actions\ViewAction::make(),
-                    Tables\Actions\EditAction::make(),
+                    Tables\Actions\ViewAction::make()
+                        ->hidden(fn($record) => $record->trashed()),
+                    Tables\Actions\EditAction::make()
+                        ->hidden(fn($record) => $record->trashed()),
+                    Tables\Actions\DeleteAction::make(),
+                    Tables\Actions\RestoreAction::make(),
                     Tables\Actions\Action::make('Move to Stage')
                         ->visible(fn(User $user) => !$user->hasRole(Role::ADMIN))
+                        ->hidden(fn($record) => $record->trashed())
                         ->icon('heroicon-m-puzzle-piece')
                         ->modalDescription(fn (User $record) => 'Move ' . $record->name . ' to another stage')
                         ->modalIcon('heroicon-o-puzzle-piece')
@@ -174,6 +179,16 @@ class UserResource extends Resource
                         }),
                 ])
             ])
+            ->recordUrl(function ($record) {
+                // If the record is trashed, return null
+                if ($record->trashed()) {
+                    // Null will disable the row click
+                    return null;
+                }
+
+                // Otherwise, return the edit page URL
+                return Pages\ViewUser::getUrl([$record->id]);
+            })
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
@@ -267,9 +282,6 @@ class UserResource extends Resource
 
     public static function getEloquentQuery(): Builder
     {
-        return parent::getEloquentQuery()
-            ->withoutGlobalScopes([
-                SoftDeletingScope::class,
-            ]);
+        return parent::getEloquentQuery();
     }
 }
