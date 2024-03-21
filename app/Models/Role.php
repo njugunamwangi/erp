@@ -13,4 +13,6 @@ class Role extends ModelsRole
    public const ADMIN = 1;
 
     public const CUSTOMER = 2;
+
+    public const STAFF = 3;
 }
