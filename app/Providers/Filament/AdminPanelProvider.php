@@ -55,6 +55,7 @@ class AdminPanelProvider extends PanelProvider
                 DisableBladeIconComponents::class,
                 DispatchServingFilamentEvent::class,
             ])
+            ->collapsibleNavigationGroups(true)
             ->navigationGroups([
                 NavigationGroup::make()
                     ->label('Customer Relations')
