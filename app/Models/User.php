@@ -86,6 +86,10 @@ class User extends Authenticatable
         return $this->hasMany(Document::class);
     }
 
+    public function customFieldUsers(): HasMany {
+        return $this->hasMany(CustomFieldUser::class);
+    }
+
     public function lead(): BelongsTo {
         return $this->belongsTo(Lead::class);
     }

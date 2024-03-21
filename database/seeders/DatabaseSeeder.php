@@ -19,7 +19,6 @@ class DatabaseSeeder extends Seeder
         $this->call(VerticalSeeder::class);
         $this->call(RoleSeeder::class);
         $this->call(AdminSeeder::class);
-
-        User::factory(9)->create();
+        $this->call(CustomFieldSeeder::class);
     }
 }
