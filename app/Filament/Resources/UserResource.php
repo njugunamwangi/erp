@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\UserResource\Pages;
 use App\Filament\Resources\UserResource\RelationManagers;
 use App\Filament\Resources\UserResource\RelationManagers\PipelinesRelationManager;
+use App\Models\CustomField;
 use App\Models\Lead;
 use App\Models\Role;
 use App\Models\Stage;
@@ -15,6 +16,7 @@ use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Section as ComponentsSection;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Form;
+use Filament\Forms\Get;
 use Filament\Infolists\Components\Fieldset;
 use Filament\Infolists\Components\RepeatableEntry;
 use Filament\Infolists\Components\Section;
@@ -125,7 +127,33 @@ class UserResource extends Resource
                                 Forms\Components\Textarea::make('comments'),
                             ])
                             ->columns()
-                    ])
+                            ]),
+                Forms\Components\Section::make('Additional fields')
+                    ->schema([
+                        Forms\Components\Repeater::make('fields')
+                            ->hiddenLabel()
+                            ->relationship('customFieldUsers')
+                            ->schema([
+                                Forms\Components\Select::make('custom_field_id')
+                                    ->label('Field Type')
+                                    ->options(CustomField::pluck('custom_field', 'id')->toArray())
+                                    ->disableOptionWhen(function ($value, $state, Get $get) {
+                                        return collect($get('../*.custom_field_id'))
+                                            ->reject(fn($id) => $id === $state)
+                                            ->filter()
+                                            ->contains($value);
+                                    })
+                                    ->createOptionForm(CustomField::getForm())
+                                    ->editOptionForm(CustomField::getForm())
+                                    ->required()
+                                    ->searchable()
+                                    ->live(),
+                                Forms\Components\TextInput::make('value')
+                                    ->required()
+                            ])
+                            ->addActionLabel('Add another field')
+                            ->columns(),
+                    ]),
             ]);
     }
 
@@ -298,6 +326,16 @@ class UserResource extends Resource
                         TextEntry::make('lead.lead'),
                         TextEntry::make('stage.stage'),
                     ]),
+                Section::make('Additional fields')
+                    ->hidden(fn($record) => $record->customFieldUsers->isEmpty())
+                    ->schema(
+                        fn($record) => $record->customFieldUsers->map(function ($customField) {
+                            return TextEntry::make($customField->customField->custom_field)
+                                ->label($customField->customField->custom_field)
+                                ->default($customField->value);
+                        })->toArray()
+                    )
+                    ->columns(),
                 Section::make('Documents')
                     ->hidden(fn($record) => $record->documents->isEmpty())
                     ->schema([

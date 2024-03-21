@@ -10,6 +10,8 @@ class CustomFieldUser extends Pivot
 {
     use HasFactory;
 
+    protected $table = 'custom_field_users';
+
     protected $guarded = [];
 
     public function user(): BelongsTo {
