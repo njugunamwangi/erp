@@ -14,9 +14,9 @@ return new class extends Migration
     {
         Schema::create('tasks', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('assigned_by')->references('id')->on('users')->constrained();
-            $table->foreignId('assigned_to')->references('id')->on('users')->constrained();
-            $table->foreignId('assigned_for')->references('id')->on('users')->constrained();
+            $table->foreignIdFor(User::class, 'assigned_by')->constrained();
+            $table->foreignIdFor(User::class, 'assigned_to')->constrained();
+            $table->foreignIdFor(User::class, 'assigned_for')->constrained();
             $table->text('description');
             $table->date('due_date')->nullable();
             $table->boolean('is_completed')->default(false);

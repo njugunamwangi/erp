@@ -86,10 +86,6 @@ class User extends Authenticatable
         return $this->hasMany(Document::class);
     }
 
-    public function tasks(): HasMany {
-        return $this->hasMany(Task::class, 'assigned_to');
-    }
-
     public function customFieldUsers(): HasMany {
         return $this->hasMany(CustomFieldUser::class);
     }
