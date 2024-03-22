@@ -87,11 +87,21 @@ class User extends Authenticatable
     }
 
     public function tasks(): HasMany {
-        return $this->hasMany(Task::class);
+        return $this->hasMany(Task::class, 'assigned_to');
     }
 
     public function customFieldUsers(): HasMany {
         return $this->hasMany(CustomFieldUser::class);
+    }
+
+    public function completedTasks(): HasMany
+    {
+        return $this->hasMany(Task::class)->where('is_completed', true);
+    }
+
+    public function incompleteTasks(): HasMany
+    {
+        return $this->hasMany(Task::class)->where('is_completed', false);
     }
 
     public function lead(): BelongsTo {

@@ -18,9 +18,11 @@ use Filament\Forms\Components\Section as ComponentsSection;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
+use Filament\Infolists\Components\Actions\Action;
 use Filament\Infolists\Components\Fieldset;
 use Filament\Infolists\Components\RepeatableEntry;
 use Filament\Infolists\Components\Section;
+use Filament\Infolists\Components\Tabs;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Components\ViewEntry;
 use Filament\Infolists\Infolist;
@@ -393,7 +395,65 @@ class UserResource extends Resource
                             ->label('')
                             ->view('components.filament.pipeline-stage-history-list')
                     ])
-                    ->collapsible()
+                    ->collapsible(),
+                // Tabs::make('Tasks')
+                //     ->tabs([
+                //         Tabs\Tab::make('Completed')
+                //             ->badge(fn($record) => $record->completedTasks->count())
+                //             ->schema([
+                //                 RepeatableEntry::make('completedTasks')
+                //                     ->hiddenLabel()
+                //                     ->schema([
+                //                         TextEntry::make('description')
+                //                             ->html()
+                //                             ->columnSpanFull(),
+                //                         TextEntry::make('assignedFor.name')
+                //                             ->hidden(fn($state) => is_null($state)),
+                //                         TextEntry::make('due_date')
+                //                             ->hidden(fn($state) => is_null($state))
+                //                             ->date(),
+                //                     ])
+                //                     ->columns()
+                //             ]),
+                //         Tabs\Tab::make('Incomplete')
+                //             ->badge(fn($record) => $record->incompleteTasks->count())
+                //             ->schema([
+                //                 RepeatableEntry::make('incompleteTasks')
+                //                     ->hiddenLabel()
+                //                     ->schema([
+                //                         TextEntry::make('description')
+                //                             ->html()
+                //                             ->columnSpanFull(),
+                //                         TextEntry::make('assignedFor.name')
+                //                             ->hidden(fn($state) => is_null($state)),
+                //                         TextEntry::make('due_date')
+                //                             ->hidden(fn($state) => is_null($state))
+                //                             ->date(),
+                //                         TextEntry::make('is_completed')
+                //                             ->formatStateUsing(function ($state) {
+                //                                 return $state ? 'Yes' : 'No';
+                //                             })
+                //                             ->suffixAction(
+                //                                 Action::make('complete')
+                //                                     ->button()
+                //                                     ->requiresConfirmation()
+                //                                     ->modalHeading('Mark task as completed?')
+                //                                     ->modalDescription('Are you sure you want to mark this task as completed?')
+                //                                     ->action(function (Task $record) {
+                //                                         $record->is_completed = true;
+                //                                         $record->save();
+
+                //                                         Notification::make()
+                //                                             ->title('Task marked as completed')
+                //                                             ->success()
+                //                                             ->send();
+                //                                     })
+                //                             ),
+                //                     ])
+                //                     ->columns(3)
+                //             ])
+                //     ])
+                //     ->columnSpanFull(),
             ]);
     }
 
