@@ -10,6 +10,7 @@ use App\Models\Lead;
 use App\Models\Role;
 use App\Models\Stage;
 use App\Models\Tag;
+use App\Models\Task;
 use App\Models\User;
 use Filament\Forms;
 use Filament\Forms\Components\Grid;
@@ -88,6 +89,7 @@ class UserResource extends Resource
                             ])
                     ]),
                 ComponentsSection::make('Tertiary Details')
+                    ->visibleOn('edit')
                     ->columns(3)
                     ->schema([
                         Select::make('lead_id')
@@ -129,6 +131,7 @@ class UserResource extends Resource
                             ->columns()
                             ]),
                 Forms\Components\Section::make('Additional fields')
+                    ->visibleOn('edit')
                     ->schema([
                         Forms\Components\Repeater::make('fields')
                             ->hiddenLabel()
@@ -176,7 +179,7 @@ class UserResource extends Resource
                     ->searchable(),
                 Tables\Columns\TextColumn::make('phone')
                     ->searchable(),
-                TextColumn::make('lead.lead')
+                TextColumn::make('roles.name')
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
@@ -204,7 +207,7 @@ class UserResource extends Resource
                     Tables\Actions\DeleteAction::make(),
                     Tables\Actions\RestoreAction::make(),
                     Tables\Actions\Action::make('Move to Stage')
-                        ->visible(fn(User $user) => !$user->hasRole(Role::ADMIN))
+                        ->visible(fn(User $user) => $user->hasRole(Role::CUSTOMER))
                         ->hidden(fn($record) => $record->trashed())
                         ->icon('heroicon-m-puzzle-piece')
                         ->modalDescription(fn (User $record) => 'Move ' . $record->name . ' to another stage')
@@ -237,6 +240,37 @@ class UserResource extends Resource
                                 ->success()
                                 ->send();
                         }),
+                    Tables\Actions\Action::make('Add Task')
+                        ->visible(fn(User $user) => $user->hasRole(Role::CUSTOMER))
+                        ->icon('heroicon-s-clipboard-document')
+                        ->form([
+                            Forms\Components\RichEditor::make('description')
+                                ->required(),
+                            Forms\Components\Select::make('assigned_to')
+                                ->options(Role::find(Role::STAFF)->users()->get()->pluck('name', 'id'))
+                                ->preload()
+                                ->searchable(),
+                            Forms\Components\DatePicker::make('due_date')
+                                ->native(false),
+
+                        ])
+                        ->action(function (array $data, $record) {
+                            $data['assigned_by'] = auth()->id();
+                            $data['assigned_for'] = $record->id;
+
+                            Task::create([
+                                'assigned_by' => auth()->id(),
+                                'assigned_to' => $data['assigned_to'],
+                                'assigned_for' => $record->id,
+                                'description' => $data['description'],
+                                'due_date' => $data['due_date']
+                            ]);
+
+                            Notification::make()
+                                ->title('Task created successfully')
+                                ->success()
+                                ->send();
+                        })
                 ])
             ])
             ->recordUrl(function ($record) {
