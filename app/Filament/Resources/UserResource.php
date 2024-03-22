@@ -178,6 +178,7 @@ class UserResource extends Resource
                     })
                     ->html(),
                 Tables\Columns\TextColumn::make('email')
+                    ->copyable()
                     ->searchable(),
                 Tables\Columns\TextColumn::make('phone')
                     ->searchable(),
@@ -276,13 +277,10 @@ class UserResource extends Resource
                 ])
             ])
             ->recordUrl(function ($record) {
-                // If the record is trashed, return null
                 if ($record->trashed()) {
-                    // Null will disable the row click
                     return null;
                 }
 
-                // Otherwise, return the edit page URL
                 return Pages\ViewUser::getUrl([$record->id]);
             })
             ->bulkActions([
