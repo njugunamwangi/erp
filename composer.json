@@ -18,6 +18,7 @@
         "laravel/tinker": "^2.9",
         "laraveldaily/laravel-invoices": "4.0",
         "livewire/livewire": "^3.0",
+        "saade/filament-fullcalendar": "^3.2",
         "spatie/laravel-sluggable": "^3.6",
         "ysfkaya/filament-phone-input": "^2.3"
     },
