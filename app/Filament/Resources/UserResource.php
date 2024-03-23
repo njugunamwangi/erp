@@ -228,7 +228,7 @@ class UserResource extends Resource
                             Forms\Components\Textarea::make('notes')
                                 ->label('Notes')
                         ])
-                        ->action(function (User $customer, array $data): void {
+                        ->action(function (User $customer, array $data, $record) {
                             $customer->stage_id = $data['stage_id'];
                             $customer->save();
 
@@ -238,10 +238,18 @@ class UserResource extends Resource
                                 'user_id' => $customer->id
                             ]);
 
-                            Notification::make()
-                                ->title('Pipeline Updated')
-                                ->success()
-                                ->send();
+                            $recipients = User::role(Role::ADMIN)->get();
+
+                            foreach($recipients as $recipient) {
+                                $recipient->notify(
+                                    Notification::make()
+                                    ->title($record->name . ' moved to ' . $record->stage->stage)
+                                    ->body(auth()->user()->name . ' moved ' . $record->name . ' to another stage')
+                                    ->icon('heroicon-o-puzzle-piece')
+                                    ->success()
+                                    ->toDatabase()
+                                );
+                            }
                         }),
                     Tables\Actions\Action::make('Add Task')
                         ->visible(fn(User $user) => $user->hasRole(Role::CUSTOMER))
@@ -269,10 +277,18 @@ class UserResource extends Resource
                                 'due_date' => $data['due_date']
                             ]);
 
-                            Notification::make()
-                                ->title('Task created successfully')
-                                ->success()
-                                ->send();
+                            $recipients = User::role(Role::ADMIN)->get();
+
+                            foreach($recipients as $recipient) {
+                                $recipient->notify(
+                                    Notification::make()
+                                    ->title('Task Assigned')
+                                    ->body(auth()->user()->name . ' assigned a task for ' . $record->name)
+                                    ->icon('heroicon-o-puzzle-piece')
+                                    ->success()
+                                    ->toDatabase()
+                                );
+                            }
                         })
                 ])
             ])
