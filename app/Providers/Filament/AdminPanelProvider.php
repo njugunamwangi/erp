@@ -68,6 +68,8 @@ class AdminPanelProvider extends PanelProvider
                     ->icon('heroicon-o-cog-8-tooth')
                     ->collapsed(),
             ])
+            ->databaseNotifications()
+            ->databaseNotificationsPolling('2s')
             ->maxContentWidth(MaxWidth::Full)
             ->authMiddleware([
                 Authenticate::class,
