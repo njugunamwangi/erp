@@ -191,7 +191,7 @@ class QuoteResource extends Resource
                         ->label('Download PDF')
                         ->icon('heroicon-o-arrow-down-on-square-stack')
                         ->color('success')
-                        ->url(fn (Quote $record) => route('pdf.download', $record))
+                        ->url(fn (Quote $record) => route('quote.download', $record))
                         ->openUrlInNewTab()
                     ])
             ])

@@ -21,10 +21,10 @@ Route::middleware([
     })->name('dashboard');
 
     Route::get('quote/{record}/pdf', ViewQuoteController::class)
-        ->name('quote.pdf.download');
+        ->name('quote.view');
 
     Route::get('download/{record}/pdf', DownloadQuoteController::class)
-        ->name('pdf.download');
+        ->name('quote.download');
 });
 
 Route::middleware('signed')
