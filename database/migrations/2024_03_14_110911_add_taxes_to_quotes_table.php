@@ -12,8 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('quotes', function (Blueprint $table) {
-            $table->decimal('subtotal');
-            $table->decimal('taxes');
+            $table->bigInteger('subtotal');
+            $table->bigInteger('taxes');
         });
     }
 

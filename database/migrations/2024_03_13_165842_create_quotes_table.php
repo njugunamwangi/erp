@@ -17,7 +17,7 @@ return new class extends Migration
             $table->id();
             $table->foreignIdFor(User::class)->constrained();
             $table->foreignIdFor(Vertical::class)->constrained();
-            $table->decimal('total');
+            $table->bigInteger('total');
             $table->json('items');
             $table->softDeletes();
             $table->timestamps();
