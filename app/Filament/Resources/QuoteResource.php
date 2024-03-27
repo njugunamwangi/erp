@@ -83,6 +83,7 @@ class QuoteResource extends Resource
                                             ->afterStateUpdated(function (Get $get, Set $set) {
                                                 self::updateTotals($get, $set);
                                             })
+                                            ->addActionLabel('Add Item')
                                             ->columnSpanFull(),
                                     ])->columnSpan(8),
                                 Section::make()

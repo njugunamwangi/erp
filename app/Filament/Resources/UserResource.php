@@ -237,18 +237,17 @@ class UserResource extends Resource
                                 'notes' => $data['notes'],
                                 'user_id' => $customer->id
                             ]);
-
+                        })
+                        ->after(function(User $record) {
                             $recipients = User::role(Role::ADMIN)->get();
 
                             foreach($recipients as $recipient) {
-                                $recipient->notify(
-                                    Notification::make()
+                                Notification::make()
                                     ->title($record->name . ' moved to ' . $record->stage->stage)
                                     ->body(auth()->user()->name . ' moved ' . $record->name . ' to another stage')
                                     ->icon('heroicon-o-puzzle-piece')
                                     ->success()
-                                    ->toDatabase()
-                                );
+                                    ->sendToDatabase($recipient);
                             }
                         }),
                     Tables\Actions\Action::make('Add Task')

@@ -69,7 +69,7 @@ class AdminPanelProvider extends PanelProvider
                     ->collapsed(),
             ])
             ->databaseNotifications()
-            ->databaseNotificationsPolling('2s')
+            ->databaseNotificationsPolling('5s')
             ->maxContentWidth(MaxWidth::Full)
             ->authMiddleware([
                 Authenticate::class,
