@@ -21,6 +21,7 @@ use Filament\Resources\Resource;
 use Filament\Support\RawJs;
 use Filament\Tables;
 use Filament\Tables\Actions\Action;
+use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
@@ -182,12 +183,17 @@ class QuoteResource extends Resource
                 Tables\Filters\TrashedFilter::make(),
             ])
             ->actions([
-                Tables\Actions\ViewAction::make(),
-                Tables\Actions\EditAction::make(),
-                Action::make('Pdf')
-                    ->icon('heroicon-o-arrow-down-on-square-stack')
-                    ->url(fn (Quote $record) => route('quote.pdf.download', $record))
-                    ->openUrlInNewTab()
+                ActionGroup::make([
+                    Tables\Actions\ViewAction::make(),
+                    Tables\Actions\EditAction::make()
+                        ->color('primary'),
+                    Action::make('pdf')
+                        ->label('Download PDF')
+                        ->icon('heroicon-o-arrow-down-on-square-stack')
+                        ->color('success')
+                        ->url(fn (Quote $record) => route('pdf.download', $record))
+                        ->openUrlInNewTab()
+                    ])
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

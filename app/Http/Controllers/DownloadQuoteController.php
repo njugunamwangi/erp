@@ -3,13 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\Quote;
-use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use LaravelDaily\Invoices\Classes\Buyer;
 use LaravelDaily\Invoices\Classes\InvoiceItem;
 use LaravelDaily\Invoices\Invoice;
 
-class QuotePdfController extends Controller
+class DownloadQuoteController extends Controller
 {
     /**
      * Handle the incoming request.
@@ -23,8 +22,6 @@ class QuotePdfController extends Controller
                 'phone' => $record->user->phone,
             ],
         ]);
-
-        $item = InvoiceItem::make('Service 1')->pricePerUnit(2);
 
         $items = [];
 
@@ -41,6 +38,6 @@ class QuotePdfController extends Controller
             ->taxRate($record->taxes)
             ->addItems($items);
 
-        return $invoice->stream();
+        return $invoice->download();
     }
 }
