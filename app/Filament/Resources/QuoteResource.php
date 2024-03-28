@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\QuoteResource\Pages;
 use App\Filament\Resources\QuoteResource\RelationManagers;
+use App\Filament\Resources\QuoteResource\Widgets\QuoteOverviewStats;
 use App\Models\Quote;
 use Filament\Forms;
 use Filament\Forms\Components\Fieldset;
@@ -227,5 +228,12 @@ class QuoteResource extends Resource
             ->withoutGlobalScopes([
                 SoftDeletingScope::class,
             ]);
+    }
+
+    public static function getWidgets(): array
+    {
+        return [
+            QuoteOverviewStats::class
+        ];
     }
 }

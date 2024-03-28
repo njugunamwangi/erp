@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\QuoteResource\Pages;
 
 use App\Filament\Resources\QuoteResource;
+use App\Filament\Resources\QuoteResource\Widgets\QuoteOverviewStats;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
 
@@ -14,6 +15,13 @@ class ListQuotes extends ListRecords
     {
         return [
             Actions\CreateAction::make(),
+        ];
+    }
+
+    protected function getHeaderWidgets(): array
+    {
+        return [
+            QuoteOverviewStats::class
         ];
     }
 }
