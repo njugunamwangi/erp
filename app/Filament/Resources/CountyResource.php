@@ -26,14 +26,7 @@ class CountyResource extends Resource
     public static function form(Form $form): Form
     {
         return $form
-            ->schema([
-                Forms\Components\TextInput::make('county')
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('county_code')
-                    ->required()
-                    ->maxLength(255),
-            ]);
+            ->schema(County::getForm());
     }
 
     public static function table(Table $table): Table

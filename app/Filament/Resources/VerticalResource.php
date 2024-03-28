@@ -22,11 +22,7 @@ class VerticalResource extends Resource
     public static function form(Form $form): Form
     {
         return $form
-            ->schema([
-                Forms\Components\TextInput::make('vertical')
-                    ->required()
-                    ->maxLength(255),
-            ]);
+            ->schema(Vertical::getForm());
     }
 
     public static function table(Table $table): Table
