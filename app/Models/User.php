@@ -105,6 +105,11 @@ class User extends Authenticatable implements FilamentUser
         return $this->hasMany(Task::class)->where('is_completed', false);
     }
 
+    public function projects(): HasMany
+    {
+         return $this->hasMany(Project::class);
+    }
+
     public function lead(): BelongsTo {
         return $this->belongsTo(Lead::class);
     }
