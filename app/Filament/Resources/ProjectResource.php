@@ -7,6 +7,7 @@ use App\Filament\Resources\ProjectResource\RelationManagers;
 use App\Models\County;
 use App\Models\Project;
 use App\Models\Vertical;
+use Filament\Actions\Action;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -24,30 +25,7 @@ class ProjectResource extends Resource
     public static function form(Form $form): Form
     {
         return $form
-            ->schema([
-                Forms\Components\Select::make('user_id')
-                    ->relationship('user', 'name')
-                    ->searchable()
-                    ->preload()
-                    ->required(),
-                Forms\Components\Select::make('vertical_id')
-                    ->relationship('vertical', 'vertical')
-                    ->searchable()
-                    ->createOptionForm(Vertical::getForm())
-                    ->editOptionForm(Vertical::getForm())
-                    ->preload()
-                    ->required(),
-                Forms\Components\Select::make('county_id')
-                    ->relationship('county', 'county')
-                    ->searchable()
-                    ->createOptionForm(County::getForm())
-                    ->editOptionForm(County::getForm())
-                    ->preload()
-                    ->required(),
-                Forms\Components\TextInput::make('acreage')
-                    ->required()
-                    ->numeric(),
-            ]);
+            ->schema(Project::getForm());
     }
 
     public static function table(Table $table): Table
