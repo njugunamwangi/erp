@@ -67,6 +67,10 @@ class AdminPanelProvider extends PanelProvider
                     ->label('Settings')
                     ->icon('heroicon-o-cog-8-tooth')
                     ->collapsed(),
+                NavigationGroup::make()
+                    ->label('Locations')
+                    ->icon('heroicon-o-globe-europe-africa')
+                    ->collapsed(),
             ])
             ->databaseNotifications()
             ->databaseNotificationsPolling('5s')
