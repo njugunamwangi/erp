@@ -21,7 +21,8 @@
         "livewire/livewire": "^3.0",
         "saade/filament-fullcalendar": "^3.2",
         "spatie/laravel-sluggable": "^3.6",
-        "ysfkaya/filament-phone-input": "^2.3"
+        "ysfkaya/filament-phone-input": "^2.3",
+        "z3d0x/filament-logger": "^0.7.0"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",

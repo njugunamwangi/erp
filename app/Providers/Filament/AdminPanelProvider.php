@@ -71,15 +71,14 @@ class AdminPanelProvider extends PanelProvider
                     ->url(fn (): string => CustomFieldResource::getUrl())
                     ->icon('heroicon-o-viewfinder-circle'),
             ])
+            ->resources([
+                config('filament-logger.activity_resource')
+            ])
             ->collapsibleNavigationGroups(true)
             ->navigationGroups([
                 NavigationGroup::make()
                     ->label('Customer Relations')
                     ->icon('heroicon-o-user-group')
-                    ->collapsed(),
-                NavigationGroup::make()
-                    ->label('Settings')
-                    ->icon('heroicon-o-cog-8-tooth')
                     ->collapsed(),
                 NavigationGroup::make()
                     ->label('Locations')
