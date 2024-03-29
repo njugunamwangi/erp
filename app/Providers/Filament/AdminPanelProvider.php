@@ -3,10 +3,14 @@
 namespace App\Providers\Filament;
 
 use Althinect\FilamentSpatieRolesPermissions\FilamentSpatieRolesPermissionsPlugin;
+use App\Filament\Resources\CustomFieldResource;
+use App\Filament\Resources\VerticalResource;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
+use Filament\Navigation\MenuItem;
 use Filament\Navigation\NavigationGroup;
+use Filament\Navigation\NavigationItem;
 use Filament\Pages;
 use Filament\Panel;
 use Filament\PanelProvider;
@@ -56,6 +60,16 @@ class AdminPanelProvider extends PanelProvider
                 SubstituteBindings::class,
                 DisableBladeIconComponents::class,
                 DispatchServingFilamentEvent::class,
+            ])
+            ->userMenuItems([
+                MenuItem::make()
+                    ->label('Verticals')
+                    ->url(fn (): string => VerticalResource::getUrl())
+                    ->icon('heroicon-o-chart-bar'),
+                MenuItem::make()
+                    ->label('Custom Fields')
+                    ->url(fn (): string => CustomFieldResource::getUrl())
+                    ->icon('heroicon-o-viewfinder-circle'),
             ])
             ->collapsibleNavigationGroups(true)
             ->navigationGroups([
