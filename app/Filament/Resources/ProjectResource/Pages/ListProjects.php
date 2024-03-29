@@ -5,10 +5,13 @@ namespace App\Filament\Resources\ProjectResource\Pages;
 use App\Filament\Resources\ProjectResource;
 use App\Models\County;
 use App\Models\Project;
+use App\Models\Role;
+use App\Models\User;
 use App\Models\Vertical;
 use Filament\Actions;
 use Filament\Actions\Action;
 use Filament\Forms\Components\DatePicker;
+use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
@@ -49,8 +52,9 @@ class ListProjects extends ListRecords
                     TextInput::make('acreage')
                         ->required()
                         ->numeric(),
-                    DatePicker::make('created_at')
+                    DateTimePicker::make('created_at')
                         ->label('Date')
+                        ->required()
                 ])
                 ->action(function(array $data) {
                     Project::create([
@@ -61,11 +65,15 @@ class ListProjects extends ListRecords
                         'created_at' => $data['created_at'],
                     ]);
 
-                    Notification::make()
-                        ->title('Back date successful')
-                        ->color('primary')
-                        ->body('Project backdated successfully')
-                        ->send();
+                    $recipients = User::role(Role::ADMIN)->get();
+
+                    foreach($recipients as $recipient) {
+                        Notification::make()
+                            ->title('Back date successful')
+                            ->color('success')
+                            ->body('Project backdated successfully')
+                            ->sendToDatabase($recipient);
+                    }
                 })
         ];
     }
