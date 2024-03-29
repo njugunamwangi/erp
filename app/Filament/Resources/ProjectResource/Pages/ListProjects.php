@@ -50,6 +50,7 @@ class ListProjects extends ListRecords
                         ->required()
                         ->numeric(),
                     DatePicker::make('created_at')
+                        ->label('Date')
                 ])
                 ->action(function(array $data) {
                     Project::create([
