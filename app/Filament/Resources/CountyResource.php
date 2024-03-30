@@ -21,7 +21,7 @@ class CountyResource extends Resource
 {
     protected static ?string $model = County::class;
 
-    protected static ?string $navigationGroup = 'Locations';
+    protected static bool $shouldRegisterNavigation = false;
 
     public static function form(Form $form): Form
     {

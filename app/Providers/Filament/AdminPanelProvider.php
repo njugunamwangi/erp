@@ -3,6 +3,7 @@
 namespace App\Providers\Filament;
 
 use Althinect\FilamentSpatieRolesPermissions\FilamentSpatieRolesPermissionsPlugin;
+use App\Filament\Resources\CountyResource;
 use App\Filament\Resources\CustomFieldResource;
 use App\Filament\Resources\VerticalResource;
 use Filament\Http\Middleware\Authenticate;
@@ -63,13 +64,17 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->userMenuItems([
                 MenuItem::make()
-                    ->label('Verticals')
-                    ->url(fn (): string => VerticalResource::getUrl())
-                    ->icon('heroicon-o-chart-bar'),
+                    ->label('Counties')
+                    ->url(fn (): string => CountyResource::getUrl())
+                    ->icon('heroicon-o-globe-europe-africa'),
                 MenuItem::make()
                     ->label('Custom Fields')
                     ->url(fn (): string => CustomFieldResource::getUrl())
                     ->icon('heroicon-o-viewfinder-circle'),
+                MenuItem::make()
+                    ->label('Verticals')
+                    ->url(fn (): string => VerticalResource::getUrl())
+                    ->icon('heroicon-o-chart-bar'),
             ])
             ->resources([
                 config('filament-logger.activity_resource')
@@ -79,10 +84,6 @@ class AdminPanelProvider extends PanelProvider
                 NavigationGroup::make()
                     ->label('Customer Relations')
                     ->icon('heroicon-o-user-group')
-                    ->collapsed(),
-                NavigationGroup::make()
-                    ->label('Locations')
-                    ->icon('heroicon-o-globe-europe-africa')
                     ->collapsed(),
             ])
             ->databaseNotifications()
