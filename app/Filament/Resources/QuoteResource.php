@@ -5,7 +5,10 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\QuoteResource\Pages;
 use App\Filament\Resources\QuoteResource\RelationManagers;
 use App\Filament\Resources\QuoteResource\Widgets\QuoteOverviewStats;
+use App\Models\Invoice;
 use App\Models\Quote;
+use App\Models\Role;
+use App\Models\User;
 use Filament\Forms;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Grid;
@@ -18,6 +21,7 @@ use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Filament\Infolists\Components\ViewEntry;
 use Filament\Infolists\Infolist;
+use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Support\RawJs;
 use Filament\Tables;
@@ -188,8 +192,33 @@ class QuoteResource extends Resource
                     Tables\Actions\ViewAction::make(),
                     Tables\Actions\EditAction::make()
                         ->color('primary'),
+                    Action::make('invoice')
+                        ->label('Generate Invoice')
+                        ->color('warning')
+                        ->icon('heroicon-o-document-check')
+                        ->action(function($record) {
+                            Invoice::create([
+                                'user_id' => $record->user_id,
+                                'quote_id' => $record->quote_id,
+                                'items' => $record->items,
+                                'subtotal' => $record->subtotal,
+                                'taxes' => $record->taxes,
+                                'total' => $record->total,
+                            ]);
+
+                            $recipients = User::role(Role::ADMIN)->get();
+
+                            foreach($recipients as $recipient) {
+                                Notification::make()
+                                    ->title('Invoice generated')
+                                    ->body('Invoice successfully generated')
+                                    ->icon('heroicon-o-check-badge')
+                                    ->color('success')
+                                    ->sendToDatabase($recipient);
+                            }
+                        }),
                     Action::make('pdf')
-                        ->label('Download PDF')
+                        ->label('Download Quote PDF')
                         ->icon('heroicon-o-arrow-down-on-square-stack')
                         ->color('success')
                         ->url(fn (Quote $record) => route('quote.download', $record))

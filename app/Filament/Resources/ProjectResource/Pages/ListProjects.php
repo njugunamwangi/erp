@@ -71,6 +71,7 @@ class ListProjects extends ListRecords
                         Notification::make()
                             ->title('Back date successful')
                             ->color('success')
+                            ->icon('heroicon-o-check-badge')
                             ->body('Project backdated successfully')
                             ->sendToDatabase($recipient);
                     }
