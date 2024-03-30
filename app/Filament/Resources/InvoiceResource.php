@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\InvoiceResource\Pages;
 use App\Filament\Resources\InvoiceResource\RelationManagers;
+use App\Filament\Resources\InvoiceResource\Widgets\InvoiceStatsOverview;
 use App\Models\Invoice;
 use Filament\Forms;
 use Filament\Forms\Components\Fieldset;
@@ -198,5 +199,12 @@ class InvoiceResource extends Resource
             ->withoutGlobalScopes([
                 SoftDeletingScope::class,
             ]);
+    }
+
+    public static function getWidgets(): array
+    {
+        return [
+            InvoiceStatsOverview::class,
+        ];
     }
 }
