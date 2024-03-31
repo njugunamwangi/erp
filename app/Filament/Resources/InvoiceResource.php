@@ -16,6 +16,8 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
+use Filament\Infolists\Components\ViewEntry;
+use Filament\Infolists\Infolist;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -118,6 +120,19 @@ class InvoiceResource extends Resource
 
         $set('subtotal', number_format($subtotal, 2, '.', ''));
         $set('total', number_format($subtotal + ($subtotal * ($get('taxes') / 100)), 2, '.', ''));
+    }
+
+    public static function infolist(Infolist $infolist): Infolist
+    {
+        return $infolist
+            ->schema([
+                ViewEntry::make('invoice')
+                    ->columnSpanFull()
+                    ->viewData([
+                        'record' => $infolist->record
+                    ])
+                    ->view('components.filament.invoice-view')
+            ]);
     }
 
     public static function table(Table $table): Table
