@@ -374,7 +374,8 @@ class UserResource extends Resource
                     ->schema([
                         TextEntry::make('lead.lead'),
                         TextEntry::make('stage.stage'),
-                    ]),
+                    ])
+                    ->collapsed(),
                 Section::make('Additional fields')
                     ->hidden(fn($record) => $record->customFieldUsers->isEmpty())
                     ->schema(
@@ -384,7 +385,8 @@ class UserResource extends Resource
                                 ->default($customField->value);
                         })->toArray()
                     )
-                    ->columns(),
+                    ->columns()
+                    ->collapsed(),
                 Section::make('Documents')
                     ->hidden(fn($record) => $record->documents->isEmpty())
                     ->schema([
@@ -400,7 +402,8 @@ class UserResource extends Resource
                                 TextEntry::make('comments'),
                             ])
                             ->columns()
-                    ]),
+                    ])
+                    ->collapsed(),
                 Section::make('Pipeline Stage History and Notes')
                     ->hidden(fn($record) => $record->hasRole(Role::ADMIN))
                     ->schema([
@@ -408,65 +411,65 @@ class UserResource extends Resource
                             ->label('')
                             ->view('components.filament.pipeline-stage-history-list')
                     ])
-                    ->collapsible(),
-                // Tabs::make('Tasks')
-                //     ->tabs([
-                //         Tabs\Tab::make('Completed')
-                //             ->badge(fn($record) => $record->completedTasks->count())
-                //             ->schema([
-                //                 RepeatableEntry::make('completedTasks')
-                //                     ->hiddenLabel()
-                //                     ->schema([
-                //                         TextEntry::make('description')
-                //                             ->html()
-                //                             ->columnSpanFull(),
-                //                         TextEntry::make('assignedFor.name')
-                //                             ->hidden(fn($state) => is_null($state)),
-                //                         TextEntry::make('due_date')
-                //                             ->hidden(fn($state) => is_null($state))
-                //                             ->date(),
-                //                     ])
-                //                     ->columns()
-                //             ]),
-                //         Tabs\Tab::make('Incomplete')
-                //             ->badge(fn($record) => $record->incompleteTasks->count())
-                //             ->schema([
-                //                 RepeatableEntry::make('incompleteTasks')
-                //                     ->hiddenLabel()
-                //                     ->schema([
-                //                         TextEntry::make('description')
-                //                             ->html()
-                //                             ->columnSpanFull(),
-                //                         TextEntry::make('assignedFor.name')
-                //                             ->hidden(fn($state) => is_null($state)),
-                //                         TextEntry::make('due_date')
-                //                             ->hidden(fn($state) => is_null($state))
-                //                             ->date(),
-                //                         TextEntry::make('is_completed')
-                //                             ->formatStateUsing(function ($state) {
-                //                                 return $state ? 'Yes' : 'No';
-                //                             })
-                //                             ->suffixAction(
-                //                                 Action::make('complete')
-                //                                     ->button()
-                //                                     ->requiresConfirmation()
-                //                                     ->modalHeading('Mark task as completed?')
-                //                                     ->modalDescription('Are you sure you want to mark this task as completed?')
-                //                                     ->action(function (Task $record) {
-                //                                         $record->is_completed = true;
-                //                                         $record->save();
+                    ->collapsed(),
+                Tabs::make('Tasks')
+                    ->tabs([
+                        Tabs\Tab::make('Completed')
+                            ->badge(fn($record) => $record->completedTasks->count())
+                            ->schema([
+                                RepeatableEntry::make('completedTasks')
+                                    ->hiddenLabel()
+                                    ->schema([
+                                        TextEntry::make('description')
+                                            ->html()
+                                            ->columnSpanFull(),
+                                        TextEntry::make('assignedFor.name')
+                                            ->hidden(fn($state) => is_null($state)),
+                                        TextEntry::make('due_date')
+                                            ->hidden(fn($state) => is_null($state))
+                                            ->date(),
+                                    ])
+                                    ->columns()
+                            ]),
+                        Tabs\Tab::make('Incomplete')
+                            ->badge(fn($record) => $record->incompleteTasks->count())
+                            ->schema([
+                                RepeatableEntry::make('incompleteTasks')
+                                    ->hiddenLabel()
+                                    ->schema([
+                                        TextEntry::make('description')
+                                            ->html()
+                                            ->columnSpanFull(),
+                                        TextEntry::make('assignedFor.name')
+                                            ->hidden(fn($state) => is_null($state)),
+                                        TextEntry::make('due_date')
+                                            ->hidden(fn($state) => is_null($state))
+                                            ->date(),
+                                        TextEntry::make('is_completed')
+                                            ->formatStateUsing(function ($state) {
+                                                return $state ? 'Yes' : 'No';
+                                            })
+                                            ->suffixAction(
+                                                Action::make('complete')
+                                                    ->button()
+                                                    ->requiresConfirmation()
+                                                    ->modalHeading('Mark task as completed?')
+                                                    ->modalDescription('Are you sure you want to mark this task as completed?')
+                                                    ->action(function (Task $record) {
+                                                        $record->is_completed = true;
+                                                        $record->save();
 
-                //                                         Notification::make()
-                //                                             ->title('Task marked as completed')
-                //                                             ->success()
-                //                                             ->send();
-                //                                     })
-                //                             ),
-                //                     ])
-                //                     ->columns(3)
-                //             ])
-                //     ])
-                //     ->columnSpanFull(),
+                                                        Notification::make()
+                                                            ->title('Task marked as completed')
+                                                            ->success()
+                                                            ->send();
+                                                    })
+                                            ),
+                                    ])
+                                    ->columns(3)
+                            ])
+                    ])
+                    ->columnSpanFull(),
             ]);
     }
 

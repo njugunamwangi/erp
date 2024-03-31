@@ -97,12 +97,12 @@ class User extends Authenticatable implements FilamentUser
 
     public function completedTasks(): HasMany
     {
-        return $this->hasMany(Task::class)->where('is_completed', true);
+        return $this->hasMany(Task::class, 'assigned_for')->where('is_completed', true);
     }
 
     public function incompleteTasks(): HasMany
     {
-        return $this->hasMany(Task::class)->where('is_completed', false);
+        return $this->hasMany(Task::class, 'assigned_for')->where('is_completed', false);
     }
 
     public function projects(): HasMany

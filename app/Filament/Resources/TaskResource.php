@@ -26,12 +26,14 @@ class TaskResource extends Resource
         return $form
             ->schema([
                 Forms\Components\Select::make('assigned_to')
+                    ->label('Staff')
                     ->relationship('assignedTo', 'name')
                     ->options(Role::find(Role::STAFF)->users()->get()->pluck('name', 'id'))
                     ->searchable()
                     ->preload()
                     ->required(),
                 Forms\Components\Select::make('assigned_for')
+                    ->label('Customer')
                     ->relationship('assignedFor', 'name')
                     ->options(Role::find(Role::CUSTOMER)->users()->get()->pluck('name', 'id'))
                     ->searchable()
