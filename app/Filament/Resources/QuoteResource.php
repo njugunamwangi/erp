@@ -145,7 +145,7 @@ class QuoteResource extends Resource
                     ->viewData([
                         'record' => $infolist->record
                     ])
-                    ->view('components.quote-invoice-view')
+                    ->view('components.filament.quote-view')
             ]);
     }
 
