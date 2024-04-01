@@ -11,6 +11,11 @@ class CreateInvoice extends CreateRecord
 {
     protected static string $resource = InvoiceResource::class;
 
+    protected function getRedirectUrl(): string
+    {
+        return $this->getResource()::getUrl('view', ['record' => $this->getRecord()]);
+    }
+
     protected function mutateFormDataBeforeCreate(array $data): array
     {
         $data['serial_number'] = (Invoice::max('serial_number') ?? 0) + 1;

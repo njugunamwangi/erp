@@ -158,6 +158,8 @@ class InvoiceResource extends Resource
     {
         return $table
             ->columns([
+                Tables\Columns\TextColumn::make('serial')
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('user.name')
                     ->numeric()
                     ->sortable(),
@@ -168,8 +170,6 @@ class InvoiceResource extends Resource
                 Tables\Columns\TextColumn::make('taxes')
                     ->numeric()
                     ->suffix('%')
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('serial')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('status')
                     ->badge()

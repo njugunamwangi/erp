@@ -9,12 +9,14 @@ use App\Models\Invoice;
 use App\Models\Quote;
 use App\Models\Role;
 use App\Models\User;
+use App\QuoteSeries;
 use Filament\Forms;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
@@ -57,6 +59,15 @@ class QuoteResource extends Resource
                                     ->searchable()
                                     ->preload()
                                     ->required(),
+                            ]),
+                        Grid::make(1)
+                            ->schema([
+                                Select::make('series')
+                                    ->required()
+                                    ->enum(QuoteSeries::class)
+                                    ->options(QuoteSeries::class)
+                                    ->searchable()
+                                    ->preload()
                             ]),
                         Fieldset::make('Quote Summary')
                             ->schema([
@@ -153,6 +164,8 @@ class QuoteResource extends Resource
     {
         return $table
             ->columns([
+                Tables\Columns\TextColumn::make('serial')
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('user.name')
                     ->numeric()
                     ->sortable(),
@@ -196,7 +209,15 @@ class QuoteResource extends Resource
                         ->label('Generate Invoice')
                         ->color('warning')
                         ->icon('heroicon-o-document-check')
-                        ->action(function($record) {
+                        ->form([
+                            Select::make('series')
+                                ->required()
+                                ->enum(QuoteSeries::class)
+                                ->options(QuoteSeries::class)
+                                ->searchable()
+                                ->preload()
+                        ])
+                        ->action(function(array $data, $record) {
                             Invoice::create([
                                 'user_id' => $record->user_id,
                                 'quote_id' => $record->quote_id,
@@ -204,6 +225,8 @@ class QuoteResource extends Resource
                                 'subtotal' => $record->subtotal,
                                 'taxes' => $record->taxes,
                                 'total' => $record->total,
+                                'serial_number' => $serial_number = (Invoice::max('serial_number') ?? 0) + 1,
+                                'serial' => $data['series'] . '-' . str_pad($serial_number, 5, '0', STR_PAD_LEFT),
                             ]);
 
                             $recipients = User::role(Role::ADMIN)->get();
