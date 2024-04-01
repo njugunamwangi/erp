@@ -22,8 +22,8 @@ class Quote extends Model
         ];
     }
 
-    public function invoice(): BelongsTo {
-        return $this->belongsTo(Invoice::class);
+    public function invoice(): HasOne {
+        return $this->hasOne(Invoice::class);
     }
 
     public function user(): BelongsTo {

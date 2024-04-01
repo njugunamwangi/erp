@@ -23,6 +23,7 @@ use Filament\Infolists\Components\ViewEntry;
 use Filament\Infolists\Infolist;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Actions\Action;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -202,6 +203,10 @@ class InvoiceResource extends Resource
             ->actions([
                 Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
+                Action::make('viewQuote')
+                    ->icon('heroicon-o-document-text')
+                    ->visible(fn($record) => $record->quote)
+                    ->url(fn($record) => QuoteResource::getUrl('view', ['record' => $record->quote_id])),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

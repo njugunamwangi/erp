@@ -207,6 +207,7 @@ class QuoteResource extends Resource
                     Action::make('invoice')
                         ->label('Generate Invoice')
                         ->color('warning')
+                        ->visible(fn($record) => !$record->invoice)
                         ->icon('heroicon-o-document-check')
                         ->form([
                             Select::make('series')
@@ -219,7 +220,7 @@ class QuoteResource extends Resource
                         ->action(function(array $data, $record) {
                             Invoice::create([
                                 'user_id' => $record->user_id,
-                                'quote_id' => $record->quote_id,
+                                'quote_id' => $record->id,
                                 'items' => $record->items,
                                 'subtotal' => $record->subtotal,
                                 'taxes' => $record->taxes,
