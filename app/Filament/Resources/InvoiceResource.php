@@ -5,6 +5,8 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\InvoiceResource\Pages;
 use App\Filament\Resources\InvoiceResource\RelationManagers;
 use App\Filament\Resources\InvoiceResource\Widgets\InvoiceStatsOverview;
+use App\InvoiceSeries;
+use App\InvoiceStatus;
 use App\Models\Invoice;
 use Filament\Forms;
 use Filament\Forms\Components\Fieldset;
@@ -12,6 +14,7 @@ use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
@@ -44,64 +47,80 @@ class InvoiceResource extends Resource
                                     ->preload()
                                     ->required(),
                             ]),
-                            Fieldset::make('Invoice Summary')
-                                ->schema([
-                                    Section::make()
-                                        ->schema([
-                                            Repeater::make('items')
-                                                ->columns(4)
-                                                ->live()
-                                                ->schema([
-                                                    TextInput::make('quantity')
-                                                        ->numeric()
-                                                        ->required()
-                                                        ->live()
-                                                        ->default(1),
-                                                    TextInput::make('description')
-                                                        ->required()
-                                                        ->placeholder('Aerial Spraying'),
-                                                    TextInput::make('unit_price')
-                                                        ->required()
-                                                        ->live()
-                                                        ->numeric()
-                                                        ->default(1000),
-                                                    Placeholder::make('sum')
-                                                        ->label('Sub Total')
-                                                        ->live()
-                                                        ->content(function (Get $get) {
-                                                            return 'Kes ' . number_format($get('quantity') * $get('unit_price'), 2, '.', ',');
-                                                        })
-                                                ])
-                                                ->afterStateUpdated(function (Get $get, Set $set) {
-                                                    self::updateTotals($get, $set);
-                                                })
-                                                ->addActionLabel('Add Item')
-                                                ->columnSpanFull(),
-                                        ])->columnSpan(8),
-                                    Section::make()
-                                        ->schema([
-                                            Forms\Components\TextInput::make('subtotal')
-                                                ->numeric()
-                                                ->readOnly()
-                                                ->prefix('Kes')
-                                                ->afterStateHydrated(function (Get $get, Set $set) {
-                                                    self::updateTotals($get, $set);
-                                                }),
-                                            Forms\Components\TextInput::make('taxes')
-                                                ->suffix('%')
-                                                ->required()
-                                                ->numeric()
-                                                ->default(20)
-                                                ->live(true)
-                                                ->afterStateUpdated(function (Get $get, Set $set) {
-                                                    self::updateTotals($get, $set);
-                                                }),
-                                            Forms\Components\TextInput::make('total')
-                                                ->numeric()
-                                                ->readOnly()
-                                                ->prefix('Kes')
-                                        ])->columnSpan(4),
-                                ])->columns(12)
+                        Grid::make(2)
+                            ->schema([
+                                Select::make('status')
+                                    ->enum(InvoiceStatus::class)
+                                    ->options(InvoiceStatus::class)
+                                    ->required()
+                                    ->searchable()
+                                    ->preload(),
+                                Select::make('series')
+                                    ->label('Invoice Series')
+                                    ->enum(InvoiceSeries::class)
+                                    ->options(InvoiceSeries::class)
+                                    ->required()
+                                    ->searchable()
+                                    ->preload()
+                            ]),
+                        Fieldset::make('Invoice Summary')
+                            ->schema([
+                                Section::make()
+                                    ->schema([
+                                        Repeater::make('items')
+                                            ->columns(4)
+                                            ->live()
+                                            ->schema([
+                                                TextInput::make('quantity')
+                                                    ->numeric()
+                                                    ->required()
+                                                    ->live()
+                                                    ->default(1),
+                                                TextInput::make('description')
+                                                    ->required()
+                                                    ->placeholder('Aerial Spraying'),
+                                                TextInput::make('unit_price')
+                                                    ->required()
+                                                    ->live()
+                                                    ->numeric()
+                                                    ->default(1000),
+                                                Placeholder::make('sum')
+                                                    ->label('Sub Total')
+                                                    ->live()
+                                                    ->content(function (Get $get) {
+                                                        return 'Kes ' . number_format($get('quantity') * $get('unit_price'), 2, '.', ',');
+                                                    })
+                                            ])
+                                            ->afterStateUpdated(function (Get $get, Set $set) {
+                                                self::updateTotals($get, $set);
+                                            })
+                                            ->addActionLabel('Add Item')
+                                            ->columnSpanFull(),
+                                    ])->columnSpan(8),
+                                Section::make()
+                                    ->schema([
+                                        Forms\Components\TextInput::make('subtotal')
+                                            ->numeric()
+                                            ->readOnly()
+                                            ->prefix('Kes')
+                                            ->afterStateHydrated(function (Get $get, Set $set) {
+                                                self::updateTotals($get, $set);
+                                            }),
+                                        Forms\Components\TextInput::make('taxes')
+                                            ->suffix('%')
+                                            ->required()
+                                            ->numeric()
+                                            ->default(20)
+                                            ->live(true)
+                                            ->afterStateUpdated(function (Get $get, Set $set) {
+                                                self::updateTotals($get, $set);
+                                            }),
+                                        Forms\Components\TextInput::make('total')
+                                            ->numeric()
+                                            ->readOnly()
+                                            ->prefix('Kes')
+                                    ])->columnSpan(4),
+                            ])->columns(12)
                         ]),
             ]);
     }
@@ -149,6 +168,8 @@ class InvoiceResource extends Resource
                 Tables\Columns\TextColumn::make('taxes')
                     ->numeric()
                     ->suffix('%')
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('serial')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('status')
                     ->badge()

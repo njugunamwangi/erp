@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\InvoiceSeries;
 use App\InvoiceStatus;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -20,6 +21,7 @@ class Invoice extends Model
         return [
             'items' => 'json',
             'status' => InvoiceStatus::class,
+            'series' => InvoiceSeries::class,
         ];
     }
 

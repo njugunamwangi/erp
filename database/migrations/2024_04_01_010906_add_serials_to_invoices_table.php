@@ -12,9 +12,9 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('invoices', function (Blueprint $table) {
-            $table->string('serial_series');
-            $table->string('serial_number');
-            $table->string('serial');
+            $table->string('series')->default('IN2INV');
+            $table->string('serial_number')->nullable();
+            $table->string('serial')->nullable();
         });
     }
 
@@ -24,7 +24,9 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('invoices', function (Blueprint $table) {
-            //
+            $table->dropColumn('series');
+            $table->dropColumn('serial_number');
+            $table->dropColumn('serial');
         });
     }
 };
