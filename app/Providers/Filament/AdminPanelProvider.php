@@ -85,6 +85,10 @@ class AdminPanelProvider extends PanelProvider
                     ->label('Customer Relations')
                     ->icon('heroicon-o-user-group')
                     ->collapsed(),
+                NavigationGroup::make()
+                    ->label('User Management')
+                    ->icon('heroicon-o-users')
+                    ->collapsed(),
             ])
             ->databaseNotifications()
             ->databaseNotificationsPolling('5s')

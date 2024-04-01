@@ -37,9 +37,8 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 class QuoteResource extends Resource
 {
     protected static ?string $model = Quote::class;
-
     protected static ?string $navigationGroup = 'Customer Relations';
-
+    protected static ?int $navigationSort = 1;
 
     public static function form(Form $form): Form
     {

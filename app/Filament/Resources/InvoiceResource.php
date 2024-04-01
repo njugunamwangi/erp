@@ -30,8 +30,8 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 class InvoiceResource extends Resource
 {
     protected static ?string $model = Invoice::class;
-
     protected static ?string $navigationGroup = 'Customer Relations';
+    protected static ?int $navigationSort = 2;
 
     public static function form(Form $form): Form
     {

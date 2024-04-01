@@ -44,7 +44,7 @@ class UserResource extends Resource
 {
     protected static ?string $model = User::class;
 
-    protected static ?string $navigationGroup = 'Customer Relations';
+    protected static ?string $navigationGroup = 'User Management';
 
     public static function form(Form $form): Form
     {
