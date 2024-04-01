@@ -111,7 +111,7 @@ class InvoiceResource extends Resource
                                             ->suffix('%')
                                             ->required()
                                             ->numeric()
-                                            ->default(20)
+                                            ->default(16)
                                             ->live(true)
                                             ->afterStateUpdated(function (Get $get, Set $set) {
                                                 self::updateTotals($get, $set);
