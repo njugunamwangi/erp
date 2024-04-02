@@ -201,17 +201,21 @@ class QuoteResource extends Resource
             ])
             ->actions([
                 ActionGroup::make([
-                    Tables\Actions\ViewAction::make(),
+                    Tables\Actions\ViewAction::make()
+                        ->label('View Quote'),
                     Tables\Actions\EditAction::make()
-                        ->color('primary'),
+                        ->color('primary')
+                        ->label('Edit Quote'),
                     Action::make('viewInvoice')
                         ->visible(fn($record) => $record->invoice)
                         ->icon('heroicon-o-document-check')
+                        ->color('warning')
                         ->url(fn($record) => InvoiceResource::getUrl('view', ['record' => $record->invoice->id])),
                     Action::make('generateInvoice')
                         ->label('Generate Invoice')
                         ->color('warning')
                         ->visible(fn($record) => !$record->invoice)
+                        ->modalSubmitActionLabel('Generate Invoice')
                         ->icon('heroicon-o-document')
                         ->form([
                             Select::make('series')
@@ -245,7 +249,7 @@ class QuoteResource extends Resource
                             }
                         }),
                     Action::make('pdf')
-                        ->label('Download Quote PDF')
+                        ->label('Download Quote')
                         ->icon('heroicon-o-arrow-down-on-square-stack')
                         ->color('success')
                         ->url(fn (Quote $record) => route('quote.download', $record))
