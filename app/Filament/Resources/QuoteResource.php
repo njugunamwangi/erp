@@ -204,11 +204,15 @@ class QuoteResource extends Resource
                     Tables\Actions\ViewAction::make(),
                     Tables\Actions\EditAction::make()
                         ->color('primary'),
-                    Action::make('invoice')
+                    Action::make('viewInvoice')
+                        ->visible(fn($record) => $record->invoice)
+                        ->icon('heroicon-o-document-check')
+                        ->url(fn($record) => InvoiceResource::getUrl('view', ['record' => $record->invoice->id])),
+                    Action::make('generateInvoice')
                         ->label('Generate Invoice')
                         ->color('warning')
                         ->visible(fn($record) => !$record->invoice)
-                        ->icon('heroicon-o-document-check')
+                        ->icon('heroicon-o-document')
                         ->form([
                             Select::make('series')
                                 ->required()
