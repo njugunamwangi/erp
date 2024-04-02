@@ -36,6 +36,12 @@ class DownloadInvoiceController extends Controller
         $invoice = InvoicesInvoice::make()
             ->buyer($customer)
             ->taxRate($record->taxes)
+            ->status($record->status->name)
+            ->filename($record->serial)
+            ->template('invoice')
+            ->series($record->series->name)
+            ->sequence($record->serial_number)
+            ->delimiter('-')
             ->addItems($items);
 
         return $invoice->download();

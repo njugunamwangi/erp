@@ -24,6 +24,7 @@ use Filament\Infolists\Infolist;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Actions\Action;
+use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -201,12 +202,20 @@ class InvoiceResource extends Resource
                 Tables\Filters\TrashedFilter::make(),
             ])
             ->actions([
-                Tables\Actions\ViewAction::make(),
-                Tables\Actions\EditAction::make(),
-                Action::make('viewQuote')
-                    ->icon('heroicon-o-document-text')
-                    ->visible(fn($record) => $record->quote)
-                    ->url(fn($record) => QuoteResource::getUrl('view', ['record' => $record->quote_id])),
+                ActionGroup::make([
+                    Tables\Actions\ViewAction::make(),
+                    Tables\Actions\EditAction::make(),
+                    Action::make('viewQuote')
+                        ->icon('heroicon-o-document-text')
+                        ->visible(fn($record) => $record->quote)
+                        ->url(fn($record) => QuoteResource::getUrl('view', ['record' => $record->quote_id])),
+                    Action::make('pdf')
+                        ->label('Download Invoice PDF')
+                        ->icon('heroicon-o-arrow-down-on-square-stack')
+                        ->color('success')
+                        ->url(fn ($record) => route('invoice.download', $record))
+                        ->openUrlInNewTab()
+                ])
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
