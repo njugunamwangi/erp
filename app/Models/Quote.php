@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\QuoteSeries;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -19,6 +20,7 @@ class Quote extends Model
     {
         return [
             'items' => 'json',
+            'series' => QuoteSeries::class,
         ];
     }
 

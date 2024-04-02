@@ -36,6 +36,12 @@ class DownloadQuoteController extends Controller
         $invoice = Invoice::make()
             ->buyer($customer)
             ->taxRate($record->taxes)
+            ->filename($record->serial)
+            ->template('quote')
+            ->name('Quote')
+            ->series($record->series->name)
+            ->sequence($record->serial_number)
+            ->delimiter('-')
             ->addItems($items);
 
         return $invoice->download();
