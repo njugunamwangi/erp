@@ -100,6 +100,16 @@ class User extends Authenticatable implements FilamentUser
         return $this->hasMany(CustomFieldUser::class);
     }
 
+    public function staffCompletedTasks(): HasMany
+    {
+         return $this->hasMany(Task::class, 'assigned_to')->where('is_completed', true);
+    }
+
+    public function staffIncompleteTasks(): HasMany
+    {
+         return $this->hasMany(Task::class, 'assigned_to')->where('is_completed', false);
+    }
+
     public function completedTasks(): HasMany
     {
         return $this->hasMany(Task::class, 'assigned_for')->where('is_completed', true);
