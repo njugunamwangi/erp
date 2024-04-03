@@ -4,6 +4,7 @@ namespace App\Filament\Resources\QuoteResource\Pages;
 
 use App\Filament\Resources\InvoiceResource;
 use App\Filament\Resources\QuoteResource;
+use App\InvoiceSeries;
 use App\Models\Invoice;
 use App\Models\Quote;
 use App\Models\Role;
@@ -12,6 +13,7 @@ use App\QuoteSeries;
 use Filament\Actions;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Select;
+use Filament\Notifications\Actions\Action as ActionsAction;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ViewRecord;
 use Illuminate\Support\Facades\URL;
@@ -54,14 +56,14 @@ class ViewQuote extends ViewRecord
                         ->default(InvoiceSeries::IN2INV->name)
                 ])
                 ->action(function(array $data, $record) {
-                    Invoice::create([
+                    $invoice =Invoice::create([
                         'user_id' => $record->user_id,
                         'quote_id' => $record->id,
                         'items' => $record->items,
                         'subtotal' => $record->subtotal,
                         'taxes' => $record->taxes,
                         'total' => $record->total,
-                        'serial_number' => $serial_number = (Invoice::max('serial_number') ?? 0) + 1,
+                        'serial_number' => $serial_number = Invoice::max('serial_number')  + 1,
                         'serial' => $data['series'] . '-' . str_pad($serial_number, 5, '0', STR_PAD_LEFT),
                     ]);
 
@@ -70,9 +72,14 @@ class ViewQuote extends ViewRecord
                     foreach($recipients as $recipient) {
                         Notification::make()
                             ->title('Invoice generated')
-                            ->body('Invoice successfully generated')
+                            ->body(auth()->user()->name . ' generated an invoice for ' . $record->serial)
                             ->icon('heroicon-o-check-badge')
-                            ->color('success')
+                            ->success()
+                            ->actions([
+                                ActionsAction::make('View')
+                                    ->url(InvoiceResource::getUrl('view', ['record' => $invoice->id]))
+                                    ->markAsRead(),
+                            ])
                             ->sendToDatabase($recipient);
                     }
                 }),

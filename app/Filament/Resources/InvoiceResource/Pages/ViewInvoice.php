@@ -8,6 +8,7 @@ use App\Models\Role;
 use App\Models\User;
 use Filament\Actions;
 use Filament\Actions\Action;
+use Filament\Notifications\Actions\Action as ActionsAction;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ViewRecord;
 use Illuminate\Support\Facades\URL;
@@ -32,9 +33,10 @@ class ViewInvoice extends ViewRecord
                 ->label('Mark as Paid')
                 ->visible(fn($record) => $record->status != InvoiceStatus::Paid)
                 ->color('warning')
-                ->icon('heroicon-o-check-badge')
+                ->icon('heroicon-o-banknotes')
                 ->requiresConfirmation()
                 ->modalDescription(fn($record) => 'Are you sure you want to mark ' . $record->serial . ' as paid?')
+                ->modalIcon('heroicon-o-banknotes')
                 ->modalSubmitActionLabel('Mark as Paid')
                 ->action(function($record) {
                     $record->status = InvoiceStatus::Paid;
@@ -45,9 +47,14 @@ class ViewInvoice extends ViewRecord
                     foreach($recipients as $recipient) {
                         Notification::make()
                             ->title('Invoice paid')
-                            ->body('Invoice has been paid')
-                            ->icon('heroicon-o-check-badge')
-                            ->color('success')
+                            ->body(auth()->user()->name . ' marked ' . $record->serial . ' as paid')
+                            ->icon('heroicon-o-banknotes')
+                            ->warning()
+                            ->actions([
+                                ActionsAction::make('View')
+                                    ->url(InvoiceResource::getUrl('view', ['record' => $record->id]))
+                                    ->markAsRead(),
+                            ])
                             ->sendToDatabase($recipient);
                     }
                 }),

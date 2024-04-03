@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\QuoteResource\Pages;
 use App\Filament\Resources\QuoteResource\RelationManagers;
 use App\Filament\Resources\QuoteResource\Widgets\QuoteOverviewStats;
+use App\InvoiceSeries;
 use App\Models\Invoice;
 use App\Models\Quote;
 use App\Models\Role;
@@ -23,6 +24,7 @@ use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Filament\Infolists\Components\ViewEntry;
 use Filament\Infolists\Infolist;
+use Filament\Notifications\Actions\Action as ActionsAction;
 use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Support\RawJs;
@@ -69,6 +71,7 @@ class QuoteResource extends Resource
                                     ->options(QuoteSeries::class)
                                     ->searchable()
                                     ->preload()
+                                    ->default(QuoteSeries::IN2QUT->name)
                             ]),
                         Fieldset::make('Quote Summary')
                             ->schema([
@@ -229,14 +232,14 @@ class QuoteResource extends Resource
                                 ->default(InvoiceSeries::IN2INV->name)
                         ])
                         ->action(function(array $data, $record) {
-                            Invoice::create([
+                            $invoice = Invoice::create([
                                 'user_id' => $record->user_id,
                                 'quote_id' => $record->id,
                                 'items' => $record->items,
                                 'subtotal' => $record->subtotal,
                                 'taxes' => $record->taxes,
                                 'total' => $record->total,
-                                'serial_number' => $serial_number = (Invoice::max('serial_number') ?? 0) + 1,
+                                'serial_number' => $serial_number = Invoice::max('serial_number') + 1,
                                 'serial' => $data['series'] . '-' . str_pad($serial_number, 5, '0', STR_PAD_LEFT),
                             ]);
 
@@ -245,9 +248,14 @@ class QuoteResource extends Resource
                             foreach($recipients as $recipient) {
                                 Notification::make()
                                     ->title('Invoice generated')
-                                    ->body('Invoice successfully generated')
+                                    ->body(auth()->user()->name . ' generated an invoice for '. $record->serial)
                                     ->icon('heroicon-o-check-badge')
-                                    ->color('success')
+                                    ->success()
+                                    ->actions([
+                                        ActionsAction::make('View')
+                                            ->url(InvoiceResource::getUrl('view', ['record' => $invoice->id]))
+                                            ->markAsRead(),
+                                    ])
                                     ->sendToDatabase($recipient);
                             }
                         }),

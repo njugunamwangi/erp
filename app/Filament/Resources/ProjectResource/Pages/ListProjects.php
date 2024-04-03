@@ -14,6 +14,7 @@ use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
+use Filament\Notifications\Actions\Action as ActionsAction;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ListRecords;
 
@@ -57,7 +58,7 @@ class ListProjects extends ListRecords
                         ->required()
                 ])
                 ->action(function(array $data) {
-                    Project::create([
+                    $project = Project::create([
                         'user_id' => $data['user_id'],
                         'vertical_id' => $data['vertical_id'],
                         'county_id' => $data['county_id'],
@@ -70,9 +71,14 @@ class ListProjects extends ListRecords
                     foreach($recipients as $recipient) {
                         Notification::make()
                             ->title('Back date successful')
-                            ->color('success')
+                            ->success()
                             ->icon('heroicon-o-check-badge')
-                            ->body('Project backdated successfully')
+                            ->body(auth()->user()->name . ' backdated a project successfully')
+                            ->actions([
+                                ActionsAction::make('View')
+                                    ->url(ProjectResource::getUrl('view', ['record' => $project->id]))
+                                    ->markAsRead(),
+                            ])
                             ->sendToDatabase($recipient);
                     }
                 })

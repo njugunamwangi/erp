@@ -23,6 +23,7 @@ use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Filament\Infolists\Components\ViewEntry;
 use Filament\Infolists\Infolist;
+use Filament\Notifications\Actions\Action as ActionsAction;
 use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -61,7 +62,8 @@ class InvoiceResource extends Resource
                                     ->options(InvoiceStatus::class)
                                     ->required()
                                     ->searchable()
-                                    ->preload(),
+                                    ->preload()
+                                    ->default(InvoiceStatus::Unpaid->name),
                                 Select::make('series')
                                     ->label('Invoice Series')
                                     ->enum(InvoiceSeries::class)
@@ -69,6 +71,7 @@ class InvoiceResource extends Resource
                                     ->required()
                                     ->searchable()
                                     ->preload()
+                                    ->default(InvoiceSeries::IN2INV->name)
                             ]),
                         Fieldset::make('Invoice Summary')
                             ->schema([
@@ -167,6 +170,8 @@ class InvoiceResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('serial')
                     ->sortable(),
+                Tables\Columns\TextColumn::make('quote.serial')
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('user.name')
                     ->numeric()
                     ->sortable(),
@@ -217,8 +222,9 @@ class InvoiceResource extends Resource
                         ->label('Mark as Paid')
                         ->visible(fn($record) => $record->status != InvoiceStatus::Paid)
                         ->color('warning')
-                        ->icon('heroicon-o-check-badge')
+                        ->icon('heroicon-o-banknotes')
                         ->requiresConfirmation()
+                        ->modalIcon('heroicon-o-banknotes')
                         ->modalDescription(fn($record) => 'Are you sure you want to mark ' . $record->serial . ' as paid?')
                         ->modalSubmitActionLabel('Mark as Paid')
                         ->action(function($record) {
@@ -230,9 +236,14 @@ class InvoiceResource extends Resource
                             foreach($recipients as $recipient) {
                                 Notification::make()
                                     ->title('Invoice paid')
-                                    ->body('Invoice has been paid')
-                                    ->icon('heroicon-o-check-badge')
-                                    ->color('success')
+                                    ->body(auth()->user()->name . ' marked ' . $record->serial . ' as paid')
+                                    ->icon('heroicon-o-banknotes')
+                                    ->warning()
+                                    ->actions([
+                                        ActionsAction::make('View')
+                                            ->url(InvoiceResource::getUrl('view', ['record' => $record->id]))
+                                            ->markAsRead(),
+                                    ])
                                     ->sendToDatabase($recipient);
                             }
                         }),
