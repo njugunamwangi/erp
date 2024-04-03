@@ -5,11 +5,14 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\TaskResource\Pages;
 use App\Models\Role;
 use App\Models\Task;
+use App\Models\User;
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Notifications\Actions\Action;
 use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -86,24 +89,40 @@ class TaskResource extends Resource
                 Tables\Filters\TrashedFilter::make(),
             ])
             ->actions([
-                Tables\Actions\ViewAction::make(),
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\Action::make('Complete')
-                    ->hidden(fn (Task $record) => $record->is_completed)
-                    ->icon('heroicon-m-check-badge')
-                    ->modalIcon('heroicon-m-check-badge')
-                    ->modalHeading('Mark task as completed?')
-                    ->modalSubmitActionLabel('Yes')
-                    ->modalDescription('Are you sure you want to mark this task as completed?')
-                    ->action(function (Task $record) {
-                        $record->is_completed = true;
-                        $record->save();
+                ActionGroup::make([
+                    Tables\Actions\ViewAction::make(),
+                    Tables\Actions\EditAction::make()
+                        ->color('primary'),
+                    Tables\Actions\Action::make('Complete')
+                        ->color('warning')
+                        ->hidden(fn (Task $record) => $record->is_completed)
+                        ->icon('heroicon-m-check-badge')
+                        ->modalIcon('heroicon-m-check-badge')
+                        ->modalHeading('Mark task as completed?')
+                        ->modalSubmitActionLabel('Yes')
+                        ->modalDescription('Are you sure you want to mark this task as completed?')
+                        ->action(function (Task $record) {
+                            $record->is_completed = true;
+                            $record->save();
+                        })
+                        ->after(function(Task $record) {
+                            $recipients = User::role(Role::ADMIN)->get();
 
-                        Notification::make()
-                            ->title('Task marked as completed')
-                            ->success()
-                            ->send();
-                    }),
+                            foreach ($recipients as $recipient) {
+                                Notification::make()
+                                    ->title('Task completed')
+                                    ->body(auth()->user()->name.' marked task #'.$record->id . ' as completed')
+                                    ->icon('heroicon-o-check')
+                                    ->success()
+                                    ->actions([
+                                        Action::make('View')
+                                            ->url(TaskResource::getUrl('view', ['record' => $record->id]))
+                                            ->markAsRead(),
+                                    ])
+                                    ->sendToDatabase($recipient);
+                            }
+                        }),
+                ])
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
