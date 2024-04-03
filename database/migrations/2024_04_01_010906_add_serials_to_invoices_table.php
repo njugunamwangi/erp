@@ -1,5 +1,6 @@
 <?php
 
+use App\InvoiceSeries;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -12,8 +13,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('invoices', function (Blueprint $table) {
-            $table->string('series')->default('IN2INV');
-            $table->string('serial_number')->nullable();
+            $table->string('series')->default(InvoiceSeries::IN2INV->name);
+            $table->integer('serial_number')->nullable();
             $table->string('serial')->nullable();
         });
     }
