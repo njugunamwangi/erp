@@ -52,7 +52,9 @@ class QuoteResource extends Resource
                                     ->relationship('user', 'name')
                                     ->searchable()
                                     ->preload()
-                                    ->required(),
+                                    ->required()
+                                    ->getSearchResultsUsing(fn (string $search): array => User::where('name', 'like', "%{$search}%")->limit(50)->pluck('name', 'id')->toArray())
+                                    ->getOptionLabelsUsing(fn (array $values): array => User::whereIn('id', $values)->pluck('name', 'id')->toArray()),
                                 Forms\Components\Select::make('vertical_id')
                                     ->relationship('vertical', 'vertical')
                                     ->searchable()
