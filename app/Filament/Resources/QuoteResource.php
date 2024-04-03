@@ -222,10 +222,11 @@ class QuoteResource extends Resource
                         ->form([
                             Select::make('series')
                                 ->required()
-                                ->enum(QuoteSeries::class)
-                                ->options(QuoteSeries::class)
+                                ->enum(InvoiceSeries::class)
+                                ->options(InvoiceSeries::class)
                                 ->searchable()
                                 ->preload()
+                                ->default(InvoiceSeries::IN2INV->name)
                         ])
                         ->action(function(array $data, $record) {
                             Invoice::create([
