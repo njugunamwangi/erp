@@ -3,7 +3,6 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\InvoiceResource\Pages;
-use App\Filament\Resources\InvoiceResource\RelationManagers;
 use App\Filament\Resources\InvoiceResource\Widgets\InvoiceStatsOverview;
 use App\InvoiceSeries;
 use App\InvoiceStatus;
@@ -36,7 +35,9 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 class InvoiceResource extends Resource
 {
     protected static ?string $model = Invoice::class;
+
     protected static ?string $navigationGroup = 'Customer Relations';
+
     protected static ?int $navigationSort = 2;
 
     public static function form(Form $form): Form
@@ -71,7 +72,7 @@ class InvoiceResource extends Resource
                                     ->required()
                                     ->searchable()
                                     ->preload()
-                                    ->default(InvoiceSeries::IN2INV->name)
+                                    ->default(InvoiceSeries::IN2INV->name),
                             ]),
                         Fieldset::make('Invoice Summary')
                             ->schema([
@@ -98,8 +99,8 @@ class InvoiceResource extends Resource
                                                     ->label('Sub Total')
                                                     ->live()
                                                     ->content(function (Get $get) {
-                                                        return 'Kes ' . number_format($get('quantity') * $get('unit_price'), 2, '.', ',');
-                                                    })
+                                                        return 'Kes '.number_format($get('quantity') * $get('unit_price'), 2, '.', ',');
+                                                    }),
                                             ])
                                             ->afterStateUpdated(function (Get $get, Set $set) {
                                                 self::updateTotals($get, $set);
@@ -128,10 +129,10 @@ class InvoiceResource extends Resource
                                         Forms\Components\TextInput::make('total')
                                             ->numeric()
                                             ->readOnly()
-                                            ->prefix('Kes')
+                                            ->prefix('Kes'),
                                     ])->columnSpan(4),
-                            ])->columns(12)
-                        ]),
+                            ])->columns(12),
+                    ]),
             ]);
     }
 
@@ -141,7 +142,7 @@ class InvoiceResource extends Resource
 
         $subtotal = 0;
 
-        foreach($items as $item) {
+        foreach ($items as $item) {
             $aggregate = $item['quantity'] * $item['unit_price'];
 
             $subtotal += $aggregate;
@@ -158,9 +159,9 @@ class InvoiceResource extends Resource
                 ViewEntry::make('invoice')
                     ->columnSpanFull()
                     ->viewData([
-                        'record' => $infolist->record
+                        'record' => $infolist->record,
                     ])
-                    ->view('components.filament.invoice-view')
+                    ->view('components.filament.invoice-view'),
             ]);
     }
 
@@ -220,23 +221,23 @@ class InvoiceResource extends Resource
                         ->label('Edit Invoice'),
                     Action::make('markPaid')
                         ->label('Mark as Paid')
-                        ->visible(fn($record) => $record->status != InvoiceStatus::Paid)
+                        ->visible(fn ($record) => $record->status != InvoiceStatus::Paid)
                         ->color('warning')
                         ->icon('heroicon-o-banknotes')
                         ->requiresConfirmation()
                         ->modalIcon('heroicon-o-banknotes')
-                        ->modalDescription(fn($record) => 'Are you sure you want to mark ' . $record->serial . ' as paid?')
+                        ->modalDescription(fn ($record) => 'Are you sure you want to mark '.$record->serial.' as paid?')
                         ->modalSubmitActionLabel('Mark as Paid')
-                        ->action(function($record) {
+                        ->action(function ($record) {
                             $record->status = InvoiceStatus::Paid;
                             $record->save();
 
                             $recipients = User::role(Role::ADMIN)->get();
 
-                            foreach($recipients as $recipient) {
+                            foreach ($recipients as $recipient) {
                                 Notification::make()
                                     ->title('Invoice paid')
-                                    ->body(auth()->user()->name . ' marked ' . $record->serial . ' as paid')
+                                    ->body(auth()->user()->name.' marked '.$record->serial.' as paid')
                                     ->icon('heroicon-o-banknotes')
                                     ->warning()
                                     ->actions([
@@ -255,9 +256,9 @@ class InvoiceResource extends Resource
                         ->openUrlInNewTab(),
                     Action::make('viewQuote')
                         ->icon('heroicon-o-document-text')
-                        ->visible(fn($record) => $record->quote)
-                        ->url(fn($record) => QuoteResource::getUrl('view', ['record' => $record->quote_id])),
-                ])
+                        ->visible(fn ($record) => $record->quote)
+                        ->url(fn ($record) => QuoteResource::getUrl('view', ['record' => $record->quote_id])),
+                ]),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

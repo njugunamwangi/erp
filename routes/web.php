@@ -1,9 +1,7 @@
 <?php
 
 use App\Http\Controllers\DownloadInvoiceController;
-use App\Http\Controllers\DownloadPDFController;
 use App\Http\Controllers\DownloadQuoteController;
-use App\Http\Controllers\QuotePdfController;
 use App\Http\Controllers\ViewInvoiceController;
 use App\Http\Controllers\ViewQuoteController;
 use App\Livewire\AcceptInvitation;
@@ -40,4 +38,3 @@ Route::middleware([
 Route::middleware('signed')
     ->get('invitation/{invitation}/accept', AcceptInvitation::class)
     ->name('invitation.accept');
-

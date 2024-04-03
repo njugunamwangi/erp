@@ -29,7 +29,7 @@ class ListUsers extends ListRecords
                 ->form([
                     TextInput::make('email')
                         ->email()
-                        ->required()
+                        ->required(),
                 ])
                 ->action(function ($data) {
                     $invitation = Invitation::create(['email' => $data['email']]);

@@ -20,7 +20,7 @@ class ProjectStatsWidget extends BaseWidget
                 ->color('success')
                 ->description('Number of projects we\'ve taken')
                 ->descriptionIcon('heroicon-o-calculator'),
-            Stat::make('Projects by Acreage', number_format(Project::all()->sum('acreage')) . ' acres')
+            Stat::make('Projects by Acreage', number_format(Project::all()->sum('acreage')).' acres')
                 ->color('success')
                 ->description('Number of acres we\'ve covered')
                 ->descriptionIcon('heroicon-o-globe-alt'),

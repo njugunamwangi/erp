@@ -3,23 +3,18 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\TagResource\Pages;
-use App\Filament\Resources\TagResource\RelationManagers;
 use App\Models\Tag;
-use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class TagResource extends Resource
 {
     protected static ?string $model = Tag::class;
 
     protected static ?string $navigationGroup = 'Customer Relations';
-
 
     public static function form(Form $form): Form
     {
@@ -51,25 +46,25 @@ class TagResource extends Resource
                 Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make()
-                ->action(function ($record) {
-                    if ($record->users()->count() > 0) {
+                    ->action(function ($record) {
+                        if ($record->users()->count() > 0) {
+                            Notification::make()
+                                ->danger()
+                                ->title('Tag is in use')
+                                ->body('Tag is in use by customers.')
+                                ->send();
+
+                            return;
+                        }
+
                         Notification::make()
-                            ->danger()
-                            ->title('Tag is in use')
-                            ->body('Tag is in use by customers.')
+                            ->success()
+                            ->title('Tag deleted')
+                            ->body('Tag has been deleted.')
                             ->send();
 
-                        return;
-                    }
-
-                    Notification::make()
-                        ->success()
-                        ->title('Tag deleted')
-                        ->body('Tag has been deleted.')
-                        ->send();
-
-                    $record->delete();
-                })
+                        $record->delete();
+                    }),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

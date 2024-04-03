@@ -40,7 +40,7 @@ class UserFactory extends Factory
             'profile_photo_path' => null,
             'current_team_id' => null,
             'lead_id' => fake()->randomElement(Lead::all()->pluck('id')),
-            'stage_id' => Stage::where('is_default', true)->first()->id
+            'stage_id' => Stage::where('is_default', true)->first()->id,
         ];
     }
 
@@ -57,7 +57,7 @@ class UserFactory extends Factory
     /**
      * Indicate that the user should have a personal team.
      */
-    public function withPersonalTeam(callable $callback = null): static
+    public function withPersonalTeam(?callable $callback = null): static
     {
         if (! Features::hasTeamFeatures()) {
             return $this->state([]);

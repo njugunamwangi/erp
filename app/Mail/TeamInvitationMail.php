@@ -4,7 +4,6 @@ namespace App\Mail;
 
 use App\Models\Invitation;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
@@ -31,7 +30,7 @@ class TeamInvitationMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Invitation to join ' . config('app.name'),
+            subject: 'Invitation to join '.config('app.name'),
         );
     }
 
@@ -44,7 +43,7 @@ class TeamInvitationMail extends Mailable
             markdown: 'emails.team-invitation',
             with: [
                 'acceptUrl' => URL::signedRoute(
-                    "invitation.accept",
+                    'invitation.accept',
                     ['invitation' => $this->invitation]
                 ),
             ]

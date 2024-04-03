@@ -3,9 +3,7 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\LeadResource\Pages;
-use App\Filament\Resources\LeadResource\RelationManagers;
 use App\Models\Lead;
-use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
@@ -52,25 +50,25 @@ class LeadResource extends Resource
                 Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make()
-                ->action(function ($data, $record) {
-                    if ($record->users()->count() > 0) {
+                    ->action(function ($data, $record) {
+                        if ($record->users()->count() > 0) {
+                            Notification::make()
+                                ->danger()
+                                ->title('Lead Source is in use')
+                                ->body('Lead Source is in use by customers.')
+                                ->send();
+
+                            return;
+                        }
+
                         Notification::make()
-                            ->danger()
-                            ->title('Lead Source is in use')
-                            ->body('Lead Source is in use by customers.')
+                            ->success()
+                            ->title('Lead Source deleted')
+                            ->body('Lead Source has been deleted.')
                             ->send();
 
-                        return;
-                    }
-
-                    Notification::make()
-                        ->success()
-                        ->title('Lead Source deleted')
-                        ->body('Lead Source has been deleted.')
-                        ->send();
-
-                    $record->delete();
-                })
+                        $record->delete();
+                    }),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

@@ -24,15 +24,18 @@ class Quote extends Model
         ];
     }
 
-    public function invoice(): HasOne {
+    public function invoice(): HasOne
+    {
         return $this->hasOne(Invoice::class);
     }
 
-    public function user(): BelongsTo {
+    public function user(): BelongsTo
+    {
         return $this->belongsTo(User::class);
     }
 
-    public function vertical(): BelongsTo {
+    public function vertical(): BelongsTo
+    {
         return $this->belongsTo(Vertical::class);
     }
 }

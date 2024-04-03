@@ -22,11 +22,11 @@ class User extends Authenticatable implements FilamentUser
     use HasApiTokens;
     use HasFactory;
     use HasProfilePhoto;
+    use HasRoles;
     use HasTeams;
     use Notifiable;
-    use TwoFactorAuthenticatable;
     use SoftDeletes;
-    use HasRoles;
+    use TwoFactorAuthenticatable;
 
     /**
      * The attributes that are mass assignable.
@@ -75,23 +75,28 @@ class User extends Authenticatable implements FilamentUser
         ];
     }
 
-    public function canAccessPanel(\Filament\Panel $panel): bool {
+    public function canAccessPanel(\Filament\Panel $panel): bool
+    {
         return $this->hasRole(Role::ADMIN);
     }
 
-    public function quotes(): HasMany {
+    public function quotes(): HasMany
+    {
         return $this->hasMany(Quote::class);
     }
 
-    public function pipelines(): HasMany {
+    public function pipelines(): HasMany
+    {
         return $this->hasMany(Pipeline::class);
     }
 
-    public function documents(): HasMany {
+    public function documents(): HasMany
+    {
         return $this->hasMany(Document::class);
     }
 
-    public function customFieldUsers(): HasMany {
+    public function customFieldUsers(): HasMany
+    {
         return $this->hasMany(CustomFieldUser::class);
     }
 
@@ -107,22 +112,26 @@ class User extends Authenticatable implements FilamentUser
 
     public function projects(): HasMany
     {
-         return $this->hasMany(Project::class);
+        return $this->hasMany(Project::class);
     }
 
-    public function invoices(): HasMany {
+    public function invoices(): HasMany
+    {
         return $this->hasMany(Invoice::class);
     }
 
-    public function lead(): BelongsTo {
+    public function lead(): BelongsTo
+    {
         return $this->belongsTo(Lead::class);
     }
 
-    public function stage(): BelongsTo {
+    public function stage(): BelongsTo
+    {
         return $this->belongsTo(Stage::class);
     }
 
-    public function tags(): BelongsToMany {
+    public function tags(): BelongsToMany
+    {
         return $this->belongsToMany(Tag::class);
     }
 }

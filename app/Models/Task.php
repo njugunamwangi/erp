@@ -19,15 +19,18 @@ class Task extends Model
         'is_completed' => 'boolean',
     ];
 
-    public function assignedBy(): BelongsTo {
+    public function assignedBy(): BelongsTo
+    {
         return $this->belongsTo(User::class, 'assigned_by');
     }
 
-    public function assignedTo(): BelongsTo {
+    public function assignedTo(): BelongsTo
+    {
         return $this->belongsTo(User::class, 'assigned_to');
     }
 
-    public function assignedFor(): BelongsTo {
+    public function assignedFor(): BelongsTo
+    {
         return $this->belongsTo(User::class, 'assigned_for');
     }
 }

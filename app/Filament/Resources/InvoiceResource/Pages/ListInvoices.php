@@ -21,7 +21,8 @@ class ListInvoices extends ListRecords
         ];
     }
 
-    protected function getHeaderWidgets(): array {
+    protected function getHeaderWidgets(): array
+    {
         return [
             InvoiceStatsOverview::class,
         ];
@@ -36,11 +37,11 @@ class ListInvoices extends ListRecords
 
         $tabs['paid'] = Tab::make('Paid')
             ->badge(Invoice::where('status', '=', InvoiceStatus::Paid)->count())
-            ->modifyQueryUsing(fn($query) => $query->where('status', '=', InvoiceStatus::Paid));
+            ->modifyQueryUsing(fn ($query) => $query->where('status', '=', InvoiceStatus::Paid));
 
         $tabs['unpaid'] = Tab::make('Unpaid')
             ->badge(Invoice::where('status', '=', InvoiceStatus::Unpaid)->count())
-            ->modifyQueryUsing(fn($query) => $query->where('status', '=', InvoiceStatus::Unpaid));
+            ->modifyQueryUsing(fn ($query) => $query->where('status', '=', InvoiceStatus::Unpaid));
 
         return $tabs;
     }

@@ -16,7 +16,7 @@ class ViewQuoteController extends Controller
     public function __invoke(Quote $record)
     {
         $customer = new Buyer([
-            'name'          => $record->user->name,
+            'name' => $record->user->name,
             'custom_fields' => [
                 'email' => $record->user->email,
                 'phone' => $record->user->phone,

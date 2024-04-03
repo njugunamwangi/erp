@@ -15,15 +15,18 @@ class Stage extends Model
 
     protected $guarded = [];
 
-    public function users(): HasMany {
+    public function users(): HasMany
+    {
         return $this->hasMany(User::class);
     }
 
-    public function pipelines(): HasMany {
+    public function pipelines(): HasMany
+    {
         return $this->hasMany(Pipeline::class);
     }
 
-    public static function getForm(): array {
+    public static function getForm(): array
+    {
         return [
             TextInput::make('stage')
                 ->required()

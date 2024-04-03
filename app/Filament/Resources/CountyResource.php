@@ -5,9 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Exports\CountyExporter;
 use App\Filament\Imports\CountyImporter;
 use App\Filament\Resources\CountyResource\Pages;
-use App\Filament\Resources\CountyResource\RelationManagers;
 use App\Models\County;
-use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -36,7 +34,7 @@ class CountyResource extends Resource
                 ImportAction::make()
                     ->importer(CountyImporter::class),
                 ExportAction::make()
-                    ->exporter(CountyExporter::class)
+                    ->exporter(CountyExporter::class),
             ])
             ->columns([
                 Tables\Columns\TextColumn::make('county')

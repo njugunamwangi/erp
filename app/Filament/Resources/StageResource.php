@@ -3,9 +3,7 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\StageResource\Pages;
-use App\Filament\Resources\StageResource\RelationManagers;
 use App\Models\Stage;
-use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
@@ -57,10 +55,10 @@ class StageResource extends Resource
                 ActionGroup::make([
                     Tables\Actions\Action::make('Set Default')
                         ->icon('heroicon-o-star')
-                        ->hidden(fn($record) => $record->is_default)
+                        ->hidden(fn ($record) => $record->is_default)
                         ->requiresConfirmation(function (Tables\Actions\Action $action, $record) {
                             $action->modalDescription('Are you sure you want to set this as the default pipeline stage?');
-                            $action->modalHeading('Set "' . $record->stage . '" as Default');
+                            $action->modalHeading('Set "'.$record->stage.'" as Default');
 
                             return $action;
                         })
@@ -91,8 +89,8 @@ class StageResource extends Resource
                                 ->send();
 
                             $record->delete();
-                        })
-                ])
+                        }),
+                ]),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

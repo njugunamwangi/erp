@@ -10,7 +10,6 @@ use App\Models\User;
 use App\Models\Vertical;
 use Filament\Actions;
 use Filament\Actions\Action;
-use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -55,9 +54,9 @@ class ListProjects extends ListRecords
                         ->numeric(),
                     DateTimePicker::make('created_at')
                         ->label('Date')
-                        ->required()
+                        ->required(),
                 ])
-                ->action(function(array $data) {
+                ->action(function (array $data) {
                     $project = Project::create([
                         'user_id' => $data['user_id'],
                         'vertical_id' => $data['vertical_id'],
@@ -68,12 +67,12 @@ class ListProjects extends ListRecords
 
                     $recipients = User::role(Role::ADMIN)->get();
 
-                    foreach($recipients as $recipient) {
+                    foreach ($recipients as $recipient) {
                         Notification::make()
                             ->title('Back date successful')
                             ->success()
                             ->icon('heroicon-o-check-badge')
-                            ->body(auth()->user()->name . ' backdated a project successfully')
+                            ->body(auth()->user()->name.' backdated a project successfully')
                             ->actions([
                                 ActionsAction::make('View')
                                     ->url(ProjectResource::getUrl('view', ['record' => $project->id]))
@@ -81,7 +80,7 @@ class ListProjects extends ListRecords
                             ])
                             ->sendToDatabase($recipient);
                     }
-                })
+                }),
         ];
     }
 }

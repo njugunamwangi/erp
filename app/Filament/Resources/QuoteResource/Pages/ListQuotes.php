@@ -22,7 +22,7 @@ class ListQuotes extends ListRecords
     protected function getHeaderWidgets(): array
     {
         return [
-            QuoteOverviewStats::class
+            QuoteOverviewStats::class,
         ];
     }
 }

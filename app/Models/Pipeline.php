@@ -12,11 +12,13 @@ class Pipeline extends Model
 
     protected $guarded = [];
 
-    public function user(): BelongsTo {
+    public function user(): BelongsTo
+    {
         return $this->belongsTo(User::class);
     }
 
-    public function stage(): BelongsTo {
+    public function stage(): BelongsTo
+    {
         return $this->belongsTo(Stage::class);
     }
 }

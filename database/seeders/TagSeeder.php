@@ -3,7 +3,6 @@
 namespace Database\Seeders;
 
 use App\Models\Tag;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class TagSeeder extends Seeder
@@ -15,7 +14,7 @@ class TagSeeder extends Seeder
     {
         $tags = [
             'Priority',
-            'VIP'
+            'VIP',
         ];
 
         foreach ($tags as $tag) {

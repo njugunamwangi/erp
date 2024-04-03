@@ -22,7 +22,7 @@ class TaskFactory extends Factory
             'assigned_to' => fake()->randomElement(Role::find(Role::STAFF)->users()->get()->pluck('id')),
             'assigned_for' => fake()->randomElement(Role::find(Role::CUSTOMER)->users()->get()->pluck('id')),
             'description' => fake()->paragraph(),
-            'due_date' => fake()->dateTimeThisYear()->format('Y-m-d')
+            'due_date' => fake()->dateTimeThisYear()->format('Y-m-d'),
         ];
     }
 }

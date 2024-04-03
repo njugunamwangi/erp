@@ -14,11 +14,13 @@ class Tag extends Model
 
     protected $guarded = [];
 
-    public function users(): BelongsToMany {
+    public function users(): BelongsToMany
+    {
         return $this->belongsToMany(User::class);
     }
 
-    public static function getForm(): array {
+    public static function getForm(): array
+    {
         return [
             TextInput::make('tag')
                 ->required()

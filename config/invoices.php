@@ -15,14 +15,14 @@ return [
     ],
 
     'serial_number' => [
-        'series'   => 'AA',
+        'series' => 'AA',
         'sequence' => 1,
 
         /*
          * Sequence will be padded accordingly, for ex. 00001
          */
         'sequence_padding' => 5,
-        'delimiter'        => '.',
+        'delimiter' => '.',
 
         /*
          * Supported tags {SERIES}, {DELIMITER}, {SEQUENCE}
@@ -41,7 +41,7 @@ return [
          * Example: Amount in words: Eight hundred fifty thousand sixty-eight EUR and fifteen ct.
          */
         'fraction' => 'ct.',
-        'symbol'   => 'Kes',
+        'symbol' => 'Kes',
 
         /*
          * Example: 19.00
@@ -68,7 +68,7 @@ return [
 
     'paper' => [
         // A4 = 210 mm x 297 mm = 595 pt x 842 pt
-        'size'        => 'a4',
+        'size' => 'a4',
         'orientation' => 'portrait',
     ],
 
@@ -87,9 +87,9 @@ return [
          * Default attributes for Seller::class
          */
         'attributes' => [
-            'name'          => 'in2 Drones Technology Solutions Limited',
-            'address'       => 'D&D Building, Along West Rd',
-            'phone'         => '+254 759 235 385',
+            'name' => 'in2 Drones Technology Solutions Limited',
+            'address' => 'D&D Building, Along West Rd',
+            'phone' => '+254 759 235 385',
             'custom_fields' => [
                 /*
                  * Custom attributes for Seller::class
@@ -99,7 +99,7 @@ return [
                  */
                 'SWIFT' => 'CBAFKENX',
                 'Bank' => 'NCBA Bank',
-                'Bank A/c No.' => '5758560017'
+                'Bank A/c No.' => '5758560017',
             ],
         ],
     ],
@@ -108,6 +108,7 @@ return [
         'enable_php' => true,
         /**
          * Do not write log.html or make it optional
+         *
          *  @see https://github.com/dompdf/dompdf/issues/2810
          */
         'logOutputFile' => '/dev/null',

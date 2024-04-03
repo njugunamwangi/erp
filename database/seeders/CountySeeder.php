@@ -3,7 +3,6 @@
 namespace Database\Seeders;
 
 use App\Models\County;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class CountySeeder extends Seeder
@@ -63,7 +62,7 @@ class CountySeeder extends Seeder
             ['county' => 'Nairobi', 'county_code' => '047'],
         ];
 
-        foreach($counties as $county) {
+        foreach ($counties as $county) {
             County::create($county);
         }
     }

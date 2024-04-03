@@ -18,17 +18,17 @@ class Project extends Model
 
     public function user(): BelongsTo
     {
-         return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class);
     }
 
     public function county(): BelongsTo
     {
-         return $this->belongsTo(County::class);
+        return $this->belongsTo(County::class);
     }
 
     public function vertical(): BelongsTo
     {
-         return $this->belongsTo(Vertical::class);
+        return $this->belongsTo(Vertical::class);
     }
 
     public static function getForm(): array

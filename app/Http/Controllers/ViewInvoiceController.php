@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\InvoiceStatus;
 use App\Models\Invoice as ModelsInvoice;
 use Illuminate\Http\Request;
 use LaravelDaily\Invoices\Classes\Buyer;
@@ -17,7 +16,7 @@ class ViewInvoiceController extends Controller
     public function __invoke(ModelsInvoice $record)
     {
         $customer = new Buyer([
-            'name'          => $record->user->name,
+            'name' => $record->user->name,
             'custom_fields' => [
                 'email' => $record->user->email,
                 'phone' => $record->user->phone,

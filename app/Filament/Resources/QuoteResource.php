@@ -3,7 +3,6 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\QuoteResource\Pages;
-use App\Filament\Resources\QuoteResource\RelationManagers;
 use App\Filament\Resources\QuoteResource\Widgets\QuoteOverviewStats;
 use App\InvoiceSeries;
 use App\Models\Invoice;
@@ -27,11 +26,9 @@ use Filament\Infolists\Infolist;
 use Filament\Notifications\Actions\Action as ActionsAction;
 use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
-use Filament\Support\RawJs;
 use Filament\Tables;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\ActionGroup;
-use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -39,7 +36,9 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 class QuoteResource extends Resource
 {
     protected static ?string $model = Quote::class;
+
     protected static ?string $navigationGroup = 'Customer Relations';
+
     protected static ?int $navigationSort = 1;
 
     public static function form(Form $form): Form
@@ -71,7 +70,7 @@ class QuoteResource extends Resource
                                     ->options(QuoteSeries::class)
                                     ->searchable()
                                     ->preload()
-                                    ->default(QuoteSeries::IN2QUT->name)
+                                    ->default(QuoteSeries::IN2QUT->name),
                             ]),
                         Fieldset::make('Quote Summary')
                             ->schema([
@@ -98,8 +97,8 @@ class QuoteResource extends Resource
                                                     ->label('Sub Total')
                                                     ->live()
                                                     ->content(function (Get $get) {
-                                                        return 'Kes ' . number_format($get('quantity') * $get('unit_price'), 2, '.', ',');
-                                                    })
+                                                        return 'Kes '.number_format($get('quantity') * $get('unit_price'), 2, '.', ',');
+                                                    }),
                                             ])
                                             ->afterStateUpdated(function (Get $get, Set $set) {
                                                 self::updateTotals($get, $set);
@@ -128,10 +127,10 @@ class QuoteResource extends Resource
                                         Forms\Components\TextInput::make('total')
                                             ->numeric()
                                             ->readOnly()
-                                            ->prefix('Kes')
+                                            ->prefix('Kes'),
                                     ])->columnSpan(4),
-                            ])->columns(12)
-                        ])
+                            ])->columns(12),
+                    ]),
             ]);
     }
 
@@ -141,7 +140,7 @@ class QuoteResource extends Resource
 
         $subtotal = 0;
 
-        foreach($items as $item) {
+        foreach ($items as $item) {
             $aggregate = $item['quantity'] * $item['unit_price'];
 
             $subtotal += $aggregate;
@@ -158,9 +157,9 @@ class QuoteResource extends Resource
                 ViewEntry::make('invoice')
                     ->columnSpanFull()
                     ->viewData([
-                        'record' => $infolist->record
+                        'record' => $infolist->record,
                     ])
-                    ->view('components.filament.quote-view')
+                    ->view('components.filament.quote-view'),
             ]);
     }
 
@@ -212,14 +211,14 @@ class QuoteResource extends Resource
                         ->color('primary')
                         ->label('Edit Quote'),
                     Action::make('viewInvoice')
-                        ->visible(fn($record) => $record->invoice)
+                        ->visible(fn ($record) => $record->invoice)
                         ->icon('heroicon-o-document-check')
                         ->color('warning')
-                        ->url(fn($record) => InvoiceResource::getUrl('view', ['record' => $record->invoice->id])),
+                        ->url(fn ($record) => InvoiceResource::getUrl('view', ['record' => $record->invoice->id])),
                     Action::make('generateInvoice')
                         ->label('Generate Invoice')
                         ->color('warning')
-                        ->visible(fn($record) => !$record->invoice)
+                        ->visible(fn ($record) => ! $record->invoice)
                         ->modalSubmitActionLabel('Generate Invoice')
                         ->icon('heroicon-o-document')
                         ->form([
@@ -229,9 +228,9 @@ class QuoteResource extends Resource
                                 ->options(InvoiceSeries::class)
                                 ->searchable()
                                 ->preload()
-                                ->default(InvoiceSeries::IN2INV->name)
+                                ->default(InvoiceSeries::IN2INV->name),
                         ])
-                        ->action(function(array $data, $record) {
+                        ->action(function (array $data, $record) {
                             $invoice = Invoice::create([
                                 'user_id' => $record->user_id,
                                 'quote_id' => $record->id,
@@ -240,15 +239,15 @@ class QuoteResource extends Resource
                                 'taxes' => $record->taxes,
                                 'total' => $record->total,
                                 'serial_number' => $serial_number = Invoice::max('serial_number') + 1,
-                                'serial' => $data['series'] . '-' . str_pad($serial_number, 5, '0', STR_PAD_LEFT),
+                                'serial' => $data['series'].'-'.str_pad($serial_number, 5, '0', STR_PAD_LEFT),
                             ]);
 
                             $recipients = User::role(Role::ADMIN)->get();
 
-                            foreach($recipients as $recipient) {
+                            foreach ($recipients as $recipient) {
                                 Notification::make()
                                     ->title('Invoice generated')
-                                    ->body(auth()->user()->name . ' generated an invoice for '. $record->serial)
+                                    ->body(auth()->user()->name.' generated an invoice for '.$record->serial)
                                     ->icon('heroicon-o-check-badge')
                                     ->success()
                                     ->actions([
@@ -264,8 +263,8 @@ class QuoteResource extends Resource
                         ->icon('heroicon-o-arrow-down-on-square-stack')
                         ->color('success')
                         ->url(fn (Quote $record) => route('quote.download', $record))
-                        ->openUrlInNewTab()
-                    ])
+                        ->openUrlInNewTab(),
+                ]),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -304,7 +303,7 @@ class QuoteResource extends Resource
     public static function getWidgets(): array
     {
         return [
-            QuoteOverviewStats::class
+            QuoteOverviewStats::class,
         ];
     }
 }

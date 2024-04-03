@@ -3,7 +3,6 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\TaskResource\Pages;
-use App\Filament\Resources\TaskResource\RelationManagers;
 use App\Models\Role;
 use App\Models\Task;
 use Filament\Forms;
@@ -90,7 +89,7 @@ class TaskResource extends Resource
                 Tables\Actions\ViewAction::make(),
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\Action::make('Complete')
-                    ->hidden(fn(Task $record) => $record->is_completed)
+                    ->hidden(fn (Task $record) => $record->is_completed)
                     ->icon('heroicon-m-check-badge')
                     ->modalIcon('heroicon-m-check-badge')
                     ->modalHeading('Mark task as completed?')
@@ -104,7 +103,7 @@ class TaskResource extends Resource
                             ->title('Task marked as completed')
                             ->success()
                             ->send();
-                    })
+                    }),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

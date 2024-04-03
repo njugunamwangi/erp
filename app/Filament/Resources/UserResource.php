@@ -3,7 +3,6 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\UserResource\Pages;
-use App\Filament\Resources\UserResource\RelationManagers;
 use App\Filament\Resources\UserResource\RelationManagers\PipelinesRelationManager;
 use App\Models\CustomField;
 use App\Models\Lead;
@@ -34,7 +33,6 @@ use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Facades\Storage;
 use Ysfkaya\FilamentPhoneInput\Forms\PhoneInput;
 use Ysfkaya\FilamentPhoneInput\Infolists\PhoneEntry;
@@ -88,7 +86,7 @@ class UserResource extends Resource
                                     ->required()
                                     ->hiddenOn('edit')
                                     ->maxLength(255),
-                            ])
+                            ]),
                     ]),
                 ComponentsSection::make('Tertiary Details')
                     ->visibleOn('edit')
@@ -130,8 +128,8 @@ class UserResource extends Resource
                                     ->required(),
                                 Forms\Components\Textarea::make('comments'),
                             ])
-                            ->columns()
-                            ]),
+                            ->columns(),
+                    ]),
                 Forms\Components\Section::make('Additional fields')
                     ->visibleOn('edit')
                     ->schema([
@@ -144,7 +142,7 @@ class UserResource extends Resource
                                     ->options(CustomField::pluck('custom_field', 'id')->toArray())
                                     ->disableOptionWhen(function ($value, $state, Get $get) {
                                         return collect($get('../*.custom_field_id'))
-                                            ->reject(fn($id) => $id === $state)
+                                            ->reject(fn ($id) => $id === $state)
                                             ->filter()
                                             ->contains($value);
                                     })
@@ -154,7 +152,7 @@ class UserResource extends Resource
                                     ->searchable()
                                     ->live(),
                                 Forms\Components\TextInput::make('value')
-                                    ->required()
+                                    ->required(),
                             ])
                             ->addActionLabel('Add another field')
                             ->columns(),
@@ -174,7 +172,7 @@ class UserResource extends Resource
                     ->formatStateUsing(function ($record) {
                         $tagsList = view('components.filament.tag-list', ['tags' => $record->tags])->render();
 
-                        return $record->name . ' ' . $tagsList;
+                        return $record->name.' '.$tagsList;
                     })
                     ->html(),
                 Tables\Columns\TextColumn::make('email')
@@ -204,16 +202,16 @@ class UserResource extends Resource
             ->actions([
                 ActionGroup::make([
                     Tables\Actions\ViewAction::make()
-                        ->hidden(fn($record) => $record->trashed()),
+                        ->hidden(fn ($record) => $record->trashed()),
                     Tables\Actions\EditAction::make()
-                        ->hidden(fn($record) => $record->trashed()),
+                        ->hidden(fn ($record) => $record->trashed()),
                     Tables\Actions\DeleteAction::make(),
                     Tables\Actions\RestoreAction::make(),
                     Tables\Actions\Action::make('Move to Stage')
-                        ->visible(fn(User $user) => $user->hasRole(Role::CUSTOMER))
-                        ->hidden(fn($record) => $record->trashed())
+                        ->visible(fn (User $user) => $user->hasRole(Role::CUSTOMER))
+                        ->hidden(fn ($record) => $record->trashed())
                         ->icon('heroicon-m-puzzle-piece')
-                        ->modalDescription(fn (User $record) => 'Move ' . $record->name . ' to another stage')
+                        ->modalDescription(fn (User $record) => 'Move '.$record->name.' to another stage')
                         ->modalIcon('heroicon-o-puzzle-piece')
                         ->form([
                             Forms\Components\Select::make('stage_id')
@@ -226,7 +224,7 @@ class UserResource extends Resource
                                     return Stage::where('position', '>', $currentPosition)->first()?->id;
                                 }),
                             Forms\Components\Textarea::make('notes')
-                                ->label('Notes')
+                                ->label('Notes'),
                         ])
                         ->action(function (User $customer, array $data, $record) {
                             $customer->stage_id = $data['stage_id'];
@@ -235,23 +233,23 @@ class UserResource extends Resource
                             $customer->pipelines()->create([
                                 'stage_id' => $data['stage_id'],
                                 'notes' => $data['notes'],
-                                'user_id' => $customer->id
+                                'user_id' => $customer->id,
                             ]);
                         })
-                        ->after(function(User $record) {
+                        ->after(function (User $record) {
                             $recipients = User::role(Role::ADMIN)->get();
 
-                            foreach($recipients as $recipient) {
+                            foreach ($recipients as $recipient) {
                                 Notification::make()
-                                    ->title($record->name . ' moved to ' . $record->stage->stage)
-                                    ->body(auth()->user()->name . ' moved ' . $record->name . ' to another stage')
+                                    ->title($record->name.' moved to '.$record->stage->stage)
+                                    ->body(auth()->user()->name.' moved '.$record->name.' to another stage')
                                     ->icon('heroicon-o-puzzle-piece')
                                     ->success()
                                     ->sendToDatabase($recipient);
                             }
                         }),
                     Tables\Actions\Action::make('Add Task')
-                        ->visible(fn(User $user) => $user->hasRole(Role::CUSTOMER))
+                        ->visible(fn (User $user) => $user->hasRole(Role::CUSTOMER))
                         ->icon('heroicon-s-clipboard-document')
                         ->form([
                             Forms\Components\RichEditor::make('description')
@@ -273,23 +271,23 @@ class UserResource extends Resource
                                 'assigned_to' => $data['assigned_to'],
                                 'assigned_for' => $record->id,
                                 'description' => $data['description'],
-                                'due_date' => $data['due_date']
+                                'due_date' => $data['due_date'],
                             ]);
 
                             $recipients = User::role(Role::ADMIN)->get();
 
-                            foreach($recipients as $recipient) {
+                            foreach ($recipients as $recipient) {
                                 $recipient->notify(
                                     Notification::make()
-                                    ->title('Task Assigned')
-                                    ->body(auth()->user()->name . ' assigned a task for ' . $record->name)
-                                    ->icon('heroicon-o-puzzle-piece')
-                                    ->success()
-                                    ->toDatabase()
+                                        ->title('Task Assigned')
+                                        ->body(auth()->user()->name.' assigned a task for '.$record->name)
+                                        ->icon('heroicon-o-puzzle-piece')
+                                        ->success()
+                                        ->toDatabase()
                                 );
                             }
-                        })
-                ])
+                        }),
+                ]),
             ])
             ->recordUrl(function ($record) {
                 if ($record->trashed()) {
@@ -370,16 +368,16 @@ class UserResource extends Resource
                             ]),
                     ]),
                 Section::make('Lead & Stage information')
-                    ->hidden(fn($record) => $record->hasRole(Role::ADMIN))
+                    ->hidden(fn ($record) => $record->hasRole(Role::ADMIN))
                     ->schema([
                         TextEntry::make('lead.lead'),
                         TextEntry::make('stage.stage'),
                     ])
                     ->collapsed(),
                 Section::make('Additional fields')
-                    ->hidden(fn($record) => $record->customFieldUsers->isEmpty())
+                    ->hidden(fn ($record) => $record->customFieldUsers->isEmpty())
                     ->schema(
-                        fn($record) => $record->customFieldUsers->map(function ($customField) {
+                        fn ($record) => $record->customFieldUsers->map(function ($customField) {
                             return TextEntry::make($customField->customField->custom_field)
                                 ->label($customField->customField->custom_field)
                                 ->default($customField->value);
@@ -388,34 +386,34 @@ class UserResource extends Resource
                     ->columns()
                     ->collapsed(),
                 Section::make('Documents')
-                    ->hidden(fn($record) => $record->documents->isEmpty())
+                    ->hidden(fn ($record) => $record->documents->isEmpty())
                     ->schema([
                         RepeatableEntry::make('documents')
                             ->hiddenLabel()
                             ->schema([
                                 TextEntry::make('file_path')
                                     ->label('Document')
-                                    ->formatStateUsing(fn() => "Download Document")
-                                    ->url(fn($record) => Storage::url($record->file_path), true)
+                                    ->formatStateUsing(fn () => 'Download Document')
+                                    ->url(fn ($record) => Storage::url($record->file_path), true)
                                     ->badge()
                                     ->color(Color::Blue),
                                 TextEntry::make('comments'),
                             ])
-                            ->columns()
+                            ->columns(),
                     ])
                     ->collapsed(),
                 Section::make('Pipeline Stage History and Notes')
-                    ->hidden(fn($record) => $record->hasRole(Role::ADMIN))
+                    ->hidden(fn ($record) => $record->hasRole(Role::ADMIN))
                     ->schema([
                         ViewEntry::make('pipelines')
                             ->label('')
-                            ->view('components.filament.pipeline-stage-history-list')
+                            ->view('components.filament.pipeline-stage-history-list'),
                     ])
                     ->collapsed(),
                 Tabs::make('Tasks')
                     ->tabs([
                         Tabs\Tab::make('Completed')
-                            ->badge(fn($record) => $record->completedTasks->count())
+                            ->badge(fn ($record) => $record->completedTasks->count())
                             ->schema([
                                 RepeatableEntry::make('completedTasks')
                                     ->hiddenLabel()
@@ -424,15 +422,15 @@ class UserResource extends Resource
                                             ->html()
                                             ->columnSpanFull(),
                                         TextEntry::make('assignedFor.name')
-                                            ->hidden(fn($state) => is_null($state)),
+                                            ->hidden(fn ($state) => is_null($state)),
                                         TextEntry::make('due_date')
-                                            ->hidden(fn($state) => is_null($state))
+                                            ->hidden(fn ($state) => is_null($state))
                                             ->date(),
                                     ])
-                                    ->columns()
+                                    ->columns(),
                             ]),
                         Tabs\Tab::make('Incomplete')
-                            ->badge(fn($record) => $record->incompleteTasks->count())
+                            ->badge(fn ($record) => $record->incompleteTasks->count())
                             ->schema([
                                 RepeatableEntry::make('incompleteTasks')
                                     ->hiddenLabel()
@@ -441,9 +439,9 @@ class UserResource extends Resource
                                             ->html()
                                             ->columnSpanFull(),
                                         TextEntry::make('assignedFor.name')
-                                            ->hidden(fn($state) => is_null($state)),
+                                            ->hidden(fn ($state) => is_null($state)),
                                         TextEntry::make('due_date')
-                                            ->hidden(fn($state) => is_null($state))
+                                            ->hidden(fn ($state) => is_null($state))
                                             ->date(),
                                         TextEntry::make('is_completed')
                                             ->formatStateUsing(function ($state) {
@@ -466,8 +464,8 @@ class UserResource extends Resource
                                                     })
                                             ),
                                     ])
-                                    ->columns(3)
-                            ])
+                                    ->columns(3),
+                            ]),
                     ])
                     ->columnSpanFull(),
             ]);

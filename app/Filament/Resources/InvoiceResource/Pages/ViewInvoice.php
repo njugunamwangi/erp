@@ -31,23 +31,23 @@ class ViewInvoice extends ViewRecord
                 ->openUrlInNewTab(),
             Action::make('markPaid')
                 ->label('Mark as Paid')
-                ->visible(fn($record) => $record->status != InvoiceStatus::Paid)
+                ->visible(fn ($record) => $record->status != InvoiceStatus::Paid)
                 ->color('warning')
                 ->icon('heroicon-o-banknotes')
                 ->requiresConfirmation()
-                ->modalDescription(fn($record) => 'Are you sure you want to mark ' . $record->serial . ' as paid?')
+                ->modalDescription(fn ($record) => 'Are you sure you want to mark '.$record->serial.' as paid?')
                 ->modalIcon('heroicon-o-banknotes')
                 ->modalSubmitActionLabel('Mark as Paid')
-                ->action(function($record) {
+                ->action(function ($record) {
                     $record->status = InvoiceStatus::Paid;
                     $record->save();
 
                     $recipients = User::role(Role::ADMIN)->get();
 
-                    foreach($recipients as $recipient) {
+                    foreach ($recipients as $recipient) {
                         Notification::make()
                             ->title('Invoice paid')
-                            ->body(auth()->user()->name . ' marked ' . $record->serial . ' as paid')
+                            ->body(auth()->user()->name.' marked '.$record->serial.' as paid')
                             ->icon('heroicon-o-banknotes')
                             ->warning()
                             ->actions([

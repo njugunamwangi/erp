@@ -7,7 +7,6 @@ use App\InvoiceStatus;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Invoice extends Model
@@ -17,7 +16,8 @@ class Invoice extends Model
 
     protected $guarded = [];
 
-    protected function casts(): array {
+    protected function casts(): array
+    {
         return [
             'items' => 'json',
             'status' => InvoiceStatus::class,
@@ -25,11 +25,13 @@ class Invoice extends Model
         ];
     }
 
-    public function quote(): BelongsTo {
+    public function quote(): BelongsTo
+    {
         return $this->belongsTo(Quote::class);
     }
 
-    public function user(): BelongsTo {
+    public function user(): BelongsTo
+    {
         return $this->belongsTo(User::class);
     }
 }

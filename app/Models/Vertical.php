@@ -18,14 +18,15 @@ class Vertical extends Model
 
     protected $guarded = [];
 
-    public function getSlugOptions() : SlugOptions
+    public function getSlugOptions(): SlugOptions
     {
         return SlugOptions::create()
             ->generateSlugsFrom('vertical')
             ->saveSlugsTo('slug');
     }
 
-    public function quotes(): HasMany {
+    public function quotes(): HasMany
+    {
         return $this->hasMany(Quote::class);
     }
 
