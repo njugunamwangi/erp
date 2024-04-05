@@ -49,6 +49,7 @@ class AdminPanelProvider extends PanelProvider
                 FilamentSpatieRolesPermissionsPlugin::make(),
                 FilamentFullCalendarPlugin::make(),
             ])
+            ->sidebarCollapsibleOnDesktop()
             ->middleware([
                 EncryptCookies::class,
                 AddQueuedCookiesToResponse::class,
