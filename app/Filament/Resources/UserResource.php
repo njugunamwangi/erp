@@ -34,6 +34,7 @@ use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
 use Ysfkaya\FilamentPhoneInput\Forms\PhoneInput;
 use Ysfkaya\FilamentPhoneInput\Infolists\PhoneEntry;
@@ -42,6 +43,8 @@ use Ysfkaya\FilamentPhoneInput\PhoneInputNumberType;
 class UserResource extends Resource
 {
     protected static ?string $model = User::class;
+
+    protected static ?string $recordTitleAttribute = 'name';
 
     protected static ?string $navigationGroup = 'User Management';
 
@@ -310,277 +313,304 @@ class UserResource extends Resource
     {
         return $infolist
             ->schema([
-                Section::make('Primary Info')
-                    ->columns(3)
-                    ->schema([
-                        TextEntry::make('name'),
-                        TextEntry::make('email'),
-                        PhoneEntry::make('phone')
-                            ->displayFormat(PhoneInputNumberType::INTERNATIONAL),
-                        Fieldset::make('Tags & Roles')
-                            ->columns(2)
+                Tabs::make('Tabs')
+                    ->columnSpanFull()
+                    ->tabs([
+                        Tabs\Tab::make('Overview')
                             ->schema([
-                                TextEntry::make('roles.name'),
-                                TextEntry::make('tags.tag'),
-                            ]),
-                        Fieldset::make('Verification')
-                            ->columns(2)
-                            ->schema([
-                                TextEntry::make('email_verified_at')
-                                    ->label('Email')
-                                    ->getStateUsing(function ($record) {
-                                        return ($record->email_verified_at == null) ? 'Not Verified' : 'Verified';
-                                    })
-                                    ->badge()
-                                    ->color(function ($state) {
-                                        if ($state === 'Verified') {
-                                            return 'success';
-                                        }
-
-                                        return 'warning';
-                                    })
-                                    ->icon(function ($state) {
-                                        if ($state === 'Verified') {
-                                            return 'heroicon-o-check-badge';
-                                        }
-
-                                        return 'heroicon-o-x-circle';
-                                    }),
-                                TextEntry::make('two_factor_confirmed_at')
-                                    ->label('Two Factor Authentication')
-                                    ->getStateUsing(function ($record) {
-                                        return ($record->two_factor_confirmed_at == null) ? 'Not Verified' : 'Verified';
-                                    })
-                                    ->badge()
-                                    ->color(function ($state) {
-                                        if ($state === 'Verified') {
-                                            return 'success';
-                                        }
-
-                                        return 'warning';
-                                    })
-                                    ->icon(function ($state) {
-                                        if ($state === 'Verified') {
-                                            return 'heroicon-o-check-badge';
-                                        }
-
-                                        return 'heroicon-o-x-circle';
-                                    }),
-                            ]),
-                    ]),
-                Section::make('Lead & Stage information')
-                    ->visible(fn ($record) => $record->hasRole(Role::CUSTOMER))
-                    ->schema([
-                        TextEntry::make('lead.lead'),
-                        TextEntry::make('stage.stage'),
-                    ])
-                    ->collapsed(),
-                Section::make('Additional fields')
-                    ->hidden(fn ($record) => $record->customFieldUsers->isEmpty())
-                    ->schema(
-                        fn ($record) => $record->customFieldUsers->map(function ($customField) {
-                            return TextEntry::make($customField->customField->custom_field)
-                                ->label($customField->customField->custom_field)
-                                ->default($customField->value);
-                        })->toArray()
-                    )
-                    ->columns()
-                    ->collapsed(),
-                Section::make('Documents')
-                    ->hidden(fn ($record) => $record->documents->isEmpty())
-                    ->schema([
-                        RepeatableEntry::make('documents')
-                            ->hiddenLabel()
-                            ->schema([
-                                TextEntry::make('file_path')
-                                    ->label('Document')
-                                    ->formatStateUsing(fn () => 'Download Document')
-                                    ->url(fn ($record) => Storage::url($record->file_path), true)
-                                    ->badge()
-                                    ->color(Color::Blue),
-                                TextEntry::make('comments'),
-                            ])
-                            ->columns(),
-                    ])
-                    ->collapsed(),
-                Section::make('Pipeline Stage History and Notes')
-                    ->visible(fn ($record) => $record->hasRole(Role::CUSTOMER))
-                    ->schema([
-                        ViewEntry::make('pipelines')
-                            ->label('')
-                            ->view('components.filament.pipeline-stage-history-list'),
-                    ])
-                    ->collapsed(),
-                Section::make('Customer Tasks')
-                    ->visible(fn($record) => $record->hasRole(Role::CUSTOMER))
-                    ->schema([
-                        Tabs::make('Tasks')
-                            ->tabs([
-                                Tabs\Tab::make('Completed')
-                                    ->badge(fn ($record) => $record->completedTasks->count())
+                                Section::make('Primary Info')
+                                    ->columns(3)
                                     ->schema([
-                                        RepeatableEntry::make('completedTasks')
+                                        TextEntry::make('name'),
+                                        TextEntry::make('email'),
+                                        PhoneEntry::make('phone')
+                                            ->displayFormat(PhoneInputNumberType::INTERNATIONAL),
+                                        Fieldset::make('Tags & Roles')
+                                            ->columns(2)
+                                            ->schema([
+                                                TextEntry::make('roles.name'),
+                                                TextEntry::make('tags.tag'),
+                                            ]),
+                                        Fieldset::make('Verification')
+                                            ->columns(2)
+                                            ->schema([
+                                                TextEntry::make('email_verified_at')
+                                                    ->label('Email')
+                                                    ->getStateUsing(function ($record) {
+                                                        return ($record->email_verified_at == null) ? 'Not Verified' : 'Verified';
+                                                    })
+                                                    ->badge()
+                                                    ->color(function ($state) {
+                                                        if ($state === 'Verified') {
+                                                            return 'success';
+                                                        }
+
+                                                        return 'warning';
+                                                    })
+                                                    ->icon(function ($state) {
+                                                        if ($state === 'Verified') {
+                                                            return 'heroicon-o-check-badge';
+                                                        }
+
+                                                        return 'heroicon-o-x-circle';
+                                                    }),
+                                                TextEntry::make('two_factor_confirmed_at')
+                                                    ->label('Two Factor Authentication')
+                                                    ->getStateUsing(function ($record) {
+                                                        return ($record->two_factor_confirmed_at == null) ? 'Not Verified' : 'Verified';
+                                                    })
+                                                    ->badge()
+                                                    ->color(function ($state) {
+                                                        if ($state === 'Verified') {
+                                                            return 'success';
+                                                        }
+
+                                                        return 'warning';
+                                                    })
+                                                    ->icon(function ($state) {
+                                                        if ($state === 'Verified') {
+                                                            return 'heroicon-o-check-badge';
+                                                        }
+
+                                                        return 'heroicon-o-x-circle';
+                                                    }),
+                                            ]),
+                                    ]),
+                                Section::make('Lead & Stage information')
+                                    ->visible(fn ($record) => $record->hasRole(Role::CUSTOMER))
+                                    ->schema([
+                                        TextEntry::make('lead.lead'),
+                                        TextEntry::make('stage.stage'),
+                                    ])
+                                    ->collapsed(),
+                                Section::make('Additional fields')
+                                    ->hidden(fn ($record) => $record->customFieldUsers->isEmpty())
+                                    ->schema(
+                                        fn ($record) => $record->customFieldUsers->map(function ($customField) {
+                                            return TextEntry::make($customField->customField->custom_field)
+                                                ->label($customField->customField->custom_field)
+                                                ->default($customField->value);
+                                        })->toArray()
+                                    )
+                                    ->columns()
+                                    ->collapsed(),
+                                Section::make('Documents')
+                                    ->hidden(fn ($record) => $record->documents->isEmpty())
+                                    ->schema([
+                                        RepeatableEntry::make('documents')
                                             ->hiddenLabel()
                                             ->schema([
-                                                TextEntry::make('description')
-                                                    ->html()
-                                                    ->columnSpanFull(),
-                                                TextEntry::make('assignedTo.name')
-                                                    ->label('Staff')
-                                                    ->color('primary')
-                                                    ->icon('heroicon-o-user')
-                                                    ->iconColor('primary')
-                                                    ->url(fn($record) => UserResource::getUrl('view', ['record' => $record->assignedTo->id]))
-                                                    ->hidden(fn ($state) => is_null($state)),
-                                                TextEntry::make('due_date')
-                                                    ->hidden(fn ($state) => is_null($state))
-                                                    ->date(),
+                                                TextEntry::make('file_path')
+                                                    ->label('Document')
+                                                    ->formatStateUsing(fn () => 'Download Document')
+                                                    ->url(fn ($record) => Storage::url($record->file_path), true)
+                                                    ->badge()
+                                                    ->color(Color::Blue),
+                                                TextEntry::make('comments'),
                                             ])
                                             ->columns(),
-                                    ]),
-                                Tabs\Tab::make('Incomplete')
-                                    ->badge(fn ($record) => $record->incompleteTasks->count())
+                                    ])
+                                    ->collapsed(),
+                                Section::make('Pipeline Stage History and Notes')
+                                    ->visible(fn ($record) => $record->hasRole(Role::CUSTOMER))
                                     ->schema([
-                                        RepeatableEntry::make('incompleteTasks')
-                                            ->hiddenLabel()
-                                            ->schema([
-                                                TextEntry::make('description')
-                                                    ->html()
-                                                    ->columnSpanFull(),
-                                                TextEntry::make('assignedTo.name')
-                                                    ->label('Staff')
-                                                    ->color('primary')
-                                                    ->icon('heroicon-o-user')
-                                                    ->iconColor('primary')
-                                                    ->url(fn($record) => UserResource::getUrl('view', ['record' => $record->assignedTo->id]))
-                                                    ->hidden(fn ($state) => is_null($state)),
-                                                TextEntry::make('due_date')
-                                                    ->hidden(fn ($state) => is_null($state))
-                                                    ->date(),
-                                                TextEntry::make('is_completed')
-                                                    ->formatStateUsing(function ($state) {
-                                                        return $state ? 'Yes' : 'No';
-                                                    })
-                                                    ->suffixAction(
-                                                        Action::make('complete')
-                                                            ->button()
-                                                            ->requiresConfirmation()
-                                                            ->modalHeading('Mark task as completed?')
-                                                            ->modalDescription('Are you sure you want to mark this task as completed?')
-                                                            ->action(function (Task $record) {
-                                                                $record->is_completed = true;
-                                                                $record->save();
-                                                            })
-                                                            ->after(function(Task $record) {
-                                                                $recipients = User::role(Role::ADMIN)->get();
+                                        ViewEntry::make('pipelines')
+                                            ->label('')
+                                            ->view('components.filament.pipeline-stage-history-list'),
+                                    ])
+                                    ->collapsed(),
+                                Section::make('Customer Tasks')
+                                    ->visible(fn($record) => $record->hasRole(Role::CUSTOMER))
+                                    ->schema([
+                                        Tabs::make('Tasks')
+                                            ->tabs([
+                                                Tabs\Tab::make('Completed')
+                                                    ->badge(fn ($record) => $record->completedTasks->count())
+                                                    ->schema([
+                                                        RepeatableEntry::make('completedTasks')
+                                                            ->hiddenLabel()
+                                                            ->schema([
+                                                                TextEntry::make('description')
+                                                                    ->html()
+                                                                    ->columnSpanFull(),
+                                                                TextEntry::make('assignedTo.name')
+                                                                    ->label('Staff')
+                                                                    ->color('primary')
+                                                                    ->icon('heroicon-o-user')
+                                                                    ->iconColor('primary')
+                                                                    ->url(fn($record) => UserResource::getUrl('view', ['record' => $record->assignedTo->id]))
+                                                                    ->hidden(fn ($state) => is_null($state)),
+                                                                TextEntry::make('due_date')
+                                                                    ->hidden(fn ($state) => is_null($state))
+                                                                    ->date(),
+                                                            ])
+                                                            ->columns(),
+                                                    ]),
+                                                Tabs\Tab::make('Incomplete')
+                                                    ->badge(fn ($record) => $record->incompleteTasks->count())
+                                                    ->schema([
+                                                        RepeatableEntry::make('incompleteTasks')
+                                                            ->hiddenLabel()
+                                                            ->schema([
+                                                                TextEntry::make('description')
+                                                                    ->html()
+                                                                    ->columnSpanFull(),
+                                                                TextEntry::make('assignedTo.name')
+                                                                    ->label('Staff')
+                                                                    ->color('primary')
+                                                                    ->icon('heroicon-o-user')
+                                                                    ->iconColor('primary')
+                                                                    ->url(fn($record) => UserResource::getUrl('view', ['record' => $record->assignedTo->id]))
+                                                                    ->hidden(fn ($state) => is_null($state)),
+                                                                TextEntry::make('due_date')
+                                                                    ->hidden(fn ($state) => is_null($state))
+                                                                    ->date(),
+                                                                TextEntry::make('is_completed')
+                                                                    ->formatStateUsing(function ($state) {
+                                                                        return $state ? 'Yes' : 'No';
+                                                                    })
+                                                                    ->suffixAction(
+                                                                        Action::make('complete')
+                                                                            ->button()
+                                                                            ->requiresConfirmation()
+                                                                            ->modalHeading('Mark task as completed?')
+                                                                            ->modalDescription('Are you sure you want to mark this task as completed?')
+                                                                            ->action(function (Task $record) {
+                                                                                $record->is_completed = true;
+                                                                                $record->save();
+                                                                            })
+                                                                            ->after(function(Task $record) {
+                                                                                $recipients = User::role(Role::ADMIN)->get();
 
-                                                                foreach ($recipients as $recipient) {
-                                                                    Notification::make()
-                                                                        ->title('Task completed')
-                                                                        ->body(auth()->user()->name.' marked task #'.$record->id . ' as completed')
-                                                                        ->icon('heroicon-o-check')
-                                                                        ->success()
-                                                                        ->actions([
-                                                                            ActionsAction::make('View')
-                                                                                ->url(TaskResource::getUrl('view', ['record' => $record->id]))
-                                                                                ->markAsRead(),
-                                                                        ])
-                                                                        ->sendToDatabase($recipient);
-                                                                }
-                                                            })
-                                                    ),
+                                                                                foreach ($recipients as $recipient) {
+                                                                                    Notification::make()
+                                                                                        ->title('Task completed')
+                                                                                        ->body(auth()->user()->name.' marked task #'.$record->id . ' as completed')
+                                                                                        ->icon('heroicon-o-check')
+                                                                                        ->success()
+                                                                                        ->actions([
+                                                                                            ActionsAction::make('View')
+                                                                                                ->url(TaskResource::getUrl('view', ['record' => $record->id]))
+                                                                                                ->markAsRead(),
+                                                                                        ])
+                                                                                        ->sendToDatabase($recipient);
+                                                                                }
+                                                                            })
+                                                                    ),
+                                                            ])
+                                                            ->columns(3),
+                                                    ]),
                                             ])
-                                            ->columns(3),
-                                    ]),
-                            ])
-                            ->columnSpanFull(),
-                    ])
-                    ->collapsed(),
-                Section::make('Staff Tasks')
-                    ->visible(fn($record) => $record->hasRole(Role::STAFF))
-                    ->schema([
-                        Tabs::make('Tasks')
-                            ->tabs([
-                                Tabs\Tab::make('Completed')
-                                    ->badge(fn ($record) => $record->staffCompletedTasks->count())
+                                            ->columnSpanFull(),
+                                    ])
+                                    ->collapsed(),
+                                Section::make('Staff Tasks')
+                                    ->visible(fn($record) => $record->hasRole(Role::STAFF))
                                     ->schema([
-                                        RepeatableEntry::make('staffCompletedTasks')
-                                            ->hiddenLabel()
-                                            ->schema([
-                                                TextEntry::make('description')
-                                                    ->html()
-                                                    ->columnSpanFull(),
-                                                TextEntry::make('assignedFor.name')
-                                                    ->label('Customer')
-                                                    ->color('success')
-                                                    ->icon('heroicon-o-user')
-                                                    ->iconColor('success')
-                                                    ->url(fn($record) => UserResource::getUrl('view', ['record' => $record->assignedFor->id]))
-                                                    ->hidden(fn ($state) => is_null($state)),
-                                                TextEntry::make('due_date')
-                                                    ->hidden(fn ($state) => is_null($state))
-                                                    ->date(),
-                                            ])
-                                            ->columns(),
-                                    ]),
-                                Tabs\Tab::make('Incomplete')
-                                    ->badge(fn ($record) => $record->staffIncompleteTasks->count())
-                                    ->schema([
-                                        RepeatableEntry::make('staffIncompleteTasks')
-                                            ->hiddenLabel()
-                                            ->schema([
-                                                TextEntry::make('description')
-                                                    ->html()
-                                                    ->columnSpanFull(),
-                                                TextEntry::make('assignedFor.name')
-                                                    ->label('Customer')
-                                                    ->color('success')
-                                                    ->icon('heroicon-o-user')
-                                                    ->iconColor('success')
-                                                    ->url(fn($record) => UserResource::getUrl('view', ['record' => $record->assignedFor->id]))
-                                                    ->hidden(fn ($state) => is_null($state)),
-                                                TextEntry::make('due_date')
-                                                    ->hidden(fn ($state) => is_null($state))
-                                                    ->date(),
-                                                TextEntry::make('is_completed')
-                                                    ->formatStateUsing(function ($state) {
-                                                        return $state ? 'Yes' : 'No';
-                                                    })
-                                                    ->suffixAction(
-                                                        Action::make('complete')
-                                                            ->button()
-                                                            ->requiresConfirmation()
-                                                            ->modalHeading('Mark task as completed?')
-                                                            ->modalDescription('Are you sure you want to mark this task as completed?')
-                                                            ->action(function (Task $record) {
-                                                                $record->is_completed = true;
-                                                                $record->save();
-                                                            })
-                                                            ->after(function(Task $record) {
-                                                                $recipients = User::role(Role::ADMIN)->get();
+                                        Tabs::make('Tasks')
+                                            ->tabs([
+                                                Tabs\Tab::make('Completed')
+                                                    ->badge(fn ($record) => $record->staffCompletedTasks->count())
+                                                    ->schema([
+                                                        RepeatableEntry::make('staffCompletedTasks')
+                                                            ->hiddenLabel()
+                                                            ->schema([
+                                                                TextEntry::make('description')
+                                                                    ->html()
+                                                                    ->columnSpanFull(),
+                                                                TextEntry::make('assignedFor.name')
+                                                                    ->label('Customer')
+                                                                    ->color('success')
+                                                                    ->icon('heroicon-o-user')
+                                                                    ->iconColor('success')
+                                                                    ->url(fn($record) => UserResource::getUrl('view', ['record' => $record->assignedFor->id]))
+                                                                    ->hidden(fn ($state) => is_null($state)),
+                                                                TextEntry::make('due_date')
+                                                                    ->hidden(fn ($state) => is_null($state))
+                                                                    ->date(),
+                                                            ])
+                                                            ->columns(),
+                                                    ]),
+                                                Tabs\Tab::make('Incomplete')
+                                                    ->badge(fn ($record) => $record->staffIncompleteTasks->count())
+                                                    ->schema([
+                                                        RepeatableEntry::make('staffIncompleteTasks')
+                                                            ->hiddenLabel()
+                                                            ->schema([
+                                                                TextEntry::make('description')
+                                                                    ->html()
+                                                                    ->columnSpanFull(),
+                                                                TextEntry::make('assignedFor.name')
+                                                                    ->label('Customer')
+                                                                    ->color('success')
+                                                                    ->icon('heroicon-o-user')
+                                                                    ->iconColor('success')
+                                                                    ->url(fn($record) => UserResource::getUrl('view', ['record' => $record->assignedFor->id]))
+                                                                    ->hidden(fn ($state) => is_null($state)),
+                                                                TextEntry::make('due_date')
+                                                                    ->hidden(fn ($state) => is_null($state))
+                                                                    ->date(),
+                                                                TextEntry::make('is_completed')
+                                                                    ->formatStateUsing(function ($state) {
+                                                                        return $state ? 'Yes' : 'No';
+                                                                    })
+                                                                    ->suffixAction(
+                                                                        Action::make('complete')
+                                                                            ->button()
+                                                                            ->requiresConfirmation()
+                                                                            ->modalHeading('Mark task as completed?')
+                                                                            ->modalDescription('Are you sure you want to mark this task as completed?')
+                                                                            ->action(function (Task $record) {
+                                                                                $record->is_completed = true;
+                                                                                $record->save();
+                                                                            })
+                                                                            ->after(function(Task $record) {
+                                                                                $recipients = User::role(Role::ADMIN)->get();
 
-                                                                foreach ($recipients as $recipient) {
-                                                                    Notification::make()
-                                                                        ->title('Task completed')
-                                                                        ->body(auth()->user()->name.' marked task #'.$record->id . ' as completed')
-                                                                        ->icon('heroicon-o-check')
-                                                                        ->success()
-                                                                        ->actions([
-                                                                            ActionsAction::make('View')
-                                                                                ->url(TaskResource::getUrl('view', ['record' => $record->id]))
-                                                                                ->markAsRead(),
-                                                                        ])
-                                                                        ->sendToDatabase($recipient);
-                                                                }
-                                                            })
-                                                    ),
+                                                                                foreach ($recipients as $recipient) {
+                                                                                    Notification::make()
+                                                                                        ->title('Task completed')
+                                                                                        ->body(auth()->user()->name.' marked task #'.$record->id . ' as completed')
+                                                                                        ->icon('heroicon-o-check')
+                                                                                        ->success()
+                                                                                        ->actions([
+                                                                                            ActionsAction::make('View')
+                                                                                                ->url(TaskResource::getUrl('view', ['record' => $record->id]))
+                                                                                                ->markAsRead(),
+                                                                                        ])
+                                                                                        ->sendToDatabase($recipient);
+                                                                                }
+                                                                            })
+                                                                    ),
+                                                            ])
+                                                            ->columns(3),
+                                                    ]),
                                             ])
-                                            ->columns(3),
-                                    ]),
+                                            ->columnSpanFull(),
+                                    ])
+                                    ->collapsed(),
+                            ]),
+                        Tabs\Tab::make('Quotes & Invoices')
+                            ->schema([
+                                Section::make('Quotes')
+                                    ->schema([
+                                        Tabs::make('Tabs')
+                                            ->tabs([
+                                                Tabs\Tab::make('Quotes')
+                                                    ->badge(fn($record) => $record->quotes->count())
+                                                    ->schema([
+
+                                                    ]),
+                                                Tabs\Tab::make('Invoices')
+                                                    ->badge(fn($record) => $record->invoices->count())
+                                                    ->schema([
+
+                                                    ]),
+                                            ])
+                                    ])
                             ])
-                            ->columnSpanFull(),
                     ])
-                    ->collapsed(),
+
             ]);
     }
 
@@ -604,5 +634,24 @@ class UserResource extends Resource
     public static function getEloquentQuery(): Builder
     {
         return parent::getEloquentQuery();
+    }
+
+    public static function getGlobalSearchResultActions(Model $record): array
+    {
+        return [
+            Action::make('view')
+                ->url(static::getUrl('view', ['record' => $record]))
+                ->link(),
+        ];
+    }
+
+    public static function getGlobalSearchEloquentQuery(): Builder
+    {
+        return parent::getGlobalSearchEloquentQuery()->with(['quotes', 'invoices']);
+    }
+
+    public static function getGloballySearchableAttributes(): array
+    {
+        return ['name', 'quotes.name', 'invoices.name'];
     }
 }
