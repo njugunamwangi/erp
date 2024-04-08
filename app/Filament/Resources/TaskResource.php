@@ -59,13 +59,21 @@ class TaskResource extends Resource
             })
             ->columns([
                 Tables\Columns\TextColumn::make('assignedBy.name')
-                    ->numeric()
+                    ->url(fn($record) => UserResource::getUrl('view', ['record' => $record->assigned_by]))
+                    ->color('warning')
+                    ->icon('heroicon-o-user')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('assignedTo.name')
-                    ->numeric()
+                    ->label('Staff')
+                    ->url(fn($record) => UserResource::getUrl('view', ['record' => $record->assigned_to]))
+                    ->color('primary')
+                    ->icon('heroicon-o-user')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('assignedFor.name')
-                    ->numeric()
+                    ->label('Customer')
+                    ->url(fn($record) => UserResource::getUrl('view', ['record' => $record->assigned_for]))
+                    ->color('success')
+                    ->icon('heroicon-o-user')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('due_date')
                     ->date()
