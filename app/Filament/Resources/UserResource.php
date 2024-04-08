@@ -622,7 +622,7 @@ class UserResource extends Resource
                                                     ->columns(6)
                                             ]),
                                         Tabs\Tab::make('Invoices')
-                                            ->badge(fn($record) => $record->quotes->count())
+                                            ->badge(fn($record) => $record->invoices->count())
                                             ->schema([
                                                 // ...
                                             ]),
