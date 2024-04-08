@@ -4,7 +4,9 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\UserResource\Pages;
 use App\Filament\Resources\UserResource\RelationManagers\PipelinesRelationManager;
+use App\InvoiceSeries;
 use App\Models\CustomField;
+use App\Models\Invoice;
 use App\Models\Lead;
 use App\Models\Role;
 use App\Models\Stage;
@@ -30,6 +32,7 @@ use Filament\Notifications\Actions\Action as ActionsAction;
 use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Support\Colors\Color;
+use Filament\Support\Enums\Alignment;
 use Filament\Tables;
 use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Columns\TextColumn;
@@ -613,14 +616,69 @@ class UserResource extends Resource
                                                             ->money('Kes'),
                                                         Actions::make([
                                                             Action::make('Edit Quote')
-                                                                ->link(),
+                                                                ->link()
+                                                                ->color('success')
+                                                                ->icon('heroicon-o-pencil-square')
+                                                                ->url(fn($record) => QuoteResource::getUrl('edit', ['record' => $record->id])),
                                                             Action::make('View Quote')
-                                                                ->link(),
+                                                                ->link()
+                                                                ->icon('heroicon-o-eye')
+                                                                ->url(fn($record) => QuoteResource::getUrl('view', ['record' => $record->id])),
+                                                            Action::make('View Invoice')
+                                                                ->visible(fn($record) => $record->invoice)
+                                                                ->link()
+                                                                ->color('warning')
+                                                                ->icon('heroicon-o-eye')
+                                                                ->url(fn($record) => InvoiceResource::getUrl('view', ['record' => $record->invoice->id])),
                                                             Action::make('Generate Invoice')
-                                                                ->link(),
-                                                        ])->verticallyAlignEnd()
+                                                                ->hidden(fn($record) => $record->invoice)
+                                                                ->link()
+                                                                ->color('warning')
+                                                                ->icon('heroicon-o-document-check')
+                                                                ->modalSubmitActionLabel('Generate Invoice')
+                                                                ->modalAlignment(Alignment::Center)
+                                                                ->modalIcon('heroicon-o-document-check')
+                                                                ->form([
+                                                                    Select::make('series')
+                                                                        ->required()
+                                                                        ->enum(InvoiceSeries::class)
+                                                                        ->options(InvoiceSeries::class)
+                                                                        ->searchable()
+                                                                        ->preload()
+                                                                        ->default(InvoiceSeries::IN2INV->name),
+                                                                ])
+                                                                ->action(function (array $data, $record) {
+                                                                    $invoice = Invoice::create([
+                                                                        'user_id' => $record->user_id,
+                                                                        'quote_id' => $record->id,
+                                                                        'items' => $record->items,
+                                                                        'subtotal' => $record->subtotal,
+                                                                        'taxes' => $record->taxes,
+                                                                        'total' => $record->total,
+                                                                        'serial_number' => $serial_number = Invoice::max('serial_number') + 1,
+                                                                        'serial' => $data['series'].'-'.str_pad($serial_number, 5, '0', STR_PAD_LEFT),
+                                                                    ]);
+
+                                                                    $recipients = User::role(Role::ADMIN)->get();
+
+                                                                    foreach ($recipients as $recipient) {
+                                                                        Notification::make()
+                                                                            ->title('Invoice generated')
+                                                                            ->body(auth()->user()->name.' generated an invoice for '.$record->serial)
+                                                                            ->icon('heroicon-o-check-badge')
+                                                                            ->success()
+                                                                            ->actions([
+                                                                                ActionsAction::make('View')
+                                                                                    ->url(InvoiceResource::getUrl('view', ['record' => $invoice->id]))
+                                                                                    ->markAsRead(),
+                                                                            ])
+                                                                            ->sendToDatabase($recipient);
+                                                                    }
+                                                                }),
+                                                        ])
+                                                        ->columnSpanFull()
                                                     ])
-                                                    ->columns(6)
+                                                    ->columns(5)
                                             ]),
                                         Tabs\Tab::make('Invoices')
                                             ->badge(fn($record) => $record->invoices->count())
