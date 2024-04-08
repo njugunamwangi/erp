@@ -22,7 +22,6 @@ class TasksWidget extends ChartWidget
         return [
             'week' => 'This Week',
             'thisMonth' => 'This Month',
-            '3months' => 'Last 3 Months',
             'year' => 'This Year',
         ];
     }
