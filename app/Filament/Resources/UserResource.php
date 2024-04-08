@@ -17,6 +17,7 @@ use Filament\Forms\Components\Section as ComponentsSection;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
+use Filament\Infolists\Components\Actions;
 use Filament\Infolists\Components\Actions\Action;
 use Filament\Infolists\Components\Fieldset;
 use Filament\Infolists\Components\RepeatableEntry;
@@ -592,21 +593,39 @@ class UserResource extends Resource
                             ]),
                         Tabs\Tab::make('Quotes & Invoices')
                             ->schema([
-                                Section::make('Quotes')
-                                    ->schema([
-                                        Tabs::make('Tabs')
-                                            ->tabs([
-                                                Tabs\Tab::make('Quotes')
-                                                    ->badge(fn($record) => $record->quotes->count())
+                                Tabs::make('Tabs')
+                                    ->tabs([
+                                        Tabs\Tab::make('Quotes')
+                                            ->badge(fn($record) => $record->quotes->count())
+                                            ->schema([
+                                                RepeatableEntry::make('quotes')
+                                                    ->hiddenLabel()
                                                     ->schema([
-
-                                                    ]),
-                                                Tabs\Tab::make('Invoices')
-                                                    ->badge(fn($record) => $record->invoices->count())
-                                                    ->schema([
-
-                                                    ]),
-                                            ])
+                                                        TextEntry::make('serial'),
+                                                        TextEntry::make('invoice.serial')
+                                                            ->label('Invoice Serial No.'),
+                                                        TextEntry::make('subtotal')
+                                                            ->money('Kes'),
+                                                        TextEntry::make('taxes')
+                                                            ->suffix('%'),
+                                                        TextEntry::make('total')
+                                                            ->money('Kes'),
+                                                        Actions::make([
+                                                            Action::make('Edit Quote')
+                                                                ->link(),
+                                                            Action::make('View Quote')
+                                                                ->link(),
+                                                            Action::make('Generate Invoice')
+                                                                ->link(),
+                                                        ])->verticallyAlignEnd()
+                                                    ])
+                                                    ->columns(6)
+                                            ]),
+                                        Tabs\Tab::make('Invoices')
+                                            ->badge(fn($record) => $record->quotes->count())
+                                            ->schema([
+                                                // ...
+                                            ]),
                                     ])
                             ])
                     ])
