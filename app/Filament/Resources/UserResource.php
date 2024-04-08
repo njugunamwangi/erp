@@ -603,7 +603,8 @@ class UserResource extends Resource
                                                     ->schema([
                                                         TextEntry::make('serial'),
                                                         TextEntry::make('invoice.serial')
-                                                            ->label('Invoice Serial No.'),
+                                                            ->label('Invoice Serial No.')
+                                                            ->getStateUsing(fn($record) => $record->invoice ? $record->invoice->serial : '-'),
                                                         TextEntry::make('subtotal')
                                                             ->money('Kes'),
                                                         TextEntry::make('taxes')
