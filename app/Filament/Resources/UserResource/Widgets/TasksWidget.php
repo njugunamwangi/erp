@@ -14,7 +14,7 @@ class TasksWidget extends ChartWidget
     public ?Model $record = null;
     public?string $filter = 'thisMonth';
     protected static ?string $heading = 'Tasks';
-    protected static ?string $maxHeight = '400px';
+    protected static ?string $maxHeight = '250px';
     protected static ?string $pollingInterval = '1s';
 
     protected function getFilters(): ?array
