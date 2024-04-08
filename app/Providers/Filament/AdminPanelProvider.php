@@ -92,6 +92,7 @@ class AdminPanelProvider extends PanelProvider
             ->databaseNotifications()
             ->databaseNotificationsPolling('1s')
             ->maxContentWidth(MaxWidth::Full)
+            ->globalSearchKeyBindings(['command+k', 'ctrl+k'])
             ->authMiddleware([
                 Authenticate::class,
             ]);

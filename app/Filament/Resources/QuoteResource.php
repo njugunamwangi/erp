@@ -31,14 +31,14 @@ use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class QuoteResource extends Resource
 {
     protected static ?string $model = Quote::class;
-
     protected static ?string $navigationGroup = 'Customer Relations';
-
+    protected static ?string $recordTitleAttribute = 'serial';
     protected static ?int $navigationSort = 1;
 
     public static function form(Form $form): Form
@@ -304,6 +304,25 @@ class QuoteResource extends Resource
     {
         return [
             QuoteOverviewStats::class,
+        ];
+    }
+
+    public static function getGloballySearchableAttributes(): array
+    {
+        return ['user.name'];
+    }
+
+    public static function getGlobalSearchEloquentQuery(): Builder
+    {
+        return parent::getGlobalSearchEloquentQuery()->with(['user']);
+    }
+
+    public static function getGlobalSearchResultActions(Model $record): array
+    {
+        return [
+            Action::make('view')
+                ->url(static::getUrl('view', ['record' => $record]))
+                ->link(),
         ];
     }
 }
