@@ -170,7 +170,9 @@ class QuoteResource extends Resource
                 Tables\Columns\TextColumn::make('serial')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('user.name')
-                    ->numeric()
+                    ->url(fn($record) => UserResource::getUrl('view', ['record' => $record->user_id]))
+                    ->color('success')
+                    ->icon('heroicon-o-user')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('vertical.vertical')
                     ->numeric()
