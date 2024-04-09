@@ -16,6 +16,7 @@ use App\Models\Task;
 use App\Models\User;
 use Filament\Forms;
 use Filament\Forms\Components\Grid;
+use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Section as ComponentsSection;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Form;
@@ -35,10 +36,13 @@ use Filament\Resources\Resource;
 use Filament\Support\Colors\Color;
 use Filament\Support\Enums\Alignment;
 use Filament\Tables;
+use Filament\Tables\Actions\Action as TablesActionsAction;
 use Filament\Tables\Actions\ActionGroup;
+use Filament\Tables\Actions\BulkAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
 use Ysfkaya\FilamentPhoneInput\Forms\PhoneInput;
@@ -296,6 +300,34 @@ class UserResource extends Resource
                                 );
                             }
                         }),
+                        TablesActionsAction::make('sendSms')
+                            ->icon('heroicon-o-chat-bubble-left-right')
+                            ->color('success')
+                            ->modalDescription(fn ($record) => 'Draft an sms for ' . $record->name)
+                            ->modalIcon('heroicon-o-chat-bubble-left-right')
+                            ->form([
+                                RichEditor::make('message')
+                                    ->label('SMS')
+                                    ->required(),
+                            ])
+                            ->modalSubmitActionLabel('Send SMS')
+                            ->action(function ($record, $data) {
+                                $message = $data['message'];
+
+                                $record->sendSms($message);
+                            })
+                            ->after(function($record) {
+                                $recipients = User::role(Role::ADMIN)->get();
+
+                                foreach ($recipients as $recipient) {
+                                    Notification::make()
+                                        ->title(auth()->user()->name . ' sent an sms' )
+                                        ->body($record->name . ' received an sms' )
+                                        ->success()
+                                        ->icon('heroicon-o-chat-bubble-left-right')
+                                        ->sendToDatabase($recipient);
+                                }
+                            })
                 ]),
             ])
             ->recordUrl(function ($record) {
@@ -310,6 +342,34 @@ class UserResource extends Resource
                     Tables\Actions\DeleteBulkAction::make(),
                     Tables\Actions\ForceDeleteBulkAction::make(),
                     Tables\Actions\RestoreBulkAction::make(),
+                    BulkAction::make('sendSms')
+                        ->icon('heroicon-o-chat-bubble-left-right')
+                        ->color('success')
+                        ->modalIcon('heroicon-o-chat-bubble-left-right')
+                        ->modalSubmitActionLabel('Send SMS')
+                        ->modalDescription(fn (Collection $records) => 'Send an sms to '. $records->count() . ' members')
+                        ->form([
+                            RichEditor::make('message')
+                                ->label('SMS')
+                                ->required(),
+                        ])
+                        ->action(function (Collection $records, $data) {
+                            $message = $data['message'];
+
+                            $records->each->sendSms($message);
+                        })
+                        ->after(function(Collection $records) {
+                            $recipients = User::role(Role::ADMIN)->get();
+
+                            foreach ($recipients as $recipient) {
+                                Notification::make()
+                                    ->title(auth()->user()->name . ' sent bulk smses' )
+                                    ->body($records->count() . ' customers received an sms' )
+                                    ->success()
+                                    ->icon('heroicon-o-chat-bubble-left-right')
+                                    ->sendToDatabase($recipient);
+                            }
+                        })
                 ]),
             ]);
     }

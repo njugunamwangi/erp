@@ -15,6 +15,7 @@ use Laravel\Fortify\TwoFactorAuthenticatable;
 use Laravel\Jetstream\HasProfilePhoto;
 use Laravel\Jetstream\HasTeams;
 use Laravel\Sanctum\HasApiTokens;
+use SamuelMwangiW\Africastalking\Facades\Africastalking;
 use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable implements FilamentUser
@@ -151,5 +152,22 @@ class User extends Authenticatable implements FilamentUser
     public function tags(): BelongsToMany
     {
         return $this->belongsToMany(Tag::class);
+    }
+
+    public function routeNotificationForAfricasTalking($notification)
+    {
+        return $this->phone;
+    }
+
+    public function sendSms($message) {
+
+        $message = strip_tags($message);
+
+        Africastalking::sms()
+            ->message($message)
+            ->to($this->phone)
+            ->bulk()
+            ->enqueue()
+            ->send();
     }
 }

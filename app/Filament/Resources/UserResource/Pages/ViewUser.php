@@ -22,6 +22,7 @@ use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -40,6 +41,34 @@ class ViewUser extends ViewRecord
         return [
             ActionGroup::make([
                 Actions\EditAction::make(),
+                Action::make('sendSms')
+                    ->icon('heroicon-o-chat-bubble-left-right')
+                    ->color('warning')
+                    ->modalDescription(fn ($record) => 'Draft an sms for ' . $record->name)
+                    ->modalIcon('heroicon-o-chat-bubble-left-right')
+                    ->form([
+                        RichEditor::make('message')
+                            ->label('SMS')
+                            ->required(),
+                    ])
+                    ->modalSubmitActionLabel('Send SMS')
+                    ->action(function ($record, $data) {
+                        $message = $data['message'];
+
+                        $record->sendSms($message);
+                    })
+                    ->after(function($record) {
+                        $recipients = User::role(Role::ADMIN)->get();
+
+                        foreach ($recipients as $recipient) {
+                            Notification::make()
+                                ->title(auth()->user()->name . ' sent an sms' )
+                                ->body($record->name . ' received an sms' )
+                                ->success()
+                                ->icon('heroicon-o-chat-bubble-left-right')
+                                ->sendToDatabase($recipient);
+                        }
+                    }),
                 Action::make('quote')
                     ->label('Generate Quote')
                     ->color('success')
