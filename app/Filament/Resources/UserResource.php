@@ -604,7 +604,8 @@ class UserResource extends Resource
                                                 RepeatableEntry::make('quotes')
                                                     ->hiddenLabel()
                                                     ->schema([
-                                                        TextEntry::make('serial'),
+                                                        TextEntry::make('serial')
+                                                            ->label('Serial Number'),
                                                         TextEntry::make('invoice.serial')
                                                             ->label('Invoice Serial No.')
                                                             ->getStateUsing(fn($record) => $record->invoice ? $record->invoice->serial : '-'),

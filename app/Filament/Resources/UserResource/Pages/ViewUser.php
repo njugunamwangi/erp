@@ -2,9 +2,13 @@
 
 namespace App\Filament\Resources\UserResource\Pages;
 
+use App\Filament\Resources\QuoteResource;
 use App\Filament\Resources\UserResource;
 use App\Filament\Resources\UserResource\Widgets\StaffTasksWidget;
 use App\Filament\Resources\UserResource\Widgets\TasksWidget;
+use App\Models\Quote;
+use App\Models\Role;
+use App\Models\User;
 use App\Models\Vertical;
 use App\QuoteSeries;
 use Filament\Actions;
@@ -19,6 +23,8 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
+use Filament\Notifications\Actions\Action as ActionsAction;
+use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ViewRecord;
 
 class ViewUser extends ViewRecord
@@ -110,7 +116,36 @@ class ViewUser extends ViewRecord
                                                 ->prefix('Kes'),
                                         ]),
                                 ])
-                    ]),
+                    ])
+                    ->action(function(array $data, $record) {
+                        $quote = $record->quotes()->create([
+                            'user_id' => $record->id,
+                            'vertical_id' => $data['vertical_id'],
+                            'subtotal' => $data['subtotal'],
+                            'taxes' => $data['taxes'],
+                            'total' => $data['total'],
+                            'items' => $data['items'],
+                            'series' => $data['series'],
+                            'serial_number' => $serial_number = Quote::max('serial_number') + 1,
+                            'serial' => $data['series'].'-'.str_pad($serial_number, 5, '0', STR_PAD_LEFT),
+                        ]);
+
+                        $recipients = User::role(Role::ADMIN)->get();
+
+                        foreach ($recipients as $recipient) {
+                            Notification::make()
+                                ->title('Quote generated')
+                                ->body(auth()->user()->name.' generated a quote for ' . $record->name)
+                                ->icon('heroicon-o-check-badge')
+                                ->success()
+                                ->actions([
+                                    ActionsAction::make('View')
+                                        ->url(QuoteResource::getUrl('view', ['record' => $quote->id]))
+                                        ->markAsRead(),
+                                ])
+                                ->sendToDatabase($recipient);
+                            }
+                    }),
                 Action::make('invoice')
                     ->label('Generate Invoice')
                     ->color('primary')
