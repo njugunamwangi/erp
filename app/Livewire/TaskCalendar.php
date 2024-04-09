@@ -26,7 +26,7 @@ class TaskCalendar extends FullCalendarWidget
                     ->title(strip_tags($task->description))
                     ->start($task->due_date)
                     ->end($task->due_date)
-                    ->url(auth()->user()->hasRole(Role::ADMIN) ? TaskResource::getUrl('edit', [$task->id]) : ResourcesTaskResource::getUrl('edit', [$task->id]))
+                    ->url(auth()->user()->hasRole(Role::ADMIN) ? TaskResource::getUrl('edit', [$task->id]) : ResourcesTaskResource::getUrl('view', [$task->id]))
                     ->toArray()
             )
             ->toArray();
