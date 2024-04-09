@@ -15,11 +15,6 @@ class County extends Model
 
     protected $guarded = [];
 
-    public function projects(): HasMany
-    {
-        return $this->hasMany(Project::class);
-    }
-
     public static function getForm(): array
     {
         return [
