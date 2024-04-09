@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "3d8c7d5c84405b84953276e690f791bd",
+    "content-hash": "71593a137c174955098a17855bdca34b",
     "packages": [
         {
             "name": "althinect/filament-spatie-roles-permissions",
@@ -6285,6 +6285,236 @@
                 "source": "https://github.com/MyIntervals/PHP-CSS-Parser/tree/v8.5.1"
             },
             "time": "2024-02-15T16:41:13+00:00"
+        },
+        {
+            "name": "saloonphp/laravel-plugin",
+            "version": "v3.5.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/saloonphp/laravel-plugin.git",
+                "reference": "15be0d587e61f11076f93d6df30561b88ff837c1"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/saloonphp/laravel-plugin/zipball/15be0d587e61f11076f93d6df30561b88ff837c1",
+                "reference": "15be0d587e61f11076f93d6df30561b88ff837c1",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/console": "^10.0 || ^11.0",
+                "illuminate/support": "^10.0 || ^11.0",
+                "php": "^8.1",
+                "saloonphp/saloon": "^3.5",
+                "symfony/finder": "^6.4 || ^7.0"
+            },
+            "require-dev": {
+                "friendsofphp/php-cs-fixer": "^3.48",
+                "orchestra/testbench": "^8.21 || ^9.0",
+                "pestphp/pest": "^2.32",
+                "phpstan/phpstan": "^1.10.56"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "aliases": {
+                        "Saloon": "Saloon\\Laravel\\Facades\\Saloon"
+                    },
+                    "providers": [
+                        "Saloon\\Laravel\\SaloonServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Saloon\\Laravel\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Sam Carré",
+                    "email": "29132017+Sammyjo20@users.noreply.github.com",
+                    "role": "Developer"
+                }
+            ],
+            "description": "The official Laravel plugin for Saloon",
+            "homepage": "https://github.com/saloonphp/laravel-plugin",
+            "keywords": [
+                "api",
+                "api-integrations",
+                "saloon",
+                "saloonphp",
+                "sdk"
+            ],
+            "support": {
+                "source": "https://github.com/saloonphp/laravel-plugin/tree/v3.5.0"
+            },
+            "time": "2024-03-13T18:48:03+00:00"
+        },
+        {
+            "name": "saloonphp/saloon",
+            "version": "v3.8.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/saloonphp/saloon.git",
+                "reference": "25cecb89110647c2e8ffad9e48a74ad717f7485a"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/saloonphp/saloon/zipball/25cecb89110647c2e8ffad9e48a74ad717f7485a",
+                "reference": "25cecb89110647c2e8ffad9e48a74ad717f7485a",
+                "shasum": ""
+            },
+            "require": {
+                "guzzlehttp/guzzle": "^7.6",
+                "guzzlehttp/promises": "^1.5 || ^2.0",
+                "guzzlehttp/psr7": "^2.0",
+                "php": "^8.1",
+                "psr/http-factory": "^1.0",
+                "psr/http-message": "^1.1 || ^2.0"
+            },
+            "conflict": {
+                "sammyjo20/saloon": "*"
+            },
+            "require-dev": {
+                "ext-simplexml": "*",
+                "friendsofphp/php-cs-fixer": "^3.5",
+                "illuminate/collections": "^9.39 || ^10.0",
+                "league/flysystem": "^3.0",
+                "pestphp/pest": "^2.6",
+                "phpstan/phpstan": "^1.9",
+                "saloonphp/xml-wrangler": "^1.1",
+                "spatie/ray": "^1.33",
+                "symfony/dom-crawler": "^6.0 || ^7.0",
+                "symfony/var-dumper": "^6.3 || ^7.0"
+            },
+            "suggest": {
+                "illuminate/collections": "Required for the response collect() method.",
+                "saloonphp/xml-wrangler": "Required for the response xmlReader() method.",
+                "symfony/dom-crawler": "Required for the response dom() method.",
+                "symfony/var-dumper": "Required for default debugging drivers."
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Saloon\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Sam Carré",
+                    "email": "29132017+Sammyjo20@users.noreply.github.com",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Build beautiful API integrations and SDKs with Saloon",
+            "homepage": "https://github.com/saloonphp/saloon",
+            "keywords": [
+                "api",
+                "api-integrations",
+                "saloon",
+                "sammyjo20",
+                "sdk"
+            ],
+            "support": {
+                "issues": "https://github.com/saloonphp/saloon/issues",
+                "source": "https://github.com/saloonphp/saloon/tree/v3.8.1"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/sammyjo20",
+                    "type": "github"
+                }
+            ],
+            "time": "2024-04-08T11:53:06+00:00"
+        },
+        {
+            "name": "samuelmwangiw/africastalking-laravel",
+            "version": "v1.5.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/SamuelMwangiW/africastalking-laravel.git",
+                "reference": "b607850f32024f3661f358f7fac716c5b7c1e651"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/SamuelMwangiW/africastalking-laravel/zipball/b607850f32024f3661f358f7fac716c5b7c1e651",
+                "reference": "b607850f32024f3661f358f7fac716c5b7c1e651",
+                "shasum": ""
+            },
+            "require": {
+                "illuminate/contracts": "^10.0|^11.0",
+                "php": "^8.1",
+                "saloonphp/laravel-plugin": "^3.5",
+                "spatie/laravel-package-tools": "^1.14"
+            },
+            "require-dev": {
+                "guzzlehttp/guzzle": "^7.4",
+                "larastan/larastan": "^2.7",
+                "nunomaduro/collision": "^7.0|^8.0.1",
+                "orchestra/testbench": "^8.0|^9.0",
+                "pestphp/pest": "^2.30",
+                "pestphp/pest-plugin-laravel": "^2.0",
+                "phpstan/extension-installer": "^1.1",
+                "phpstan/phpstan-deprecation-rules": "^1.0",
+                "phpstan/phpstan-phpunit": "^1.0",
+                "phpunit/phpunit": "^10.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "SamuelMwangiW\\Africastalking\\AfricastalkingServiceProvider"
+                    ],
+                    "aliases": {
+                        "Africastalking": "SamuelMwangiW\\Africastalking\\Facades\\Africastalking"
+                    }
+                }
+            },
+            "autoload": {
+                "files": [
+                    "src/helpers.php"
+                ],
+                "psr-4": {
+                    "SamuelMwangiW\\Africastalking\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Samuel Mwangi",
+                    "email": "samuel@samuelmwangi.co.ke",
+                    "role": "Developer"
+                }
+            ],
+            "description": "This is my package africastalking-laravel",
+            "homepage": "https://github.com/samuelmwangiw/africastalking-laravel",
+            "keywords": [
+                "SamuelMwangiW",
+                "africastalking-laravel",
+                "laravel"
+            ],
+            "support": {
+                "issues": "https://github.com/SamuelMwangiW/africastalking-laravel/issues",
+                "source": "https://github.com/SamuelMwangiW/africastalking-laravel/tree/v1.5.0"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/SamuelMwangiW",
+                    "type": "github"
+                }
+            ],
+            "time": "2024-03-13T19:07:08+00:00"
         },
         {
             "name": "spatie/color",
