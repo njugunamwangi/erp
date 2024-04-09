@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\UserResource\Pages;
 use App\Filament\Resources\UserResource\RelationManagers\PipelinesRelationManager;
 use App\InvoiceSeries;
+use App\InvoiceStatus;
 use App\Models\CustomField;
 use App\Models\Invoice;
 use App\Models\Lead;
@@ -692,7 +693,88 @@ class UserResource extends Resource
                                         Tabs\Tab::make('Invoices')
                                             ->badge(fn($record) => $record->invoices->count())
                                             ->schema([
-                                                // ...
+                                                RepeatableEntry::make('invoices')
+                                                    ->hiddenLabel()
+                                                    ->schema([
+                                                        TextEntry::make('serial')
+                                                            ->label('Serial Number'),
+                                                        TextEntry::make('quote.serial')
+                                                            ->label('Quote Serial No.')
+                                                            ->getStateUsing(fn($record) => $record->quote ? $record->quote->serial : '-'),
+                                                        TextEntry::make('subtotal')
+                                                            ->money('Kes'),
+                                                        TextEntry::make('taxes')
+                                                            ->suffix('%'),
+                                                        TextEntry::make('total')
+                                                            ->money('Kes'),
+                                                        TextEntry::make('status')
+                                                            ->badge()
+                                                            ->color(function ($state) {
+                                                                return $state->getColor();
+                                                            })
+                                                            ->icon(function ($state) {
+                                                                return $state->getIcon();
+                                                            }),
+                                                        Actions::make([
+                                                            Action::make('edit')
+                                                                ->label('Edit Invoice')
+                                                                ->icon('heroicon-o-pencil-square')
+                                                                ->link()
+                                                                ->color('gray')
+                                                                ->url(fn($record) => InvoiceResource::getUrl('edit', ['record' => $record->id])),
+                                                            Action::make('view')
+                                                                ->label('View Invoice')
+                                                                ->icon('heroicon-o-eye')
+                                                                ->link()
+                                                                ->color('success')
+                                                                ->url(fn($record) => InvoiceResource::getUrl('view', ['record' => $record->id])),
+                                                            Action::make('pdf')
+                                                                ->link()
+                                                                ->label('Download Invoice')
+                                                                ->icon('heroicon-o-arrow-down-on-square-stack')
+                                                                ->color('info')
+                                                                ->url(fn ($record) => route('invoice.download', $record))
+                                                                ->openUrlInNewTab(),
+                                                            Action::make('viewQuote')
+                                                                ->visible(fn($record) => $record->quote)
+                                                                ->label('View Quote')
+                                                                ->icon('heroicon-o-eye')
+                                                                ->link()
+                                                                ->color('success')
+                                                                ->url(fn($record) => QuoteResource::getUrl('view', ['record' => $record->quote->id])),
+                                                            Action::make('markPaid')
+                                                                ->label('Mark as Paid')
+                                                                ->link()
+                                                                ->visible(fn ($record) => $record->status != InvoiceStatus::Paid)
+                                                                ->color('warning')
+                                                                ->icon('heroicon-o-banknotes')
+                                                                ->requiresConfirmation()
+                                                                ->modalIcon('heroicon-o-banknotes')
+                                                                ->modalDescription(fn ($record) => 'Are you sure you want to mark '.$record->serial.' as paid?')
+                                                                ->modalSubmitActionLabel('Mark as Paid')
+                                                                ->action(function ($record) {
+                                                                    $record->status = InvoiceStatus::Paid;
+                                                                    $record->save();
+
+                                                                    $recipients = User::role(Role::ADMIN)->get();
+
+                                                                    foreach ($recipients as $recipient) {
+                                                                        Notification::make()
+                                                                            ->title('Invoice paid')
+                                                                            ->body(auth()->user()->name.' marked ' . $record->serial . ' as paid')
+                                                                            ->icon('heroicon-o-banknotes')
+                                                                            ->warning()
+                                                                            ->actions([
+                                                                                ActionsAction::make('View')
+                                                                                    ->url(InvoiceResource::getUrl('view', ['record' => $record->id]))
+                                                                                    ->markAsRead(),
+                                                                            ])
+                                                                            ->sendToDatabase($recipient);
+                                                                    }
+                                                                }),
+                                                        ])->columnSpanFull()
+                                                    ])
+                                                    ->columns(6)
                                             ]),
                                     ])
                             ])
