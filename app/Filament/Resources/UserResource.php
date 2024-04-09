@@ -618,13 +618,21 @@ class UserResource extends Resource
                                                         Actions::make([
                                                             Action::make('Edit Quote')
                                                                 ->link()
-                                                                ->color('success')
+                                                                ->color('gray')
                                                                 ->icon('heroicon-o-pencil-square')
                                                                 ->url(fn($record) => QuoteResource::getUrl('edit', ['record' => $record->id])),
                                                             Action::make('View Quote')
                                                                 ->link()
+                                                                ->color('success')
                                                                 ->icon('heroicon-o-eye')
                                                                 ->url(fn($record) => QuoteResource::getUrl('view', ['record' => $record->id])),
+                                                            Action::make('pdf')
+                                                                ->link()
+                                                                ->label('Download Quote')
+                                                                ->icon('heroicon-o-arrow-down-on-square-stack')
+                                                                ->color('info')
+                                                                ->url(fn ($record) => route('quote.download', $record))
+                                                                ->openUrlInNewTab(),
                                                             Action::make('View Invoice')
                                                                 ->visible(fn($record) => $record->invoice)
                                                                 ->link()
