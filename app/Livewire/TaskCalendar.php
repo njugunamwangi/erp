@@ -3,6 +3,7 @@
 namespace App\Livewire;
 
 use App\Filament\Resources\TaskResource;
+use App\Filament\Staff\Resources\TaskResource as ResourcesTaskResource;
 use App\Models\Role;
 use App\Models\Task;
 use Saade\FilamentFullCalendar\Data\EventData;
@@ -15,8 +16,8 @@ class TaskCalendar extends FullCalendarWidget
         return Task::query()
             ->where('due_date', '>=', $fetchInfo['start'])
             ->where('due_date', '<=', $fetchInfo['end'])
-            ->when(! auth()->user()->hasRole(Role::ADMIN), function ($query) {
-                return $query->where('assigned_to', auth()->id());
+            ->when(auth()->user()->hasRole(Role::STAFF), function ($query) {
+                return $query->where('assigned_to', auth()->user()->id);
             })
             ->get()
             ->map(
@@ -25,7 +26,7 @@ class TaskCalendar extends FullCalendarWidget
                     ->title(strip_tags($task->description))
                     ->start($task->due_date)
                     ->end($task->due_date)
-                    ->url(TaskResource::getUrl('edit', [$task->id]))
+                    ->url(auth()->user()->hasRole(Role::ADMIN) ? TaskResource::getUrl('edit', [$task->id]) : ResourcesTaskResource::getUrl('edit', [$task->id]))
                     ->toArray()
             )
             ->toArray();
