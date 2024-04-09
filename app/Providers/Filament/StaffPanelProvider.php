@@ -28,6 +28,7 @@ class StaffPanelProvider extends PanelProvider
         return $panel
             ->id('staff')
             ->domain(env('STAFF_SUBDOMAIN'))
+            ->login()
             ->colors([
                 'primary' => Color::Emerald,
             ])
