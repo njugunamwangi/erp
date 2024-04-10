@@ -2,10 +2,10 @@
 
 namespace App\Filament\Resources;
 
+use App\Enums\InvoiceSeries;
+use App\Enums\InvoiceStatus;
 use App\Filament\Resources\UserResource\Pages;
 use App\Filament\Resources\UserResource\RelationManagers\PipelinesRelationManager;
-use App\InvoiceSeries;
-use App\InvoiceStatus;
 use App\Models\CustomField;
 use App\Models\Invoice;
 use App\Models\Lead;

@@ -2,19 +2,19 @@
 
 namespace App\Filament\Resources\UserResource\Pages;
 
+use App\Enums\InvoiceSeries;
+use App\Enums\InvoiceStatus;
+use App\Enums\QuoteSeries;
 use App\Filament\Resources\InvoiceResource;
 use App\Filament\Resources\QuoteResource;
 use App\Filament\Resources\UserResource;
 use App\Filament\Resources\UserResource\Widgets\StaffTasksWidget;
 use App\Filament\Resources\UserResource\Widgets\TasksWidget;
-use App\InvoiceSeries;
-use App\InvoiceStatus;
 use App\Models\Invoice;
 use App\Models\Quote;
 use App\Models\Role;
 use App\Models\User;
 use App\Models\Vertical;
-use App\QuoteSeries;
 use Filament\Actions;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;

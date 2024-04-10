@@ -2,8 +2,8 @@
 
 namespace App\Models;
 
-use App\InvoiceSeries;
-use App\InvoiceStatus;
+use App\Enums\InvoiceSeries;
+use App\Enums\InvoiceStatus;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;

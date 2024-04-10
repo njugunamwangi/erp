@@ -2,14 +2,14 @@
 
 namespace App\Filament\Resources;
 
+use App\Enums\InvoiceSeries;
+use App\Enums\QuoteSeries;
 use App\Filament\Resources\QuoteResource\Pages;
 use App\Filament\Resources\QuoteResource\Widgets\QuoteOverviewStats;
-use App\InvoiceSeries;
 use App\Models\Invoice;
 use App\Models\Quote;
 use App\Models\Role;
 use App\Models\User;
-use App\QuoteSeries;
 use Filament\Forms;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Grid;

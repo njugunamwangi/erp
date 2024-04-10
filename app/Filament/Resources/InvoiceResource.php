@@ -2,11 +2,11 @@
 
 namespace App\Filament\Resources;
 
+use App\Enums\InvoiceSeries;
+use App\Enums\InvoiceStatus;
 use App\Filament\Resources\InvoiceResource\Pages;
 use App\Filament\Resources\InvoiceResource\Widgets\InvoiceStatsOverview;
 use App\Http\Controllers\MPesaSTKPushController;
-use App\InvoiceSeries;
-use App\InvoiceStatus;
 use App\Models\Invoice;
 use App\Models\Role;
 use App\Models\User;

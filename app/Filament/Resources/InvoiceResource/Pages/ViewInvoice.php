@@ -2,8 +2,8 @@
 
 namespace App\Filament\Resources\InvoiceResource\Pages;
 
+use App\Enums\InvoiceStatus;
 use App\Filament\Resources\InvoiceResource;
-use App\InvoiceStatus;
 use App\Models\Role;
 use App\Models\User;
 use Filament\Actions;

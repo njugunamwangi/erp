@@ -2,9 +2,9 @@
 
 namespace App\Filament\Resources\InvoiceResource\Pages;
 
+use App\Enums\InvoiceStatus;
 use App\Filament\Resources\InvoiceResource;
 use App\Filament\Resources\InvoiceResource\Widgets\InvoiceStatsOverview;
-use App\InvoiceStatus;
 use App\Models\Invoice;
 use Filament\Actions;
 use Filament\Resources\Components\Tab;

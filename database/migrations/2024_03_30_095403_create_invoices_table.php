@@ -1,6 +1,6 @@
 <?php
 
-use App\InvoiceStatus;
+use App\Enums\InvoiceStatus;
 use App\Models\Quote;
 use App\Models\User;
 use Illuminate\Database\Migrations\Migration;

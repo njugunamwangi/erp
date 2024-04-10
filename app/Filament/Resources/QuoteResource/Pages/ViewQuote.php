@@ -2,9 +2,9 @@
 
 namespace App\Filament\Resources\QuoteResource\Pages;
 
+use App\Enums\InvoiceSeries;
 use App\Filament\Resources\InvoiceResource;
 use App\Filament\Resources\QuoteResource;
-use App\InvoiceSeries;
 use App\Models\Invoice;
 use App\Models\Role;
 use App\Models\User;

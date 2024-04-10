@@ -2,7 +2,7 @@
 
 namespace App\Filament\Resources\InvoiceResource\Widgets;
 
-use App\InvoiceStatus;
+use App\Enums\InvoiceStatus;
 use App\Models\Invoice;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
