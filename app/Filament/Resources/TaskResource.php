@@ -8,8 +8,13 @@ use App\Models\Task;
 use App\Models\User;
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Infolists\Components\Actions\Action as ComponentsActionsAction;
+use Filament\Infolists\Components\Section;
+use Filament\Infolists\Components\TextEntry;
+use Filament\Infolists\Infolist;
 use Filament\Notifications\Actions\Action;
 use Filament\Notifications\Notification;
+use Filament\Notifications\Actions\Action as ActionsAction;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Actions\ActionGroup;
@@ -138,6 +143,59 @@ class TaskResource extends Resource
                     Tables\Actions\ForceDeleteBulkAction::make(),
                     Tables\Actions\RestoreBulkAction::make(),
                 ]),
+            ]);
+    }
+
+    public static function infolist(Infolist $infolist): Infolist
+    {
+        return $infolist
+            ->schema([
+                Section::make('Task Overview')
+                    ->headerActions([
+                        ComponentsActionsAction::make('completed')
+                            ->label('Mark as completed')
+                            ->requiresConfirmation()
+                            ->visible(fn($record) => $record->is_completed === false)
+                            ->action(fn($record) => $record->completed())
+                            ->after(function($record) {
+                                $recipients = User::role(Role::ADMIN)->get();
+
+                                foreach ($recipients as $recipient) {
+                                    Notification::make()
+                                        ->title('Task completed')
+                                        ->body(auth()->user()->name.' marked task #'.$record->id . ' as completed')
+                                        ->icon('heroicon-o-check')
+                                        ->success()
+                                        ->actions([
+                                            ActionsAction::make('View')
+                                                ->url(TaskResource::getUrl('view', ['record' => $record->id]))
+                                                ->markAsRead(),
+                                        ])
+                                        ->sendToDatabase($recipient);
+                                }
+                            })
+                    ])
+                    ->schema([
+                        TextEntry::make('assignedBy.name')
+                            ->label('Assigned By'),
+                        TextEntry::make('assignedFor.name')
+                            ->label('Customer')
+                            ->color('success')
+                            ->icon('heroicon-o-user')
+                            ->iconColor('success')
+                            ->url(fn($record) => UserResource::getUrl('view', ['record' => $record->assigned_for])),
+                        TextEntry::make('assignedTo.name')
+                            ->label('Staff')
+                            ->color('info')
+                            ->iconColor('info')
+                            ->icon('heroicon-o-user')
+                            ->url(fn($record) => UserResource::getUrl('view', ['record' => $record->assigned_to])),
+                        TextEntry::make('due_date')
+                            ->date(),
+                        TextEntry::make('description')
+                            ->html()
+                            ->columnSpanFull()
+                    ])->columns(3)
             ]);
     }
 
