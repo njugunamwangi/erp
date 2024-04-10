@@ -87,6 +87,9 @@ class AdminPanelProvider extends PanelProvider
                 NavigationGroup::make()
                     ->label('User Management')
                     ->collapsed(),
+                NavigationGroup::make()
+                    ->label('Accounting & Finance')
+                    ->collapsed(),
             ])
             ->databaseNotifications()
             ->databaseNotificationsPolling('1s')
