@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "71593a137c174955098a17855bdca34b",
+    "content-hash": "bc56dd88991be76483196637faeb8a65",
     "packages": [
         {
             "name": "althinect/filament-spatie-roles-permissions",
@@ -2698,6 +2698,73 @@
                 }
             ],
             "time": "2023-12-03T19:50:20+00:00"
+        },
+        {
+            "name": "iankumu/mpesa",
+            "version": "1.3.5",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Iankumu/mpesa.git",
+                "reference": "130ba6e5639f7bcfc51a8350615b4ce39b4902dc"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Iankumu/mpesa/zipball/130ba6e5639f7bcfc51a8350615b4ce39b4902dc",
+                "reference": "130ba6e5639f7bcfc51a8350615b4ce39b4902dc",
+                "shasum": ""
+            },
+            "require": {
+                "guzzlehttp/guzzle": "^7.5",
+                "illuminate/http": "^8.0 | ^9.0 | ^10.0 | ^11.0",
+                "illuminate/support": "^8.0 | ^9.0 | ^10.0 | ^11.0",
+                "php": "^8.0 | ^8.1 | ^8.2"
+            },
+            "require-dev": {
+                "orchestra/testbench": "^6.0 | ^7.0 | ^8.0 |^9.0",
+                "pestphp/pest": "^1.0 |^2.0",
+                "phpunit/phpunit": "^9.0 | ^10.0 | ^11.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Iankumu\\Mpesa\\MpesaServiceProvider"
+                    ],
+                    "aliases": {
+                        "Mpesa": "Iankumu\\Mpesa\\Facades\\Mpesa"
+                    }
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Iankumu\\Mpesa\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Ian Kumu",
+                    "email": "ian@iankumu.com",
+                    "homepage": "https://www.iankumu.com",
+                    "role": "Developer"
+                }
+            ],
+            "description": "A package that helps integrate the Mpesa APIs to your Laravel Project",
+            "homepage": "https://github.com/Iankumu/mpesa",
+            "keywords": [
+                "laravel",
+                "laravel mpesa",
+                "laravel-mpesa",
+                "mpesa"
+            ],
+            "support": {
+                "issues": "https://github.com/Iankumu/mpesa/issues",
+                "source": "https://github.com/Iankumu/mpesa/tree/1.3.5"
+            },
+            "time": "2024-03-13T23:11:09+00:00"
         },
         {
             "name": "kirschbaum-development/eloquent-power-joins",
