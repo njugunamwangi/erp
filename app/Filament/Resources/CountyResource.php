@@ -58,8 +58,10 @@ class CountyResource extends Resource
                 Tables\Filters\TrashedFilter::make(),
             ])
             ->actions([
-                Tables\Actions\ViewAction::make(),
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\ViewAction::make()
+                    ->icon('heroicon-o-eye'),
+                Tables\Actions\EditAction::make()
+                    ->icon('heroicon-o-pencil-square'),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

@@ -271,6 +271,8 @@ class InvoiceResource extends Resource
                         ->visible(fn($record) => $record->status == InvoiceStatus::Unpaid && strip_tags($record->total) <= 150000)
                         ->icon('heroicon-o-currency-euro')
                         ->modalSubmitActionLabel('Send STK Push')
+                        ->modalIcon('heroicon-o-currency-euro')
+                        ->modalAlignment('center')
                         ->form([
                             PhoneInput::make('phone')
                                 ->defaultCountry('KE')

@@ -47,8 +47,10 @@ class LeadResource extends Resource
                 Tables\Filters\TrashedFilter::make(),
             ])
             ->actions([
-                Tables\Actions\ViewAction::make(),
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\ViewAction::make()
+                    ->icon('heroicon-o-eye'),
+                Tables\Actions\EditAction::make()
+                    ->icon('heroicon-o-pencil-square'),
                 Tables\Actions\DeleteAction::make()
                     ->action(function ($data, $record) {
                         if ($record->users()->count() > 0) {

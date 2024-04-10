@@ -224,6 +224,7 @@ class UserResource extends Resource
                         ->visible(fn (User $user) => $user->hasRole(Role::CUSTOMER))
                         ->hidden(fn ($record) => $record->trashed())
                         ->icon('heroicon-m-puzzle-piece')
+                        ->color('warning')
                         ->modalDescription(fn (User $record) => 'Move '.$record->name.' to another stage')
                         ->modalIcon('heroicon-o-puzzle-piece')
                         ->form([
@@ -264,6 +265,7 @@ class UserResource extends Resource
                     Tables\Actions\Action::make('Add Task')
                         ->visible(fn (User $user) => $user->hasRole(Role::CUSTOMER))
                         ->icon('heroicon-s-clipboard-document')
+                        ->color('info')
                         ->form([
                             Forms\Components\RichEditor::make('description')
                                 ->required(),
