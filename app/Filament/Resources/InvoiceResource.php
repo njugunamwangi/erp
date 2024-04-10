@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\InvoiceResource\Pages;
 use App\Filament\Resources\InvoiceResource\Widgets\InvoiceStatsOverview;
+use App\Http\Controllers\MPesaSTKPushController;
 use App\InvoiceSeries;
 use App\InvoiceStatus;
 use App\Models\Invoice;
@@ -29,9 +30,12 @@ use Filament\Tables;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Table;
+use Iankumu\Mpesa\Facades\Mpesa;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Ysfkaya\FilamentPhoneInput\Forms\PhoneInput;
+use Ysfkaya\FilamentPhoneInput\PhoneInputNumberType;
 
 class InvoiceResource extends Resource
 {
@@ -261,6 +265,28 @@ class InvoiceResource extends Resource
                         ->icon('heroicon-o-document-text')
                         ->visible(fn ($record) => $record->quote)
                         ->url(fn ($record) => QuoteResource::getUrl('view', ['record' => $record->quote_id])),
+                    Action::make('stkPush')
+                        ->label('Request M-Pesa Payment')
+                        ->color('warning')
+                        ->visible(fn($record) => $record->status == InvoiceStatus::Unpaid && strip_tags($record->total) <= 150000)
+                        ->icon('heroicon-o-currency-euro')
+                        ->modalSubmitActionLabel('Send STK Push')
+                        ->form([
+                            PhoneInput::make('phone')
+                                ->defaultCountry('KE')
+                                ->required()
+                                ->default(fn($record) => $record->user->phone)
+                                ->displayNumberFormat(PhoneInputNumberType::INTERNATIONAL)
+                                ->focusNumberFormat(PhoneInputNumberType::INTERNATIONAL),
+                            TextInput::make('amount')
+                                ->readOnly()
+                                ->default(fn($record) => number_format($record->total, 2, '.', ','))
+                                ->prefix('Kes')
+                        ])
+                        ->action(function(array $data) {
+                            $response = Mpesa::stkpush($data['phone'], strip_tags($data['amount']), 600983);
+                            dd(json_decode((string)$response, true));
+                        }),
                 ]),
             ])
             ->bulkActions([

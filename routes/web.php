@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\DownloadInvoiceController;
 use App\Http\Controllers\DownloadQuoteController;
+use App\Http\Controllers\MPesaSTKPushController;
 use App\Http\Controllers\ViewInvoiceController;
 use App\Http\Controllers\ViewQuoteController;
 use App\Livewire\AcceptInvitation;
@@ -36,6 +37,9 @@ Route::middleware([
         ->name('invoice.download');
 
     Route::get('chats', Chats::class)->name('chats');
+
+    Route::post('stk-push', [MPesaSTKPushController::class, 'STKPush'])->name('mpesa.stk-push');
+    Route::post('stk-confirm', [MPesaSTKPushController::class, 'STKConfirm'])->name('mpesa.confirm');
 });
 
 Route::middleware('signed')
