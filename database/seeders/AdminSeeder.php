@@ -16,8 +16,9 @@ class AdminSeeder extends Seeder
         $user = User::create([
             'name' => 'Ndachi',
             'email' => 'info@ndachi.dev',
-            'phone' => fake()->phoneNumber(),
+            'phone' => '+254715789160',
             'password' => bcrypt('Password'),
+            'email_verified_at' => now()
         ]);
 
         $user->assignRole(Role::ADMIN);
