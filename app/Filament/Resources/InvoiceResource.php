@@ -8,8 +8,10 @@ use App\Filament\Resources\InvoiceResource\Pages;
 use App\Filament\Resources\InvoiceResource\Widgets\InvoiceStatsOverview;
 use App\Http\Controllers\MPesaSTKPushController;
 use App\Models\Invoice;
+use App\Models\MpesaSTK;
 use App\Models\Role;
 use App\Models\User;
+use App\Mpesa\STKPush;
 use Filament\Forms;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Grid;
@@ -34,6 +36,7 @@ use Iankumu\Mpesa\Facades\Mpesa;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Http\Request;
 use Ysfkaya\FilamentPhoneInput\Forms\PhoneInput;
 use Ysfkaya\FilamentPhoneInput\PhoneInputNumberType;
 
@@ -285,9 +288,33 @@ class InvoiceResource extends Resource
                                 ->default(fn($record) => number_format($record->total, 2, '.', ','))
                                 ->prefix('Kes')
                         ])
-                        ->action(function(array $data) {
+                        ->action(function(array $data, $record) {
                             $response = Mpesa::stkpush($data['phone'], strip_tags($data['amount']), 600983);
-                            dd(json_decode((string)$response, true));
+                            $result = json_decode((string)$response, true);
+
+                            $mpesa = MpesaSTK::create([
+                                'merchant_request_id' =>  $result['MerchantRequestID'],
+                                'checkout_request_id' =>  $result['CheckoutRequestID'],
+                                'invoice_id' => $record->id,
+                                'phonenumber' => $data['phone'],
+                                'amount' => $data['amount'],
+                            ]);
+
+                            $recipients = User::role(Role::ADMIN)->get();
+
+                            foreach ($recipients as $recipient) {
+                                Notification::make()
+                                    ->title('M-Pesa transaction initiated')
+                                    ->body(auth()->user()->name.' inititated M-Pesa payment for ' . $record->serial)
+                                    ->icon('heroicon-o-currency-euro')
+                                    ->warning()
+                                    ->actions([
+                                        ActionsAction::make('Check Status')
+                                            ->url(MpesaSTKResource::getUrl('view', ['record' => $mpesa->id]))
+                                            ->markAsRead(),
+                                    ])
+                                    ->sendToDatabase($recipient);
+                            }
                         }),
                 ]),
             ])
