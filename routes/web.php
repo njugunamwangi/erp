@@ -39,7 +39,6 @@ Route::middleware([
     Route::get('chats', Chats::class)->name('chats');
 
     Route::post('stk-push', [MPesaSTKPushController::class, 'STKPush'])->name('mpesa.stk-push');
-    Route::post('stk-confirm', [MPesaSTKPushController::class, 'STKConfirm'])->name('mpesa.confirm');
 });
 
 Route::middleware('signed')
