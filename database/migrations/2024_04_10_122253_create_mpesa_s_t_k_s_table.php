@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Invoice;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -21,6 +22,7 @@ return new class extends Migration
             $table->string('mpesa_receipt_number')->nullable();
             $table->string('transaction_date')->nullable();
             $table->string('phonenumber')->nullable();
+            $table->foreignIdFor(Invoice::class)->nullable()->constrained();
             $table->timestamps();
         });
     }

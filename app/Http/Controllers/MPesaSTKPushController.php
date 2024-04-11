@@ -18,7 +18,6 @@ class MPesaSTKPushController extends Controller
      */
     public function STKPush(Request $request)
     {
-        dd($request);
         $amount = $request->input('amount');
         $phoneno = $request->input('phonenumber');
         $account_number = $request->input('account_number');
