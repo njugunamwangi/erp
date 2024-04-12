@@ -252,35 +252,7 @@ class QuoteResource extends Resource
                                 'serial' => $data['series'].'-'.str_pad($serial_number, 5, '0', STR_PAD_LEFT),
                             ]);
 
-                            $customer = new Buyer([
-                                'name' => $invoice->user->name,
-                                'custom_fields' => [
-                                    'email' => $invoice->user->email,
-                                    'phone' => $invoice->user->phone,
-                                ],
-                            ]);
-
-                            $items = [];
-
-                            foreach ($invoice->items as $item) {
-                                $items[] = (new InvoiceItem())
-                                    ->title($item['description'])
-                                    ->pricePerUnit($item['unit_price'])
-                                    ->subTotalPrice($item['unit_price'] * $item['quantity'])
-                                    ->quantity($item['quantity']);
-                            }
-
-                            $pdf = FacadesInvoice::make()
-                                ->buyer($customer)
-                                ->status($invoice->status->name)
-                                ->taxRate($invoice->taxes)
-                                ->filename($invoice->serial)
-                                ->template('invoice')
-                                ->series($invoice->series->name)
-                                ->sequence($invoice->serial_number)
-                                ->delimiter('-')
-                                ->addItems($items)
-                                ->save('public');
+                            $invoice->savePdf();
 
                             Mail::to($invoice->user->email)->send(new SendInvoice($invoice));
 
