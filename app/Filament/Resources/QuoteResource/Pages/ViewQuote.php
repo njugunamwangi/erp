@@ -3,8 +3,10 @@
 namespace App\Filament\Resources\QuoteResource\Pages;
 
 use App\Enums\InvoiceSeries;
+use App\Enums\InvoiceStatus;
 use App\Filament\Resources\InvoiceResource;
 use App\Filament\Resources\QuoteResource;
+use App\Mail\SendInvoice;
 use App\Models\Invoice;
 use App\Models\Role;
 use App\Models\User;
@@ -14,6 +16,7 @@ use Filament\Forms\Components\Select;
 use Filament\Notifications\Actions\Action as ActionsAction;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ViewRecord;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\URL;
 
 class ViewQuote extends ViewRecord
@@ -61,9 +64,15 @@ class ViewQuote extends ViewRecord
                         'subtotal' => $record->subtotal,
                         'taxes' => $record->taxes,
                         'total' => $record->total,
+                        'status' => InvoiceStatus::Unpaid,
+                        'series' => $data['series'],
                         'serial_number' => $serial_number = Invoice::max('serial_number') + 1,
                         'serial' => $data['series'].'-'.str_pad($serial_number, 5, '0', STR_PAD_LEFT),
                     ]);
+
+                    $invoice->savePdf();
+
+                    Mail::to($invoice->user->email)->send(new SendInvoice($invoice));
 
                     $recipients = User::role(Role::ADMIN)->get();
 
