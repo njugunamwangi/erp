@@ -300,6 +300,9 @@ class InvoiceResource extends Resource
                                 'amount' => $data['amount'],
                             ]);
 
+                            // $stk_push_confirm = (new STKPush())->confirm($result);
+                            // dd($stk_push_confirm);
+
                             $recipients = User::role(Role::ADMIN)->get();
 
                             foreach ($recipients as $recipient) {

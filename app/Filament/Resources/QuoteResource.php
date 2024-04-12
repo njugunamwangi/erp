@@ -6,6 +6,7 @@ use App\Enums\InvoiceSeries;
 use App\Enums\QuoteSeries;
 use App\Filament\Resources\QuoteResource\Pages;
 use App\Filament\Resources\QuoteResource\Widgets\QuoteOverviewStats;
+use App\Mail\SendInvoice;
 use App\Models\Invoice;
 use App\Models\Quote;
 use App\Models\Role;
@@ -33,6 +34,7 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Facades\Mail;
 
 class QuoteResource extends Resource
 {
@@ -243,6 +245,8 @@ class QuoteResource extends Resource
                                 'serial_number' => $serial_number = Invoice::max('serial_number') + 1,
                                 'serial' => $data['series'].'-'.str_pad($serial_number, 5, '0', STR_PAD_LEFT),
                             ]);
+
+                            // Mail::to($invoice->user->email)->send(new SendInvoice($invoice));
 
                             $recipients = User::role(Role::ADMIN)->get();
 
