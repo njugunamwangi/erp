@@ -3,6 +3,7 @@
 namespace App\Filament\Resources;
 
 use App\Enums\InvoiceSeries;
+use App\Enums\InvoiceStatus;
 use App\Enums\QuoteSeries;
 use App\Filament\Resources\QuoteResource\Pages;
 use App\Filament\Resources\QuoteResource\Widgets\QuoteOverviewStats;
@@ -35,6 +36,9 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Facades\Mail;
+use LaravelDaily\Invoices\Classes\Buyer;
+use LaravelDaily\Invoices\Classes\InvoiceItem;
+use LaravelDaily\Invoices\Facades\Invoice as FacadesInvoice;
 
 class QuoteResource extends Resource
 {
@@ -238,15 +242,47 @@ class QuoteResource extends Resource
                             $invoice = Invoice::create([
                                 'user_id' => $record->user_id,
                                 'quote_id' => $record->id,
+                                'status' => InvoiceStatus::Unpaid,
                                 'items' => $record->items,
                                 'subtotal' => $record->subtotal,
                                 'taxes' => $record->taxes,
                                 'total' => $record->total,
+                                'series' => $data['series'],
                                 'serial_number' => $serial_number = Invoice::max('serial_number') + 1,
                                 'serial' => $data['series'].'-'.str_pad($serial_number, 5, '0', STR_PAD_LEFT),
                             ]);
 
-                            // Mail::to($invoice->user->email)->send(new SendInvoice($invoice));
+                            $customer = new Buyer([
+                                'name' => $invoice->user->name,
+                                'custom_fields' => [
+                                    'email' => $invoice->user->email,
+                                    'phone' => $invoice->user->phone,
+                                ],
+                            ]);
+
+                            $items = [];
+
+                            foreach ($invoice->items as $item) {
+                                $items[] = (new InvoiceItem())
+                                    ->title($item['description'])
+                                    ->pricePerUnit($item['unit_price'])
+                                    ->subTotalPrice($item['unit_price'] * $item['quantity'])
+                                    ->quantity($item['quantity']);
+                            }
+
+                            $pdf = FacadesInvoice::make()
+                                ->buyer($customer)
+                                ->status($invoice->status->name)
+                                ->taxRate($invoice->taxes)
+                                ->filename($invoice->serial)
+                                ->template('invoice')
+                                ->series($invoice->series->name)
+                                ->sequence($invoice->serial_number)
+                                ->delimiter('-')
+                                ->addItems($items)
+                                ->save('public');
+
+                            Mail::to($invoice->user->email)->send(new SendInvoice($invoice));
 
                             $recipients = User::role(Role::ADMIN)->get();
 

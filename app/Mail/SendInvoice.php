@@ -53,11 +53,7 @@ class SendInvoice extends Mailable
      */
     public function attachments(): array
     {
-        $pdf = route('invoice.view', $this->invoice);
-
-        $name = 'invoice_'.$this->invoice->serial;
-
-        Storage::disk('public')->put($name, $pdf);
+        $name = 'invoice_' . $this->invoice->series->name . '_' . str_pad($this->invoice->serial_number, 5, '0', STR_PAD_LEFT) . '.pdf';
 
         return [
             Attachment::fromPath(storage_path('app/public/' . $name))
