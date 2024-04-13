@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Task;
 use App\Models\User;
 use App\Models\Vertical;
 use Illuminate\Database\Migrations\Migration;
@@ -15,6 +16,7 @@ return new class extends Migration
     {
         Schema::create('quotes', function (Blueprint $table) {
             $table->id();
+            $table->foreignIdFor(Task::class);
             $table->foreignIdFor(User::class)->constrained();
             $table->foreignIdFor(Vertical::class)->constrained();
             $table->bigInteger('total');

@@ -24,6 +24,10 @@ class Quote extends Model
         ];
     }
 
+    public function task(): HasOne {
+        return $this->hasOne(Task::class);
+    }
+
     public function invoice(): HasOne
     {
         return $this->hasOne(Invoice::class);
