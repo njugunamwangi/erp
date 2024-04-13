@@ -19,6 +19,9 @@ class DatabaseSeeder extends Seeder
             VerticalSeeder::class,
             RoleSeeder::class,
             AdminSeeder::class,
+            StaffSeeder::class,
+            CustomerSeeder::class,
+            TaskSeeder::class,
             CustomFieldSeeder::class,
             CountySeeder::class,
         ]);
