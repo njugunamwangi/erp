@@ -6,6 +6,7 @@ use App\Enums\InvoiceSeries;
 use App\Enums\InvoiceStatus;
 use App\Filament\Resources\UserResource\Pages;
 use App\Filament\Resources\UserResource\RelationManagers\PipelinesRelationManager;
+use App\Mail\SendInvoice;
 use App\Models\CustomField;
 use App\Models\Invoice;
 use App\Models\Lead;
@@ -44,6 +45,7 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 use Ysfkaya\FilamentPhoneInput\Forms\PhoneInput;
 use Ysfkaya\FilamentPhoneInput\Infolists\PhoneEntry;
@@ -727,9 +729,15 @@ class UserResource extends Resource
                                                                         'subtotal' => $record->subtotal,
                                                                         'taxes' => $record->taxes,
                                                                         'total' => $record->total,
+                                                                        'status' => InvoiceStatus::Unpaid,
+                                                                        'series' => $data['series'],
                                                                         'serial_number' => $serial_number = Invoice::max('serial_number') + 1,
                                                                         'serial' => $data['series'].'-'.str_pad($serial_number, 5, '0', STR_PAD_LEFT),
                                                                     ]);
+
+                                                                    $invoice->savePdf();
+
+                                                                    Mail::to($invoice->user->email)->send(new SendInvoice($invoice));
 
                                                                     $recipients = User::role(Role::ADMIN)->get();
 
