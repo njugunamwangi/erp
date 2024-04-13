@@ -23,7 +23,7 @@ class TaskFactory extends Factory
             'assigned_to' => fake()->randomElement(Role::find(Role::STAFF)->users()->get()->pluck('id')),
             'assigned_for' => fake()->randomElement(Role::find(Role::CUSTOMER)->users()->get()->pluck('id')),
             'description' => fake()->paragraph(),
-            'due_date' => Carbon::now()->addDays(fake()->numberBetween(101, 200)),
+            'due_date' => Carbon::now()->addDays(fake()->numberBetween(5, 30)),
             'is_completed' => fake()->randomElement([true, false])
         ];
     }
