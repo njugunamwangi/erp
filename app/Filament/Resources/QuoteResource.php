@@ -11,6 +11,7 @@ use App\Mail\SendInvoice;
 use App\Models\Invoice;
 use App\Models\Quote;
 use App\Models\Role;
+use App\Models\Task;
 use App\Models\User;
 use Filament\Forms;
 use Filament\Forms\Components\Fieldset;
@@ -57,6 +58,7 @@ class QuoteResource extends Resource
                             ->schema([
                                 Forms\Components\Select::make('user_id')
                                     ->relationship('user', 'name')
+                                    ->options(Role::find(Role::CUSTOMER)->users()->get()->pluck('name', 'id'))
                                     ->searchable()
                                     ->preload()
                                     ->required()
@@ -68,8 +70,17 @@ class QuoteResource extends Resource
                                     ->preload()
                                     ->required(),
                             ]),
-                        Grid::make(1)
+                        Grid::make(2)
                             ->schema([
+                                Select::make('task_id')
+                                    ->relationship('task', 'description', modifyQueryUsing: function (Builder $query, Get $get) {
+                                        return $query->where('assigned_for', $get('user_id'));
+                                    })
+                                    ->getOptionLabelFromRecordUsing(fn (Model $record) => "{$record->description} \n\n Customer - {$record->assignedFor->name}, Staff - {$record->assignedTo->name}")
+                                    ->label('Task')
+                                    ->searchable()
+                                    ->preload()
+                                    ->required(),
                                 Select::make('series')
                                     ->required()
                                     ->enum(QuoteSeries::class)
