@@ -32,6 +32,7 @@ use Filament\Forms\Set;
 use Filament\Notifications\Actions\Action as ActionsAction;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ViewRecord;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
 class ViewUser extends ViewRecord
@@ -82,7 +83,10 @@ class ViewUser extends ViewRecord
                             ->schema([
                                 Select::make('task_id')
                                     ->label('Task')
-                                    ->options(Task::where('assigned_for', '=', $this->record->id)->get()->pluck('description', 'id'))
+                                    ->options(Task::where('assigned_for', '=', $this->record->id)
+                                        ->where(fn(Builder $query) => $query->whereDoesntHave('quote'))
+                                        ->get()
+                                        ->pluck('description', 'id'))
                                     ->searchable()
                                     ->preload()
                                     ->required(),

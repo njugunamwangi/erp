@@ -64,23 +64,6 @@ class QuoteResource extends Resource
                                     ->required()
                                     ->getSearchResultsUsing(fn (string $search): array => User::where('name', 'like', "%{$search}%")->limit(50)->pluck('name', 'id')->toArray())
                                     ->getOptionLabelsUsing(fn (array $values): array => User::whereIn('id', $values)->pluck('name', 'id')->toArray()),
-                                Forms\Components\Select::make('vertical_id')
-                                    ->relationship('vertical', 'vertical')
-                                    ->searchable()
-                                    ->preload()
-                                    ->required(),
-                            ]),
-                        Grid::make(2)
-                            ->schema([
-                                Select::make('task_id')
-                                    ->relationship('task', 'description', modifyQueryUsing: function (Builder $query, Get $get) {
-                                        return $query->where('assigned_for', $get('user_id'));
-                                    })
-                                    ->getOptionLabelFromRecordUsing(fn (Model $record) => "{$record->description} \n\n Customer - {$record->assignedFor->name}, Staff - {$record->assignedTo->name}")
-                                    ->label('Task')
-                                    ->searchable()
-                                    ->preload()
-                                    ->required(),
                                 Select::make('series')
                                     ->required()
                                     ->enum(QuoteSeries::class)
@@ -88,6 +71,18 @@ class QuoteResource extends Resource
                                     ->searchable()
                                     ->preload()
                                     ->default(QuoteSeries::IN2QUT->name),
+                            ]),
+                        Grid::make(1)
+                            ->schema([
+                                Select::make('task_id')
+                                    ->relationship('task', 'description', modifyQueryUsing: function (Builder $query, Get $get) {
+                                        return $query->where('assigned_for', $get('user_id'))->whereDoesntHave('quote');
+                                    })
+                                    ->getOptionLabelFromRecordUsing(fn (Model $record) => "{$record->description} \n\n Customer - {$record->assignedFor->name}, Staff - {$record->assignedTo->name}")
+                                    ->label('Task')
+                                    ->searchable()
+                                    ->preload()
+                                    ->required(),
                             ]),
                         Fieldset::make('Quote Summary')
                             ->schema([
