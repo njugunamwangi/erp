@@ -30,6 +30,11 @@ class Vertical extends Model
         return $this->hasMany(Quote::class);
     }
 
+    public function tasks(): HasMany
+    {
+         return $this->hasMany(Task::class);
+    }
+
     public static function getForm(): array
     {
         return [
