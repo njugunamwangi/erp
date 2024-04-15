@@ -80,6 +80,9 @@ class TaskResource extends Resource
                     ->color('success')
                     ->icon('heroicon-o-user')
                     ->sortable(),
+                Tables\Columns\TextColumn::make('vertical.vertical')
+                    ->searchable()
+                    ->sortable(),
                 Tables\Columns\TextColumn::make('due_date')
                     ->date()
                     ->sortable(),

@@ -13,6 +13,7 @@ use App\Filament\Resources\UserResource\Widgets\TasksWidget;
 use App\Models\Invoice;
 use App\Models\Quote;
 use App\Models\Role;
+use App\Models\Task;
 use App\Models\User;
 use App\Models\Vertical;
 use Filament\Actions;
@@ -31,6 +32,7 @@ use Filament\Forms\Set;
 use Filament\Notifications\Actions\Action as ActionsAction;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ViewRecord;
+use Illuminate\Database\Eloquent\Model;
 
 class ViewUser extends ViewRecord
 {
@@ -74,12 +76,13 @@ class ViewUser extends ViewRecord
                     ->color('success')
                     ->icon('heroicon-o-document-check')
                     ->modalSubmitActionLabel('Generate Quote')
+                    ->visible(fn(User $user) => $user->hasRole(Role::CUSTOMER))
                     ->form([
                         Grid::make(2)
                             ->schema([
-                                Select::make('vertical_id')
-                                    ->label('Vertical')
-                                    ->options(Vertical::all()->pluck('vertical', 'id'))
+                                Select::make('task_id')
+                                    ->label('Task')
+                                    ->options(Task::where('assigned_for', '=', $this->record->id)->get()->pluck('description', 'id'))
                                     ->searchable()
                                     ->preload()
                                     ->required(),
@@ -91,69 +94,70 @@ class ViewUser extends ViewRecord
                                     ->preload()
                                     ->default(QuoteSeries::IN2QUT->name),
                             ]),
-                            Fieldset::make('Quote Summary')
-                                ->schema([
-                                    Section::make()
-                                        ->schema([
-                                            Repeater::make('items')
-                                                ->columns(4)
-                                                ->live()
-                                                ->schema([
-                                                    TextInput::make('quantity')
-                                                        ->numeric()
-                                                        ->required()
-                                                        ->live()
-                                                        ->default(1),
-                                                    TextInput::make('description')
-                                                        ->required()
-                                                        ->placeholder('Aerial Spraying'),
-                                                    TextInput::make('unit_price')
-                                                        ->required()
-                                                        ->live()
-                                                        ->numeric()
-                                                        ->default(1000),
-                                                    Placeholder::make('sum')
-                                                        ->label('Sub Total')
-                                                        ->live()
-                                                        ->content(function (Get $get) {
-                                                            return 'Kes '.number_format($get('quantity') * $get('unit_price'), 2, '.', ',');
-                                                        }),
-                                                ])
-                                                ->afterStateUpdated(function (Get $get, Set $set) {
-                                                    self::updateTotals($get, $set);
-                                                })
-                                                ->addActionLabel('Add Item')
-                                                ->columnSpanFull(),
-                                        ]),
-                                    Section::make()
-                                        ->schema([
-                                            TextInput::make('subtotal')
-                                                ->numeric()
-                                                ->readOnly()
-                                                ->prefix('Kes')
-                                                ->afterStateHydrated(function (Get $get, Set $set) {
-                                                    self::updateTotals($get, $set);
-                                                }),
-                                            TextInput::make('taxes')
-                                                ->suffix('%')
-                                                ->required()
-                                                ->numeric()
-                                                ->default(16)
-                                                ->live(true)
-                                                ->afterStateUpdated(function (Get $get, Set $set) {
-                                                    self::updateTotals($get, $set);
-                                                }),
-                                            TextInput::make('total')
-                                                ->numeric()
-                                                ->readOnly()
-                                                ->prefix('Kes'),
-                                        ]),
-                                ])
+                        Fieldset::make('Quote Summary')
+                            ->schema([
+                                Section::make()
+                                    ->schema([
+                                        Repeater::make('items')
+                                            ->columns(4)
+                                            ->live()
+                                            ->schema([
+                                                TextInput::make('quantity')
+                                                    ->numeric()
+                                                    ->required()
+                                                    ->live()
+                                                    ->default(1),
+                                                TextInput::make('description')
+                                                    ->required()
+                                                    ->placeholder('Aerial Spraying'),
+                                                TextInput::make('unit_price')
+                                                    ->required()
+                                                    ->live()
+                                                    ->numeric()
+                                                    ->default(1000),
+                                                Placeholder::make('sum')
+                                                    ->label('Sub Total')
+                                                    ->live()
+                                                    ->content(function (Get $get) {
+                                                        return 'Kes '.number_format($get('quantity') * $get('unit_price'), 2, '.', ',');
+                                                    }),
+                                            ])
+                                            ->afterStateUpdated(function (Get $get, Set $set) {
+                                                self::updateTotals($get, $set);
+                                            })
+                                            ->addActionLabel('Add Item')
+                                            ->columnSpanFull(),
+                                    ]),
+                                Section::make()
+                                    ->schema([
+                                        TextInput::make('subtotal')
+                                            ->numeric()
+                                            ->readOnly()
+                                            ->prefix('Kes')
+                                            ->afterStateHydrated(function (Get $get, Set $set) {
+                                                self::updateTotals($get, $set);
+                                            }),
+                                        TextInput::make('taxes')
+                                            ->suffix('%')
+                                            ->required()
+                                            ->numeric()
+                                            ->default(16)
+                                            ->live(true)
+                                            ->afterStateUpdated(function (Get $get, Set $set) {
+                                                self::updateTotals($get, $set);
+                                            }),
+                                        TextInput::make('total')
+                                            ->numeric()
+                                            ->readOnly()
+                                            ->prefix('Kes'),
+                                    ]),
+                            ])
                     ])
                     ->action(function(array $data, $record) {
                         $quote = $record->quotes()->create([
                             'user_id' => $record->id,
-                            'vertical_id' => $data['vertical_id'],
+                            'task_id' => $task_id = $data['task_id'],
+                            'vertical_id' => Task::where('id', $task_id)->first()->vertical_id,
                             'subtotal' => $data['subtotal'],
                             'taxes' => $data['taxes'],
                             'total' => $data['total'],
@@ -182,6 +186,7 @@ class ViewUser extends ViewRecord
                 Action::make('invoice')
                     ->label('Generate Invoice')
                     ->color('primary')
+                    ->visible(fn(User $user) => $user->hasRole(Role::CUSTOMER))
                     ->icon('heroicon-o-clipboard-document-check')
                     ->modalSubmitActionLabel('Generate Invoice')
                     ->form([

@@ -509,11 +509,13 @@ class UserResource extends Resource
                                                                     ->iconColor('primary')
                                                                     ->url(fn($record) => UserResource::getUrl('view', ['record' => $record->assignedTo->id]))
                                                                     ->hidden(fn ($state) => is_null($state)),
+                                                                TextEntry::make('vertical.vertical')
+                                                                    ->icon('heroicon-o-adjustments-horizontal'),
                                                                 TextEntry::make('due_date')
                                                                     ->hidden(fn ($state) => is_null($state))
                                                                     ->date(),
                                                             ])
-                                                            ->columns(),
+                                                            ->columns(3),
                                                     ]),
                                                 Tabs\Tab::make('Incomplete')
                                                     ->badge(fn ($record) => $record->incompleteTasks->count())
@@ -531,6 +533,8 @@ class UserResource extends Resource
                                                                     ->iconColor('primary')
                                                                     ->url(fn($record) => UserResource::getUrl('view', ['record' => $record->assignedTo->id]))
                                                                     ->hidden(fn ($state) => is_null($state)),
+                                                                TextEntry::make('vertical.vertical')
+                                                                    ->icon('heroicon-o-adjustments-horizontal'),
                                                                 TextEntry::make('due_date')
                                                                     ->hidden(fn ($state) => is_null($state))
                                                                     ->date(),
@@ -567,7 +571,7 @@ class UserResource extends Resource
                                                                             })
                                                                     ),
                                                             ])
-                                                            ->columns(3),
+                                                            ->columns(4),
                                                     ]),
                                             ])
                                             ->columnSpanFull(),
@@ -594,11 +598,13 @@ class UserResource extends Resource
                                                                     ->iconColor('success')
                                                                     ->url(fn($record) => UserResource::getUrl('view', ['record' => $record->assignedFor->id]))
                                                                     ->hidden(fn ($state) => is_null($state)),
+                                                                TextEntry::make('vertical.vertical')
+                                                                    ->icon('heroicon-o-adjustments-horizontal'),
                                                                 TextEntry::make('due_date')
                                                                     ->hidden(fn ($state) => is_null($state))
                                                                     ->date(),
                                                             ])
-                                                            ->columns(),
+                                                            ->columns(3),
                                                     ]),
                                                 Tabs\Tab::make('Incomplete')
                                                     ->badge(fn ($record) => $record->staffIncompleteTasks->count())
@@ -616,6 +622,8 @@ class UserResource extends Resource
                                                                     ->iconColor('success')
                                                                     ->url(fn($record) => UserResource::getUrl('view', ['record' => $record->assignedFor->id]))
                                                                     ->hidden(fn ($state) => is_null($state)),
+                                                                TextEntry::make('vertical.vertical')
+                                                                    ->icon('heroicon-o-adjustments-horizontal'),
                                                                 TextEntry::make('due_date')
                                                                     ->hidden(fn ($state) => is_null($state))
                                                                     ->date(),
@@ -652,7 +660,7 @@ class UserResource extends Resource
                                                                             })
                                                                     ),
                                                             ])
-                                                            ->columns(3),
+                                                            ->columns(4),
                                                     ]),
                                             ])
                                             ->columnSpanFull(),
