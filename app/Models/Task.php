@@ -24,6 +24,11 @@ class Task extends Model
         return $this->hasOne(Quote::class);
     }
 
+    public function expense(): HasOne
+    {
+         return $this->hasOne(Expense::class);
+    }
+
     public function assignedBy(): BelongsTo
     {
         return $this->belongsTo(User::class, 'assigned_by');
