@@ -65,19 +65,16 @@ class TaskResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('assignedBy.name')
                     ->url(fn($record) => UserResource::getUrl('view', ['record' => $record->assigned_by]))
-                    ->color('warning')
                     ->icon('heroicon-o-user')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('assignedTo.name')
                     ->label('Staff')
                     ->url(fn($record) => UserResource::getUrl('view', ['record' => $record->assigned_to]))
-                    ->color('primary')
                     ->icon('heroicon-o-user')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('assignedFor.name')
                     ->label('Customer')
                     ->url(fn($record) => UserResource::getUrl('view', ['record' => $record->assigned_for]))
-                    ->color('success')
                     ->icon('heroicon-o-user')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('vertical.vertical')
