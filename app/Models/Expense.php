@@ -14,7 +14,12 @@ class Expense extends Model
 
     public function casts(): array {
         return [
-            'items' => 'json',
+            'accommodation' => 'json',
+            'subsistence' => 'json',
+            'fuel' => 'json',
+            'labor' => 'json',
+            'material' => 'json',
+            'misc' => 'json',
         ];
     }
 

@@ -15,7 +15,12 @@ return new class extends Migration
         Schema::create('expenses', function (Blueprint $table) {
             $table->id();
             $table->foreignIdFor(Task::class)->constrained();
-            $table->json('items');
+            $table->json('accommodation')->nullable();
+            $table->json('subsistence')->nullable();
+            $table->json('fuel')->nullable();
+            $table->json('labor')->nullable();
+            $table->json('material')->nullable();
+            $table->json('misc')->nullable();
             $table->unsignedBigInteger('total');
             $table->timestamps();
         });
