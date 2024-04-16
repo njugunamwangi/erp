@@ -21,7 +21,6 @@ return new class extends Migration
             $table->json('labor')->nullable();
             $table->json('material')->nullable();
             $table->json('misc')->nullable();
-            $table->unsignedBigInteger('total');
             $table->timestamps();
         });
     }

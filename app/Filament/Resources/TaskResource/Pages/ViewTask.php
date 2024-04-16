@@ -4,6 +4,8 @@ namespace App\Filament\Resources\TaskResource\Pages;
 
 use App\Enums\Material;
 use App\Filament\Resources\TaskResource;
+use App\Models\Expense;
+use App\Models\Task;
 use Filament\Actions;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
@@ -17,6 +19,7 @@ use Filament\Forms\Components\Tabs;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
+use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ViewRecord;
 use Filament\Support\Enums\MaxWidth;
 
@@ -37,6 +40,14 @@ class ViewTask extends ViewRecord
                     ->stickyModalFooter()
                     ->stickyModalHeader()
                     ->modalSubmitActionLabel('Save')
+                    ->fillForm(fn (Task $record): array => [
+                        'accommodation' => $record->expense?->accommodation,
+                        'subsistence' => $record->expense?->subsistence,
+                        'fuel' => $record->expense?->fuel,
+                        'labor' => $record->expense?->labor,
+                        'material' => $record->expense?->material,
+                        'misc' => $record->expense?->misc,
+                    ])
                     ->form([
                         Tabs::make('items')
                             ->tabs([
@@ -47,7 +58,8 @@ class ViewTask extends ViewRecord
                                             ->columnSpanFull()
                                             ->hiddenLabel()
                                             ->schema([
-                                                DatePicker::make('date'),
+                                                DatePicker::make('date')
+                                                    ->required(),
                                                 TextInput::make('amount')
                                                     ->numeric()
                                                     ->live()
@@ -337,27 +349,43 @@ class ViewTask extends ViewRecord
                     ->action(function(array $data) {
                         $task = $this->getRecord();
 
-                        $expenses = [
-                            'task_id' => $task->id,
-                            'accommodation' => $data['accommodation'],
-                            'subsistence' => $data['subsistence'],
-                            'fuel' => $data['fuel'],
-                            'labor' => $data['labor'],
-                            'material' => $data['material'],
-                            'misc' => $data['misc'],
-                            'total' => $data['total']
-                        ];
-
-                        dd($expenses);
-
                         if($task->expense) {
-                            $this->expense->update($expenses);
+                            $task->expense()->update([
+                                'accommodation' => $data['accommodation'],
+                                'subsistence' => $data['subsistence'],
+                                'fuel' => $data['fuel'],
+                                'labor' => $data['labor'],
+                                'material' => $data['material'],
+                                'misc' => $data['misc'],
+                            ]);
                         } else {
-                            $this->expense->create($expenses);
+                            $task->expense()->create([
+                                'task_id' => $task->id,
+                                'accommodation' => $data['accommodation'],
+                                'subsistence' => $data['subsistence'],
+                                'fuel' => $data['fuel'],
+                                'labor' => $data['labor'],
+                                'material' => $data['material'],
+                                'misc' => $data['misc'],
+                            ]);
                         }
                     })
-                    ->after(function() {
+                    ->after(function(Task $record) {
+                        if($record->expense) {
+                            Notification::make()
+                                ->title('Expense updated')
+                                ->color('info')
+                                ->icon('heroicon-o-check')
+                                ->body('Task expenses have been updated successfully')
+                                ->send();
+                        }
 
+                        Notification::make()
+                            ->title('Expense created')
+                            ->color('success')
+                            ->icon('heroicon-o-check')
+                            ->body('Task expenses have been created successfully')
+                            ->send();
                     })
             ])
         ];
