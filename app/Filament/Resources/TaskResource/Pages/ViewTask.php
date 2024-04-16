@@ -332,12 +332,6 @@ class ViewTask extends ViewRecord
 
                                 return 'Kes ' . number_format($total, 2, '.', ',');
                             }),
-                        TextInput::make('total')
-                            ->numeric()
-                            ->readOnly()
-                            ->afterStateUpdated(function (Get $get, Set $set) {
-                                self::updateTotals($get, $set);
-                            })
 
                     ])
                     ->action(function(array $data) {
@@ -367,62 +361,5 @@ class ViewTask extends ViewRecord
                     })
             ])
         ];
-    }
-
-    public static function totals(Get $get, Set $set)
-    {
-         // Accommodation
-         $accom_items = collect($get('accommodation'));
-         $accom_sub = 0;
-
-         foreach($accom_items as $item) {
-             $accom_sub += $item['amount'];
-         }
-
-         // Subsistence
-         $subsistence = collect($get('subsistence'));
-         $subsistence_sub = 0;
-
-         foreach($subsistence as $item) {
-             $subsistence_sub += $item['amount'];
-         }
-
-         // Fuel & Logistics
-         $fuel = collect($get('fuel'));
-         $fuel_sub = 0;
-
-         foreach($fuel as $item) {
-             $fuel_sub += $item['amount'];
-         }
-
-         // Labor
-         $labor = collect($get('labor'));
-         $labor_sub = 0;
-
-         foreach($labor as $item) {
-             $labor_sub += $item['amount'];
-         }
-
-         // Material
-         $material = collect($get('material'));
-         $material_sub = 0;
-
-         foreach($material as $item) {
-             $material_sub += $item['amount'];
-         }
-
-         // Miscellaneous
-         $misc = collect($get('misc'));
-         $misc_sub = 0;
-
-         foreach($misc as $item) {
-             $aggregate = $item['quantity'] * $item['unit_price'];
-
-             $misc_sub += $aggregate;
-         }
-
-         $total = $accom_sub + $subsistence_sub + $fuel_sub + $labor_sub + $material_sub + $misc_sub;
-         $set('total', $total);
-
     }
 }
