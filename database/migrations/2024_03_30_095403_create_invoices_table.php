@@ -22,7 +22,7 @@ return new class extends Migration
             $table->bigInteger('subtotal');
             $table->bigInteger('taxes');
             $table->bigInteger('total');
-            $table->string('status')->default(InvoiceStatus::Unpaid);
+            $table->enum('status', InvoiceStatus::values())->default(InvoiceStatus::Unpaid);
             $table->softDeletes();
             $table->timestamps();
         });

@@ -1,6 +1,7 @@
 <?php
 
 use App\Enums\EquipmentType;
+use App\Enums\Material;
 use App\Models\Vertical;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -17,7 +18,7 @@ return new class extends Migration
             $table->id();
             $table->string('registration')->unique();
             $table->foreignIdFor(Vertical::class)->constrained()->cascadeOnDelete();
-            $table->string('type');
+            $table->enum('type', EquipmentType::values());
             $table->softDeletes();
             $table->timestamps();
         });

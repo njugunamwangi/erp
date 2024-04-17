@@ -7,6 +7,11 @@ enum InvoiceStatus: string
     case Paid = 'Paid';
     case Unpaid = 'Unpaid';
 
+    public static function values(): array
+    {
+        return array_column(self::cases(), 'value');
+    }
+
     public function getColor(): string
     {
         return match ($this) {

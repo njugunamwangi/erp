@@ -13,7 +13,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('invoices', function (Blueprint $table) {
-            $table->string('series')->default(InvoiceSeries::IN2INV->name);
+            $table->enum('series', InvoiceSeries::values())->default(InvoiceSeries::IN2INV->name);
             $table->integer('serial_number')->nullable();
             $table->string('serial')->nullable();
         });

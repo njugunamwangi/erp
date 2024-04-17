@@ -13,7 +13,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('quotes', function (Blueprint $table) {
-            $table->string('series')->default(QuoteSeries::IN2QUT->name);
+            $table->enum('series', QuoteSeries::values())->default(QuoteSeries::IN2QUT->name);
             $table->integer('serial_number')->nullable();
             $table->string('serial')->nullable();
         });
