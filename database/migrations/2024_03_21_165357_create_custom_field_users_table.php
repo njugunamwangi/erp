@@ -15,8 +15,8 @@ return new class extends Migration
     {
         Schema::create('custom_field_users', function (Blueprint $table) {
             $table->id();
-            $table->foreignIdFor(User::class)->constrained();
-            $table->foreignIdFor(CustomField::class)->constrained();
+            $table->foreignIdFor(User::class)->constrained()->cascadeOnDelete();
+            $table->foreignIdFor(CustomField::class)->constrained()->cascadeOnDelete();
             $table->string('value');
             $table->timestamps();
         });

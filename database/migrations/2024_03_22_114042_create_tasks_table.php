@@ -15,10 +15,10 @@ return new class extends Migration
     {
         Schema::create('tasks', function (Blueprint $table) {
             $table->id();
-            $table->foreignIdFor(User::class, 'assigned_by');
-            $table->foreignIdFor(User::class, 'assigned_to');
-            $table->foreignIdFor(User::class, 'assigned_for');
-            $table->foreignIdFor(Vertical::class);
+            $table->foreignIdFor(User::class, 'assigned_by')->cascadeOnDelete();
+            $table->foreignIdFor(User::class, 'assigned_to')->cascadeOnDelete();
+            $table->foreignIdFor(User::class, 'assigned_for')->cascadeOnDelete();
+            $table->foreignIdFor(Vertical::class)->cascadeOnDelete();
             $table->text('description');
             $table->date('due_date')->nullable();
             $table->boolean('is_completed')->default(false);

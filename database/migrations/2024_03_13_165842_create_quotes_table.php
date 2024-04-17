@@ -16,9 +16,9 @@ return new class extends Migration
     {
         Schema::create('quotes', function (Blueprint $table) {
             $table->id();
-            $table->foreignIdFor(Task::class);
-            $table->foreignIdFor(User::class)->constrained();
-            $table->foreignIdFor(Vertical::class)->constrained();
+            $table->foreignIdFor(Task::class)->nullable()->cascadeOnDelete();
+            $table->foreignIdFor(User::class)->constrained()->cascadeOnDelete();
+            $table->foreignIdFor(Vertical::class)->constrained()->cascadeOnDelete();
             $table->bigInteger('total');
             $table->json('items');
             $table->softDeletes();

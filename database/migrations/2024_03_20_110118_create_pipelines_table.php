@@ -15,8 +15,8 @@ return new class extends Migration
     {
         Schema::create('pipelines', function (Blueprint $table) {
             $table->id();
-            $table->foreignIdFor(User::class)->constrained();
-            $table->foreignIdFor(Stage::class)->nullable()->constrained();
+            $table->foreignIdFor(User::class)->constrained()->cascadeOnDelete();
+            $table->foreignIdFor(Stage::class)->nullable()->constrained()->cascadeOnDelete();
             $table->longText('notes')->nullable();
             $table->timestamps();
         });

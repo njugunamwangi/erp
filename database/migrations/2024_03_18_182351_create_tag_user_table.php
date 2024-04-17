@@ -15,8 +15,8 @@ return new class extends Migration
     {
         Schema::create('tag_user', function (Blueprint $table) {
             $table->id();
-            $table->foreignIdFor(Tag::class)->constrained();
-            $table->foreignIdFor(User::class)->constrained();
+            $table->foreignIdFor(Tag::class)->constrained()->cascadeOnDelete();
+            $table->foreignIdFor(User::class)->constrained()->cascadeOnDelete();
             $table->timestamps();
         });
     }

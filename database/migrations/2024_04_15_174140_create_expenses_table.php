@@ -14,7 +14,7 @@ return new class extends Migration
     {
         Schema::create('expenses', function (Blueprint $table) {
             $table->id();
-            $table->foreignIdFor(Task::class)->constrained();
+            $table->foreignIdFor(Task::class)->constrained()->cascadeOnDelete();
             $table->json('accommodation')->nullable();
             $table->json('subsistence')->nullable();
             $table->json('fuel')->nullable();

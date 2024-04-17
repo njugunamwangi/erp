@@ -16,8 +16,8 @@ return new class extends Migration
     {
         Schema::create('invoices', function (Blueprint $table) {
             $table->id();
-            $table->foreignIdFor(User::class);
-            $table->foreignIdFor(Quote::class)->nullable();
+            $table->foreignIdFor(User::class)->cascadeOnDelete();
+            $table->foreignIdFor(Quote::class)->nullable()->cascadeOnDelete();
             $table->json('items');
             $table->bigInteger('subtotal');
             $table->bigInteger('taxes');

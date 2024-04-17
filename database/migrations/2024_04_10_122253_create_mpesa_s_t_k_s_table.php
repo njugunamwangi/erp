@@ -22,7 +22,7 @@ return new class extends Migration
             $table->string('mpesa_receipt_number')->nullable();
             $table->string('transaction_date')->nullable();
             $table->string('phonenumber')->nullable();
-            $table->foreignIdFor(Invoice::class)->nullable()->constrained();
+            $table->foreignIdFor(Invoice::class)->nullable()->constrained()->cascadeOnDelete();
             $table->timestamps();
         });
     }
