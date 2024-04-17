@@ -90,16 +90,28 @@ class AdminPanelProvider extends PanelProvider
             ->collapsibleNavigationGroups(true)
             ->navigationGroups([
                 NavigationGroup::make()
+                    ->label('Accounting & Finance')
+                    ->collapsed(),
+                NavigationGroup::make()
+                    ->label('Asset Management')
+                    ->collapsed(),
+                NavigationGroup::make()
+                    ->label('Commerce')
+                    ->collapsed(),
+                NavigationGroup::make()
+                    ->label('Content')
+                    ->collapsed(),
+                NavigationGroup::make()
                     ->label('Customer Relations')
+                    ->collapsed(),
+                NavigationGroup::make()
+                    ->label('Settings')
                     ->collapsed(),
                 NavigationGroup::make()
                     ->label('User Management')
                     ->collapsed(),
                 NavigationGroup::make()
-                    ->label('Accounting & Finance')
-                    ->collapsed(),
-                NavigationGroup::make()
-                    ->label('Asset Management')
+                    ->label('Roles and Permissions')
                     ->collapsed(),
             ])
             ->databaseNotifications()
