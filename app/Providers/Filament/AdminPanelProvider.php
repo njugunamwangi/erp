@@ -35,8 +35,8 @@ class AdminPanelProvider extends PanelProvider
         return $panel
             ->default()
             ->id('admin')
-            // ->path('admin')
-            ->domain(env('ADMIN_SUBDOMAIN'))
+            ->path('admin')
+            // ->domain(env('ADMIN_SUBDOMAIN'))
             ->login()
             ->colors([
                 'primary' => Color::Cyan,
@@ -97,6 +97,9 @@ class AdminPanelProvider extends PanelProvider
                     ->collapsed(),
                 NavigationGroup::make()
                     ->label('Accounting & Finance')
+                    ->collapsed(),
+                NavigationGroup::make()
+                    ->label('Asset Management')
                     ->collapsed(),
             ])
             ->databaseNotifications()
