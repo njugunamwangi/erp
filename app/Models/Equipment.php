@@ -32,4 +32,9 @@ class Equipment extends Model
     {
          return $this->belongsTo(Brand::class);
     }
+
+    public function vertical(): BelongsTo
+    {
+         return $this->belongsTo(Vertical::class);
+    }
 }

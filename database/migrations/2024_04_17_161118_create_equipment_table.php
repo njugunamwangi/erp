@@ -17,7 +17,7 @@ return new class extends Migration
             $table->id();
             $table->string('registration')->unique();
             $table->foreignIdFor(Vertical::class)->constrained()->cascadeOnDelete();
-            $table->enum('type', [EquipmentType::class]);
+            $table->string('type');
             $table->softDeletes();
             $table->timestamps();
         });
