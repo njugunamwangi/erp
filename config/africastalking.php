@@ -13,5 +13,5 @@ return [
     ],
     'voice' => [
         'from' => env('AFRICASTALKING_VOICE_PHONE_NUMBER'),
-    ]
+    ],
 ];

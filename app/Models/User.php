@@ -78,7 +78,7 @@ class User extends Authenticatable implements FilamentUser
 
     public function canAccessPanel(\Filament\Panel $panel): bool
     {
-        if($panel->getId() == 'admin') {
+        if ($panel->getId() == 'admin') {
 
             return $this->hasRole(Role::ADMIN);
 
@@ -111,12 +111,12 @@ class User extends Authenticatable implements FilamentUser
 
     public function staffCompletedTasks(): HasMany
     {
-         return $this->hasMany(Task::class, 'assigned_to')->where('is_completed', true);
+        return $this->hasMany(Task::class, 'assigned_to')->where('is_completed', true);
     }
 
     public function staffIncompleteTasks(): HasMany
     {
-         return $this->hasMany(Task::class, 'assigned_to')->where('is_completed', false);
+        return $this->hasMany(Task::class, 'assigned_to')->where('is_completed', false);
     }
 
     public function completedTasks(): HasMany
@@ -154,7 +154,8 @@ class User extends Authenticatable implements FilamentUser
         return $this->phone;
     }
 
-    public function sendSms($message) {
+    public function sendSms($message)
+    {
 
         $message = strip_tags($message);
 

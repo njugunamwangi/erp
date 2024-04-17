@@ -24,7 +24,8 @@ class Quote extends Model
         ];
     }
 
-    public function task(): HasOne {
+    public function task(): HasOne
+    {
         return $this->hasOne(Task::class);
     }
 

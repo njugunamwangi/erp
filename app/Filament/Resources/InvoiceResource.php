@@ -6,7 +6,6 @@ use App\Enums\InvoiceSeries;
 use App\Enums\InvoiceStatus;
 use App\Filament\Resources\InvoiceResource\Pages;
 use App\Filament\Resources\InvoiceResource\Widgets\InvoiceStatsOverview;
-use App\Http\Controllers\MPesaSTKPushController;
 use App\Models\Invoice;
 use App\Models\MpesaSTK;
 use App\Models\Role;
@@ -36,17 +35,18 @@ use Iankumu\Mpesa\Facades\Mpesa;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
-use Illuminate\Http\Request;
 use Ysfkaya\FilamentPhoneInput\Forms\PhoneInput;
 use Ysfkaya\FilamentPhoneInput\PhoneInputNumberType;
 
 class InvoiceResource extends Resource
 {
     protected static ?string $model = Invoice::class;
-    protected static ?string $navigationGroup = 'Customer Relations';
-    protected static ?int $navigationSort = 2;
-    protected static ?string $recordTitleAttribute = 'serial';
 
+    protected static ?string $navigationGroup = 'Customer Relations';
+
+    protected static ?int $navigationSort = 2;
+
+    protected static ?string $recordTitleAttribute = 'serial';
 
     public static function form(Form $form): Form
     {
@@ -182,7 +182,7 @@ class InvoiceResource extends Resource
                 Tables\Columns\TextColumn::make('quote.serial')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('user.name')
-                    ->url(fn($record) => UserResource::getUrl('view', ['record' => $record->user_id]))
+                    ->url(fn ($record) => UserResource::getUrl('view', ['record' => $record->user_id]))
                     ->color('success')
                     ->icon('heroicon-o-user')
                     ->sortable(),
@@ -271,7 +271,7 @@ class InvoiceResource extends Resource
                     Action::make('stkPush')
                         ->label('Request M-Pesa Payment')
                         ->color('warning')
-                        ->visible(fn($record) => $record->status == InvoiceStatus::Unpaid && strip_tags($record->total) <= 150000)
+                        ->visible(fn ($record) => $record->status == InvoiceStatus::Unpaid && strip_tags($record->total) <= 150000)
                         ->icon('heroicon-o-currency-euro')
                         ->modalSubmitActionLabel('Send STK Push')
                         ->modalIcon('heroicon-o-currency-euro')
@@ -280,21 +280,21 @@ class InvoiceResource extends Resource
                             PhoneInput::make('phone')
                                 ->defaultCountry('KE')
                                 ->required()
-                                ->default(fn($record) => $record->user->phone)
+                                ->default(fn ($record) => $record->user->phone)
                                 ->displayNumberFormat(PhoneInputNumberType::INTERNATIONAL)
                                 ->focusNumberFormat(PhoneInputNumberType::INTERNATIONAL),
                             TextInput::make('amount')
                                 ->readOnly()
-                                ->default(fn($record) => number_format($record->total, 2, '.', ','))
-                                ->prefix('Kes')
+                                ->default(fn ($record) => number_format($record->total, 2, '.', ','))
+                                ->prefix('Kes'),
                         ])
-                        ->action(function(array $data, $record) {
+                        ->action(function (array $data, $record) {
                             $response = Mpesa::stkpush($data['phone'], strip_tags($data['amount']), 600983);
-                            $result = json_decode((string)$response, true);
+                            $result = json_decode((string) $response, true);
 
                             $mpesa = MpesaSTK::create([
-                                'merchant_request_id' =>  $result['MerchantRequestID'],
-                                'checkout_request_id' =>  $result['CheckoutRequestID'],
+                                'merchant_request_id' => $result['MerchantRequestID'],
+                                'checkout_request_id' => $result['CheckoutRequestID'],
                                 'invoice_id' => $record->id,
                                 'phonenumber' => $data['phone'],
                                 'amount' => $data['amount'],
@@ -308,7 +308,7 @@ class InvoiceResource extends Resource
                             foreach ($recipients as $recipient) {
                                 Notification::make()
                                     ->title('M-Pesa transaction initiated')
-                                    ->body(auth()->user()->name.' inititated M-Pesa payment for ' . $record->serial)
+                                    ->body(auth()->user()->name.' inititated M-Pesa payment for '.$record->serial)
                                     ->icon('heroicon-o-currency-euro')
                                     ->warning()
                                     ->actions([

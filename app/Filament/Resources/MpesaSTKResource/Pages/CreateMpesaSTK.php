@@ -3,7 +3,6 @@
 namespace App\Filament\Resources\MpesaSTKResource\Pages;
 
 use App\Filament\Resources\MpesaSTKResource;
-use Filament\Actions;
 use Filament\Resources\Pages\CreateRecord;
 
 class CreateMpesaSTK extends CreateRecord

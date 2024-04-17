@@ -3,7 +3,6 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\MpesaSTKResource\Pages;
-use App\Filament\Resources\MpesaSTKResource\RelationManagers;
 use App\Models\MpesaSTK;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -12,15 +11,17 @@ use Filament\Tables;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Table;
 use Iankumu\Mpesa\Facades\Mpesa;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class MpesaSTKResource extends Resource
 {
     protected static ?string $model = MpesaSTK::class;
+
     protected static ?string $navigationGroup = 'Accounting & Finance';
+
     protected static ?string $navigationLabel = 'STK Push';
+
     protected static ?string $slug = 'stk-push';
+
     protected static ?string $modelLabel = 'STK Push';
 
     public static function form(Form $form): Form
@@ -91,12 +92,12 @@ class MpesaSTKResource extends Resource
                     ->label('Check Status')
                     ->icon('heroicon-o-clock')
                     ->color('warning')
-                    ->action(function($record) {
+                    ->action(function ($record) {
                         $response = Mpesa::stkquery($record->checkout_request_id);
 
-                        $result = json_decode((string)$response);
+                        $result = json_decode((string) $response);
                         dd($result);
-                    })
+                    }),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

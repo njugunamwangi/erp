@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 class STKPush
 {
     public $failed = false;
+
     public $response = 'An Unkown Error Occured';
 
     public function confirm(Request $request)
@@ -26,7 +27,7 @@ class STKPush
             $phonenumber = $payload->Body->stkCallback->CallbackMetadata->Item[4]->Value;
 
             $stkPush = MpesaSTK::where('merchant_request_id', $merchant_request_id)
-                ->where('checkout_request_id', $checkout_request_id)->first();//fetch the trasaction based on the merchant and checkout ids
+                ->where('checkout_request_id', $checkout_request_id)->first(); //fetch the trasaction based on the merchant and checkout ids
 
             $data = [
                 'result_desc' => $result_desc,
@@ -47,6 +48,7 @@ class STKPush
         } else {
             $this->failed = true;
         }
+
         return $this;
     }
 }

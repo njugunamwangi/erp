@@ -26,7 +26,7 @@ class TaskFactory extends Factory
             'vertical_id' => fake()->randomElement(Vertical::all()->pluck('id')),
             'description' => fake()->paragraph(),
             'due_date' => Carbon::now()->addDays(fake()->numberBetween(5, 30)),
-            'is_completed' => fake()->randomElement([true, false])
+            'is_completed' => fake()->randomElement([true, false]),
         ];
     }
 }

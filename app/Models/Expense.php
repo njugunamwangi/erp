@@ -22,7 +22,8 @@ class Expense extends Model
 
     protected $guarded = [];
 
-    public function casts(): array {
+    public function casts(): array
+    {
         return [
             'accommodation' => 'json',
             'subsistence' => 'json',
@@ -35,12 +36,12 @@ class Expense extends Model
 
     public function task(): BelongsTo
     {
-         return $this->belongsTo(Task::class);
+        return $this->belongsTo(Task::class);
     }
 
     public static function getForm(): array
     {
-         return [
+        return [
             Tabs::make('items')
                 ->tabs([
                     Tabs\Tab::make('Accommodation')
@@ -56,7 +57,7 @@ class Expense extends Model
                                         ->numeric()
                                         ->live()
                                         ->required()
-                                        ->prefix('Kes')
+                                        ->prefix('Kes'),
                                 ])
                                 ->deleteAction(
                                     fn (Action $action) => $action->requiresConfirmation(),
@@ -68,22 +69,22 @@ class Expense extends Model
                             Placeholder::make('accommodation_subtotal')
                                 ->label('Sub Total')
                                 ->live()
-                                ->content(function(Get $get) {
+                                ->content(function (Get $get) {
                                     $items = $get('accommodation');
 
                                     $subtotal = 0;
 
-                                    foreach($items as $item) {
+                                    foreach ($items as $item) {
                                         $subtotal += $item['amount'];
                                     }
 
-                                    return 'Kes ' . number_format($subtotal, 2, '.', ',');
-                                })
+                                    return 'Kes '.number_format($subtotal, 2, '.', ',');
+                                }),
                         ]),
                     Tabs\Tab::make('Food & Beverage')
                         ->icon('heroicon-o-adjustments-vertical')
                         ->schema([
-                            Repeater::make('subsistence')
+                             Repeater::make('subsistence')
                                 ->columnSpanFull()
                                 ->hiddenLabel()
                                 ->schema([
@@ -94,7 +95,7 @@ class Expense extends Model
                                         ->numeric()
                                         ->live()
                                         ->required()
-                                        ->prefix('Kes')
+                                        ->prefix('Kes'),
                                 ])
                                 ->deleteAction(
                                     fn (Action $action) => $action->requiresConfirmation(),
@@ -103,25 +104,25 @@ class Expense extends Model
                                 ->columns(2)
                                 ->cloneable()
                                 ->addActionLabel('Add Subsistence'),
-                            Placeholder::make('subsistence_subtotal')
+                             Placeholder::make('subsistence_subtotal')
                                 ->label('Sub Total')
                                 ->live()
-                                ->content(function(Get $get) {
+                                ->content(function (Get $get) {
                                     $items = $get('subsistence');
 
                                     $subtotal = 0;
 
-                                    foreach($items as $item) {
+                                    foreach ($items as $item) {
                                         $subtotal += $item['amount'];
                                     }
 
-                                    return 'Kes ' . number_format($subtotal, 2, '.', ',');
-                                })
-                        ]),
+                                    return 'Kes '.number_format($subtotal, 2, '.', ',');
+                                }),
+                         ]),
                     Tabs\Tab::make('Fuel & Logistics')
                         ->icon('heroicon-o-truck')
                         ->schema([
-                            Repeater::make('fuel')
+                             Repeater::make('fuel')
                                 ->columnSpanFull()
                                 ->hiddenLabel()
                                 ->schema([
@@ -132,7 +133,7 @@ class Expense extends Model
                                         ->numeric()
                                         ->live()
                                         ->required()
-                                        ->prefix('Kes')
+                                        ->prefix('Kes'),
                                 ])
                                 ->deleteAction(
                                     fn (Action $action) => $action->requiresConfirmation(),
@@ -141,25 +142,25 @@ class Expense extends Model
                                 ->columns(2)
                                 ->cloneable()
                                 ->addActionLabel('Add'),
-                            Placeholder::make('fuel_subtotal')
+                             Placeholder::make('fuel_subtotal')
                                 ->label('Sub Total')
                                 ->live()
-                                ->content(function(Get $get) {
+                                ->content(function (Get $get) {
                                     $items = $get('fuel');
 
                                     $subtotal = 0;
 
-                                    foreach($items as $item) {
+                                    foreach ($items as $item) {
                                         $subtotal += $item['amount'];
                                     }
 
-                                    return 'Kes ' . number_format($subtotal, 2, '.', ',');
-                                })
-                        ]),
+                                    return 'Kes '.number_format($subtotal, 2, '.', ',');
+                                }),
+                         ]),
                     Tabs\Tab::make('Labor')
                         ->icon('heroicon-o-briefcase')
                         ->schema([
-                            Repeater::make('labor')
+                             Repeater::make('labor')
                                 ->columnSpanFull()
                                 ->hiddenLabel()
                                 ->schema([
@@ -169,7 +170,7 @@ class Expense extends Model
                                         ->numeric()
                                         ->live()
                                         ->required()
-                                        ->prefix('Kes')
+                                        ->prefix('Kes'),
                                 ])
                                 ->deleteAction(
                                     fn (Action $action) => $action->requiresConfirmation(),
@@ -178,116 +179,116 @@ class Expense extends Model
                                 ->columns(2)
                                 ->cloneable()
                                 ->addActionLabel('Add'),
-                            Placeholder::make('labor_subtotal')
+                             Placeholder::make('labor_subtotal')
                                 ->label('Sub Total')
                                 ->live()
-                                ->content(function(Get $get) {
+                                ->content(function (Get $get) {
                                     $items = $get('labor');
 
                                     $subtotal = 0;
 
-                                    foreach($items as $item) {
+                                    foreach ($items as $item) {
                                         $subtotal += $item['amount'];
                                     }
 
-                                    return 'Kes ' . number_format($subtotal, 2, '.', ',');
-                            })
-                        ]),
+                                    return 'Kes '.number_format($subtotal, 2, '.', ',');
+                                }),
+                         ]),
                     Tabs\Tab::make('Material')
                         ->icon('heroicon-o-beaker')
                         ->schema([
-                            Repeater::make('material')
-                                ->hiddenLabel()
-                                ->schema([
-                                    Select::make('type')
-                                        ->enum(Material::class)
-                                        ->options(Material::class)
-                                        ->searchable()
-                                        ->required(),
-                                    TextInput::make('amount')
-                                        ->numeric()
-                                        ->live()
-                                        ->required()
-                                        ->prefix('Kes')
-                                ])
-                                ->deleteAction(
-                                    fn (Action $action) => $action->requiresConfirmation(),
-                                )
-                                ->columns(2)
-                                ->cloneable()
-                                ->addActionLabel('Add Material'),
-                            Placeholder::make('material_subtotal')
-                                ->label('Sub Total')
-                                ->live()
-                                ->content(function(Get $get) {
-                                    $items = $get('material');
+                                Repeater::make('material')
+                                    ->hiddenLabel()
+                                    ->schema([
+                                        Select::make('type')
+                                            ->enum(Material::class)
+                                            ->options(Material::class)
+                                            ->searchable()
+                                            ->required(),
+                                        TextInput::make('amount')
+                                            ->numeric()
+                                            ->live()
+                                            ->required()
+                                            ->prefix('Kes'),
+                                    ])
+                                    ->deleteAction(
+                                        fn (Action $action) => $action->requiresConfirmation(),
+                                    )
+                                    ->columns(2)
+                                    ->cloneable()
+                                    ->addActionLabel('Add Material'),
+                                Placeholder::make('material_subtotal')
+                                    ->label('Sub Total')
+                                    ->live()
+                                    ->content(function (Get $get) {
+                                        $items = $get('material');
 
-                                    $subtotal = 0;
+                                        $subtotal = 0;
 
-                                    foreach($items as $item) {
-                                        $subtotal += $item['amount'];
-                                    }
+                                        foreach ($items as $item) {
+                                            $subtotal += $item['amount'];
+                                        }
 
-                                    return 'Kes ' . number_format($subtotal, 2, '.', ',');
-                                })
-                        ]),
+                                        return 'Kes '.number_format($subtotal, 2, '.', ',');
+                                    }),
+                         ]),
                     Tabs\Tab::make('Miscellaneous')
                         ->icon('heroicon-o-bookmark-square')
                         ->schema([
-                            Repeater::make('misc')
-                                ->hiddenLabel()
-                                ->schema([
-                                    TextInput::make('quantity')
-                                        ->numeric()
-                                        ->live()
-                                        ->required()
-                                        ->default(1),
-                                    TextInput::make('description')
-                                        ->required()
-                                        ->placeholder('Airtime'),
-                                    TextInput::make('unit_price')
-                                        ->required()
-                                        ->live()
-                                        ->numeric()
-                                        ->default(0),
-                                    Placeholder::make('sum')
-                                        ->label('Sub Total')
-                                        ->live()
-                                        ->content(function (Get $get) {
-                                            return 'Kes '.number_format($get('quantity') * $get('unit_price'), 2, '.', ',');
-                                        }),
-                                ])
-                                ->deleteAction(
-                                    fn (Action $action) => $action->requiresConfirmation(),
-                                )
-                                ->cloneable()
-                                ->columns(4)
-                                ->addActionLabel('Add Misc.'),
-                            Placeholder::make('misc_subtotal')
-                                ->label('Sub Total')
-                                ->live()
-                                ->content(function(Get $get) {
-                                    $items = $get('misc');
+                             Repeater::make('misc')
+                                    ->hiddenLabel()
+                                    ->schema([
+                                        TextInput::make('quantity')
+                                            ->numeric()
+                                            ->live()
+                                            ->required()
+                                            ->default(1),
+                                        TextInput::make('description')
+                                            ->required()
+                                            ->placeholder('Airtime'),
+                                        TextInput::make('unit_price')
+                                            ->required()
+                                            ->live()
+                                            ->numeric()
+                                            ->default(0),
+                                        Placeholder::make('sum')
+                                            ->label('Sub Total')
+                                            ->live()
+                                            ->content(function (Get $get) {
+                                                return 'Kes '.number_format($get('quantity') * $get('unit_price'), 2, '.', ',');
+                                            }),
+                                    ])
+                                    ->deleteAction(
+                                        fn (Action $action) => $action->requiresConfirmation(),
+                                    )
+                                    ->cloneable()
+                                    ->columns(4)
+                                    ->addActionLabel('Add Misc.'),
+                             Placeholder::make('misc_subtotal')
+                                    ->label('Sub Total')
+                                    ->live()
+                                    ->content(function (Get $get) {
+                                        $items = $get('misc');
 
-                                    $subtotal = 0;
+                                        $subtotal = 0;
 
-                                    foreach($items as $item) {
-                                        $subtotal += $item['quantity'] * $item['unit_price'];
-                                    }
+                                        foreach ($items as $item) {
+                                            $subtotal += $item['quantity'] * $item['unit_price'];
+                                        }
 
-                                    return 'Kes ' . number_format($subtotal, 2, '.', ',');
-                                })
-                        ]),
-                    ]),
+                                        return 'Kes '.number_format($subtotal, 2, '.', ',');
+                                    }),
+                         ]),
+                ]),
             Placeholder::make('total')
                 ->label('Total Expenses')
                 ->live()
-                ->content(function(Get $get) {
+                ->content(function (Get $get) {
                     // Accommodation
                     $accom_items = collect($get('accommodation'));
                     $accom_sub = 0;
 
-                    foreach($accom_items as $item) {
+                    foreach ($accom_items as $item) {
                         $accom_sub += $item['amount'];
                     }
 
@@ -295,7 +296,7 @@ class Expense extends Model
                     $subsistence = collect($get('subsistence'));
                     $subsistence_sub = 0;
 
-                    foreach($subsistence as $item) {
+                    foreach ($subsistence as $item) {
                         $subsistence_sub += $item['amount'];
                     }
 
@@ -303,7 +304,7 @@ class Expense extends Model
                     $fuel = collect($get('fuel'));
                     $fuel_sub = 0;
 
-                    foreach($fuel as $item) {
+                    foreach ($fuel as $item) {
                         $fuel_sub += $item['amount'];
                     }
 
@@ -311,7 +312,7 @@ class Expense extends Model
                     $labor = collect($get('labor'));
                     $labor_sub = 0;
 
-                    foreach($labor as $item) {
+                    foreach ($labor as $item) {
                         $labor_sub += $item['amount'];
                     }
 
@@ -319,7 +320,7 @@ class Expense extends Model
                     $material = collect($get('material'));
                     $material_sub = 0;
 
-                    foreach($material as $item) {
+                    foreach ($material as $item) {
                         $material_sub += $item['amount'];
                     }
 
@@ -327,7 +328,7 @@ class Expense extends Model
                     $misc = collect($get('misc'));
                     $misc_sub = 0;
 
-                    foreach($misc as $item) {
+                    foreach ($misc as $item) {
                         $aggregate = $item['quantity'] * $item['unit_price'];
 
                         $misc_sub += $aggregate;
@@ -335,7 +336,7 @@ class Expense extends Model
 
                     $total = $accom_sub + $subsistence_sub + $fuel_sub + $labor_sub + $material_sub + $misc_sub;
 
-                    return 'Kes ' . number_format($total, 2, '.', ',');
+                    return 'Kes '.number_format($total, 2, '.', ',');
                 }),
         ];
     }

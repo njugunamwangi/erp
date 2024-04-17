@@ -3,7 +3,6 @@
 namespace App\Filament\Staff\Resources;
 
 use App\Filament\Staff\Resources\TaskResource\Pages;
-use App\Filament\Staff\Resources\TaskResource\RelationManagers;
 use App\Models\Expense;
 use App\Models\Role;
 use App\Models\Task;
@@ -89,19 +88,19 @@ class TaskResource extends Resource
                 Tables\Actions\ViewAction::make(),
                 TablesActionsAction::make('completed')
                     ->requiresConfirmation()
-                    ->visible(fn($record) => $record->is_completed === false)
+                    ->visible(fn ($record) => $record->is_completed === false)
                     ->icon('heroicon-o-check-badge')
-                    ->action(function($record) {
+                    ->action(function ($record) {
                         $record->is_completed = true;
                         $record->save();
                     })
-                    ->after(function($record) {
+                    ->after(function ($record) {
                         $recipients = User::role(Role::ADMIN)->get();
 
                         foreach ($recipients as $recipient) {
                             Notification::make()
                                 ->title('Task completed')
-                                ->body(auth()->user()->name.' marked task #'.$record->id . ' as completed')
+                                ->body(auth()->user()->name.' marked task #'.$record->id.' as completed')
                                 ->icon('heroicon-o-check')
                                 ->success()
                                 ->actions([
@@ -112,61 +111,61 @@ class TaskResource extends Resource
                                 ->sendToDatabase($recipient);
                         }
                     }),
-                    TablesActionsAction::make('expenses')
-                        ->icon('heroicon-o-arrow-trending-up')
-                        ->color('danger')
-                        ->modalWidth(MaxWidth::FiveExtraLarge)
-                        ->stickyModalFooter()
-                        ->stickyModalHeader()
-                        ->modalSubmitActionLabel('Save')
-                        ->fillForm(fn (Task $record): array => [
-                            'accommodation' => $record->expense?->accommodation,
-                            'subsistence' => $record->expense?->subsistence,
-                            'fuel' => $record->expense?->fuel,
-                            'labor' => $record->expense?->labor,
-                            'material' => $record->expense?->material,
-                            'misc' => $record->expense?->misc,
-                        ])
-                        ->form(Expense::getForm())
-                        ->action(function(Task $task, array $data) {
-                            if($task->expense) {
-                                $task->expense()->update([
-                                    'accommodation' => $data['accommodation'],
-                                    'subsistence' => $data['subsistence'],
-                                    'fuel' => $data['fuel'],
-                                    'labor' => $data['labor'],
-                                    'material' => $data['material'],
-                                    'misc' => $data['misc'],
-                                ]);
-                            } else {
-                                $task->expense()->create([
-                                    'task_id' => $task->id,
-                                    'accommodation' => $data['accommodation'],
-                                    'subsistence' => $data['subsistence'],
-                                    'fuel' => $data['fuel'],
-                                    'labor' => $data['labor'],
-                                    'material' => $data['material'],
-                                    'misc' => $data['misc'],
-                                ]);
-                            }
-                        })
-                        ->after(function(Task $record) {
-                            if($record->expense) {
-                                Notification::make()
-                                    ->title('Expense updated')
-                                    ->info()
-                                    ->icon('heroicon-o-check')
-                                    ->body('Task expenses have been updated successfully')
-                                    ->send();
-                            } else {
-                                Notification::make()
-                                    ->title('Expense created')
-                                    ->success()
-                                    ->icon('heroicon-o-check')
-                                    ->body('Task expenses have been created successfully')
-                                    ->send();
-                            }
-                        })
+                TablesActionsAction::make('expenses')
+                    ->icon('heroicon-o-arrow-trending-up')
+                    ->color('danger')
+                    ->modalWidth(MaxWidth::FiveExtraLarge)
+                    ->stickyModalFooter()
+                    ->stickyModalHeader()
+                    ->modalSubmitActionLabel('Save')
+                    ->fillForm(fn (Task $record): array => [
+                        'accommodation' => $record->expense?->accommodation,
+                        'subsistence' => $record->expense?->subsistence,
+                        'fuel' => $record->expense?->fuel,
+                        'labor' => $record->expense?->labor,
+                        'material' => $record->expense?->material,
+                        'misc' => $record->expense?->misc,
+                    ])
+                    ->form(Expense::getForm())
+                    ->action(function (Task $task, array $data) {
+                        if ($task->expense) {
+                            $task->expense()->update([
+                                'accommodation' => $data['accommodation'],
+                                'subsistence' => $data['subsistence'],
+                                'fuel' => $data['fuel'],
+                                'labor' => $data['labor'],
+                                'material' => $data['material'],
+                                'misc' => $data['misc'],
+                            ]);
+                        } else {
+                            $task->expense()->create([
+                                'task_id' => $task->id,
+                                'accommodation' => $data['accommodation'],
+                                'subsistence' => $data['subsistence'],
+                                'fuel' => $data['fuel'],
+                                'labor' => $data['labor'],
+                                'material' => $data['material'],
+                                'misc' => $data['misc'],
+                            ]);
+                        }
+                    })
+                    ->after(function (Task $record) {
+                        if ($record->expense) {
+                            Notification::make()
+                                ->title('Expense updated')
+                                ->info()
+                                ->icon('heroicon-o-check')
+                                ->body('Task expenses have been updated successfully')
+                                ->send();
+                        } else {
+                            Notification::make()
+                                ->title('Expense created')
+                                ->success()
+                                ->icon('heroicon-o-check')
+                                ->body('Task expenses have been created successfully')
+                                ->send();
+                        }
+                    }),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -174,7 +173,7 @@ class TaskResource extends Resource
                         ->requiresConfirmation()
                         ->color('success')
                         ->icon('heroicon-o-check-badge')
-                        ->action(fn (Collection $records) => $records->each->completed())
+                        ->action(fn (Collection $records) => $records->each->completed()),
                 ]),
             ]);
     }
@@ -188,18 +187,18 @@ class TaskResource extends Resource
                         Action::make('completed')
                             ->label('Mark as completed')
                             ->requiresConfirmation()
-                            ->visible(fn($record) => $record->is_completed === false)
-                            ->action(function($record) {
+                            ->visible(fn ($record) => $record->is_completed === false)
+                            ->action(function ($record) {
                                 $record->is_completed = true;
                                 $record->save();
                             })
-                            ->after(function($record) {
+                            ->after(function ($record) {
                                 $recipients = User::role(Role::ADMIN)->get();
 
                                 foreach ($recipients as $recipient) {
                                     Notification::make()
                                         ->title('Task completed')
-                                        ->body(auth()->user()->name.' marked task #'.$record->id . ' as completed')
+                                        ->body(auth()->user()->name.' marked task #'.$record->id.' as completed')
                                         ->icon('heroicon-o-check')
                                         ->success()
                                         ->actions([
@@ -209,7 +208,7 @@ class TaskResource extends Resource
                                         ])
                                         ->sendToDatabase($recipient);
                                 }
-                            })
+                            }),
                     ])
                     ->schema([
                         TextEntry::make('assignedBy.name')
@@ -220,8 +219,8 @@ class TaskResource extends Resource
                             ->date(),
                         TextEntry::make('description')
                             ->html()
-                            ->columnSpanFull()
-                    ])->columns(3)
+                            ->columnSpanFull(),
+                    ])->columns(3),
             ]);
     }
 

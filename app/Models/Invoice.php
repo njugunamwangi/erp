@@ -41,10 +41,11 @@ class Invoice extends Model
 
     public function stks(): HasMany
     {
-         return $this->hasMany(MpesaSTK::class);
+        return $this->hasMany(MpesaSTK::class);
     }
 
-    public function savePdf() {
+    public function savePdf()
+    {
         $customer = new Buyer([
             'name' => $this->user->name,
             'custom_fields' => [

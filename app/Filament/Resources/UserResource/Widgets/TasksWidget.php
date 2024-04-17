@@ -12,9 +12,13 @@ use Illuminate\Database\Eloquent\Model;
 class TasksWidget extends ChartWidget
 {
     public ?Model $record = null;
-    public?string $filter = 'thisMonth';
+
+    public ?string $filter = 'thisMonth';
+
     protected static ?string $heading = 'Tasks';
+
     protected static ?string $maxHeight = '250px';
+
     protected static ?string $pollingInterval = '1s';
 
     protected function getFilters(): ?array
@@ -30,9 +34,9 @@ class TasksWidget extends ChartWidget
     {
         $filter = $this->filter;
 
-        if($this->record->hasRole(Role::STAFF)) {
+        if ($this->record->hasRole(Role::STAFF)) {
             $query = 'assigned_to';
-        } elseif($this->record->hasRole(Role::CUSTOMER)) {
+        } elseif ($this->record->hasRole(Role::CUSTOMER)) {
             $query = 'assigned_for';
         } else {
             $query = 'assigned_by';
@@ -94,7 +98,7 @@ class TasksWidget extends ChartWidget
                         end: now()->endOfYear(),
                     )
                     ->perMonth()
-                    ->count()
+                    ->count(),
             ],
         };
 
@@ -109,7 +113,7 @@ class TasksWidget extends ChartWidget
                     'pointBackgroundColor' => 'rgb(54, 162, 235)',
                     'pointBorderColor' => '#fff',
                     'pointHoverBackgroundColor' => '#fff',
-                    'pointHoverBorderColor' => 'rgb(54, 162, 235)'
+                    'pointHoverBorderColor' => 'rgb(54, 162, 235)',
                 ],
                 [
                     'label' => 'Incomplete Tasks',
@@ -120,7 +124,7 @@ class TasksWidget extends ChartWidget
                     'pointBackgroundColor' => 'rgb(255, 99, 132)',
                     'pointBorderColor' => '#fff',
                     'pointHoverBackgroundColor' => '#fff',
-                    'pointHoverBorderColor' => 'rgb(255, 99, 132)'
+                    'pointHoverBorderColor' => 'rgb(255, 99, 132)',
                 ],
             ],
             'labels' => $comp->map(fn (TrendValue $value) => $value->date),

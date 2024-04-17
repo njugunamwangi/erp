@@ -18,7 +18,7 @@ class AdminSeeder extends Seeder
             'email' => 'info@ndachi.dev',
             'phone' => '+254715789160',
             'password' => bcrypt('Password'),
-            'email_verified_at' => now()
+            'email_verified_at' => now(),
         ]);
 
         $user->assignRole(Role::ADMIN);

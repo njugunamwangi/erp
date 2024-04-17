@@ -32,7 +32,7 @@ class Vertical extends Model
 
     public function tasks(): HasMany
     {
-         return $this->hasMany(Task::class);
+        return $this->hasMany(Task::class);
     }
 
     public static function getForm(): array

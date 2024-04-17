@@ -5,7 +5,6 @@ namespace App\Filament\Staff\Resources\TaskResource\Pages;
 use App\Filament\Staff\Resources\TaskResource;
 use App\Models\Expense;
 use App\Models\Task;
-use Filament\Actions;
 use Filament\Actions\Action;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ViewRecord;
@@ -34,10 +33,10 @@ class ViewTask extends ViewRecord
                     'misc' => $record->expense?->misc,
                 ])
                 ->form(Expense::getForm())
-                ->action(function(array $data) {
+                ->action(function (array $data) {
                     $task = $this->getRecord();
 
-                    if($task->expense) {
+                    if ($task->expense) {
                         $task->expense()->update([
                             'accommodation' => $data['accommodation'],
                             'subsistence' => $data['subsistence'],
@@ -58,8 +57,8 @@ class ViewTask extends ViewRecord
                         ]);
                     }
                 })
-                ->after(function(Task $record) {
-                    if($record->expense) {
+                ->after(function (Task $record) {
+                    if ($record->expense) {
                         Notification::make()
                             ->title('Expense updated')
                             ->info()
@@ -74,7 +73,7 @@ class ViewTask extends ViewRecord
                             ->body('Task expenses have been created successfully')
                             ->send();
                     }
-                })
+                }),
         ];
     }
 }

@@ -27,12 +27,12 @@ class CreateTask extends CreateRecord
             ->warning()
             ->icon('heroicon-o-bolt')
             ->title('Task assigned')
-            ->body('Attend to task #' . $task->id . ' for ' . $task->assignedFor->name)
+            ->body('Attend to task #'.$task->id.' for '.$task->assignedFor->name)
             ->actions([
                 Action::make('view')
                     ->markAsRead()
                     ->url(ResourcesTaskResource::getUrl('view', ['record' => $task->id]))
-                    ->color('warning')
+                    ->color('warning'),
             ])
             ->sendToDatabase($task->assignedTo);
     }

@@ -11,7 +11,6 @@ use App\Mail\SendInvoice;
 use App\Models\Invoice;
 use App\Models\Quote;
 use App\Models\Role;
-use App\Models\Task;
 use App\Models\User;
 use Filament\Forms;
 use Filament\Forms\Components\Fieldset;
@@ -37,15 +36,15 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Facades\Mail;
-use LaravelDaily\Invoices\Classes\Buyer;
-use LaravelDaily\Invoices\Classes\InvoiceItem;
-use LaravelDaily\Invoices\Facades\Invoice as FacadesInvoice;
 
 class QuoteResource extends Resource
 {
     protected static ?string $model = Quote::class;
+
     protected static ?string $navigationGroup = 'Customer Relations';
+
     protected static ?string $recordTitleAttribute = 'serial';
+
     protected static ?int $navigationSort = 1;
 
     public static function form(Form $form): Form
@@ -182,7 +181,7 @@ class QuoteResource extends Resource
                 Tables\Columns\TextColumn::make('serial')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('user.name')
-                    ->url(fn($record) => UserResource::getUrl('view', ['record' => $record->user_id]))
+                    ->url(fn ($record) => UserResource::getUrl('view', ['record' => $record->user_id]))
                     ->color('success')
                     ->icon('heroicon-o-user')
                     ->sortable(),

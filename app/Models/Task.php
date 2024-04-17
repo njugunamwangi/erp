@@ -20,13 +20,14 @@ class Task extends Model
         'is_completed' => 'boolean',
     ];
 
-    public function quote(): HasOne {
+    public function quote(): HasOne
+    {
         return $this->hasOne(Quote::class);
     }
 
     public function expense(): HasOne
     {
-         return $this->hasOne(Expense::class);
+        return $this->hasOne(Expense::class);
     }
 
     public function assignedBy(): BelongsTo
@@ -46,10 +47,11 @@ class Task extends Model
 
     public function vertical(): BelongsTo
     {
-         return $this->belongsTo(Vertical::class);
+        return $this->belongsTo(Vertical::class);
     }
 
-    public function completed() {
+    public function completed()
+    {
         $this->is_completed = true;
         $this->save();
     }

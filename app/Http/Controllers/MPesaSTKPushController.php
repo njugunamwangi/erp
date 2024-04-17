@@ -2,17 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use App\Mpesa\STKPush;
 use App\Models\MpesaSTK;
+use App\Mpesa\STKPush;
 use Iankumu\Mpesa\Facades\Mpesa;
 use Illuminate\Http\Request;
 
 class MPesaSTKPushController extends Controller
 {
-
     public $result_code = 1;
 
     public $result_desc = 'An error occured';
+
     /**
      * Handle the incoming request.
      */
@@ -23,11 +23,11 @@ class MPesaSTKPushController extends Controller
         $account_number = $request->input('account_number');
 
         $response = Mpesa::stkpush($phoneno, $amount, $account_number);
-        $result = json_decode((string)$response, true);
+        $result = json_decode((string) $response, true);
 
         MpesaSTK::create([
-            'merchant_request_id' =>  $result['MerchantRequestID'],
-            'checkout_request_id' =>  $result['CheckoutRequestID']
+            'merchant_request_id' => $result['MerchantRequestID'],
+            'checkout_request_id' => $result['CheckoutRequestID'],
         ]);
 
         return $result;
@@ -42,9 +42,10 @@ class MPesaSTKPushController extends Controller
             $this->result_code = 0;
             $this->result_desc = 'Success';
         }
+
         return response()->json([
             'ResultCode' => $this->result_code,
-            'ResultDesc' => $this->result_desc
+            'ResultDesc' => $this->result_desc,
         ]);
     }
 }

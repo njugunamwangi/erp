@@ -304,34 +304,34 @@ class UserResource extends Resource
                                 );
                             }
                         }),
-                        TablesActionsAction::make('sendSms')
-                            ->icon('heroicon-o-chat-bubble-left-right')
-                            ->color('success')
-                            ->modalDescription(fn ($record) => 'Draft an sms for ' . $record->name)
-                            ->modalIcon('heroicon-o-chat-bubble-left-right')
-                            ->form([
-                                RichEditor::make('message')
-                                    ->label('SMS')
-                                    ->required(),
-                            ])
-                            ->modalSubmitActionLabel('Send SMS')
-                            ->action(function ($record, $data) {
-                                $message = $data['message'];
+                    TablesActionsAction::make('sendSms')
+                        ->icon('heroicon-o-chat-bubble-left-right')
+                        ->color('success')
+                        ->modalDescription(fn ($record) => 'Draft an sms for '.$record->name)
+                        ->modalIcon('heroicon-o-chat-bubble-left-right')
+                        ->form([
+                            RichEditor::make('message')
+                                ->label('SMS')
+                                ->required(),
+                        ])
+                        ->modalSubmitActionLabel('Send SMS')
+                        ->action(function ($record, $data) {
+                            $message = $data['message'];
 
-                                $record->sendSms($message);
-                            })
-                            ->after(function($record) {
-                                $recipients = User::role(Role::ADMIN)->get();
+                            $record->sendSms($message);
+                        })
+                        ->after(function ($record) {
+                            $recipients = User::role(Role::ADMIN)->get();
 
-                                foreach ($recipients as $recipient) {
-                                    Notification::make()
-                                        ->title(auth()->user()->name . ' sent an sms' )
-                                        ->body($record->name . ' received an sms' )
-                                        ->success()
-                                        ->icon('heroicon-o-chat-bubble-left-right')
-                                        ->sendToDatabase($recipient);
-                                }
-                            })
+                            foreach ($recipients as $recipient) {
+                                Notification::make()
+                                    ->title(auth()->user()->name.' sent an sms')
+                                    ->body($record->name.' received an sms')
+                                    ->success()
+                                    ->icon('heroicon-o-chat-bubble-left-right')
+                                    ->sendToDatabase($recipient);
+                            }
+                        }),
                 ]),
             ])
             ->recordUrl(function ($record) {
@@ -351,7 +351,7 @@ class UserResource extends Resource
                         ->color('success')
                         ->modalIcon('heroicon-o-chat-bubble-left-right')
                         ->modalSubmitActionLabel('Send SMS')
-                        ->modalDescription(fn (Collection $records) => 'Send an sms to '. $records->count() . ' members')
+                        ->modalDescription(fn (Collection $records) => 'Send an sms to '.$records->count().' members')
                         ->form([
                             RichEditor::make('message')
                                 ->label('SMS')
@@ -362,18 +362,18 @@ class UserResource extends Resource
 
                             $records->each->sendSms($message);
                         })
-                        ->after(function(Collection $records) {
+                        ->after(function (Collection $records) {
                             $recipients = User::role(Role::ADMIN)->get();
 
                             foreach ($recipients as $recipient) {
                                 Notification::make()
-                                    ->title(auth()->user()->name . ' sent bulk smses' )
-                                    ->body($records->count() . ' customers received an sms' )
+                                    ->title(auth()->user()->name.' sent bulk smses')
+                                    ->body($records->count().' customers received an sms')
                                     ->success()
                                     ->icon('heroicon-o-chat-bubble-left-right')
                                     ->sendToDatabase($recipient);
                             }
-                        })
+                        }),
                 ]),
             ]);
     }
@@ -490,7 +490,7 @@ class UserResource extends Resource
                                     ])
                                     ->collapsed(),
                                 Section::make('Customer Tasks')
-                                    ->visible(fn($record) => $record->hasRole(Role::CUSTOMER))
+                                    ->visible(fn ($record) => $record->hasRole(Role::CUSTOMER))
                                     ->schema([
                                         Tabs::make('Tasks')
                                             ->tabs([
@@ -508,7 +508,7 @@ class UserResource extends Resource
                                                                     ->color('primary')
                                                                     ->icon('heroicon-o-user')
                                                                     ->iconColor('primary')
-                                                                    ->url(fn($record) => UserResource::getUrl('view', ['record' => $record->assignedTo->id]))
+                                                                    ->url(fn ($record) => UserResource::getUrl('view', ['record' => $record->assignedTo->id]))
                                                                     ->hidden(fn ($state) => is_null($state)),
                                                                 TextEntry::make('vertical.vertical')
                                                                     ->icon('heroicon-o-adjustments-horizontal'),
@@ -532,7 +532,7 @@ class UserResource extends Resource
                                                                     ->color('primary')
                                                                     ->icon('heroicon-o-user')
                                                                     ->iconColor('primary')
-                                                                    ->url(fn($record) => UserResource::getUrl('view', ['record' => $record->assignedTo->id]))
+                                                                    ->url(fn ($record) => UserResource::getUrl('view', ['record' => $record->assignedTo->id]))
                                                                     ->hidden(fn ($state) => is_null($state)),
                                                                 TextEntry::make('vertical.vertical')
                                                                     ->icon('heroicon-o-adjustments-horizontal'),
@@ -553,13 +553,13 @@ class UserResource extends Resource
                                                                                 $record->is_completed = true;
                                                                                 $record->save();
                                                                             })
-                                                                            ->after(function(Task $record) {
+                                                                            ->after(function (Task $record) {
                                                                                 $recipients = User::role(Role::ADMIN)->get();
 
                                                                                 foreach ($recipients as $recipient) {
                                                                                     Notification::make()
                                                                                         ->title('Task completed')
-                                                                                        ->body(auth()->user()->name.' marked task #'.$record->id . ' as completed')
+                                                                                        ->body(auth()->user()->name.' marked task #'.$record->id.' as completed')
                                                                                         ->icon('heroicon-o-check')
                                                                                         ->success()
                                                                                         ->actions([
@@ -579,7 +579,7 @@ class UserResource extends Resource
                                     ])
                                     ->collapsed(),
                                 Section::make('Staff Tasks')
-                                    ->visible(fn($record) => $record->hasRole(Role::STAFF))
+                                    ->visible(fn ($record) => $record->hasRole(Role::STAFF))
                                     ->schema([
                                         Tabs::make('Tasks')
                                             ->tabs([
@@ -597,7 +597,7 @@ class UserResource extends Resource
                                                                     ->color('success')
                                                                     ->icon('heroicon-o-user')
                                                                     ->iconColor('success')
-                                                                    ->url(fn($record) => UserResource::getUrl('view', ['record' => $record->assignedFor->id]))
+                                                                    ->url(fn ($record) => UserResource::getUrl('view', ['record' => $record->assignedFor->id]))
                                                                     ->hidden(fn ($state) => is_null($state)),
                                                                 TextEntry::make('vertical.vertical')
                                                                     ->icon('heroicon-o-adjustments-horizontal'),
@@ -621,7 +621,7 @@ class UserResource extends Resource
                                                                     ->color('success')
                                                                     ->icon('heroicon-o-user')
                                                                     ->iconColor('success')
-                                                                    ->url(fn($record) => UserResource::getUrl('view', ['record' => $record->assignedFor->id]))
+                                                                    ->url(fn ($record) => UserResource::getUrl('view', ['record' => $record->assignedFor->id]))
                                                                     ->hidden(fn ($state) => is_null($state)),
                                                                 TextEntry::make('vertical.vertical')
                                                                     ->icon('heroicon-o-adjustments-horizontal'),
@@ -642,13 +642,13 @@ class UserResource extends Resource
                                                                                 $record->is_completed = true;
                                                                                 $record->save();
                                                                             })
-                                                                            ->after(function(Task $record) {
+                                                                            ->after(function (Task $record) {
                                                                                 $recipients = User::role(Role::ADMIN)->get();
 
                                                                                 foreach ($recipients as $recipient) {
                                                                                     Notification::make()
                                                                                         ->title('Task completed')
-                                                                                        ->body(auth()->user()->name.' marked task #'.$record->id . ' as completed')
+                                                                                        ->body(auth()->user()->name.' marked task #'.$record->id.' as completed')
                                                                                         ->icon('heroicon-o-check')
                                                                                         ->success()
                                                                                         ->actions([
@@ -673,7 +673,7 @@ class UserResource extends Resource
                                 Tabs::make('Tabs')
                                     ->tabs([
                                         Tabs\Tab::make('Quotes')
-                                            ->badge(fn($record) => $record->quotes->count())
+                                            ->badge(fn ($record) => $record->quotes->count())
                                             ->schema([
                                                 RepeatableEntry::make('quotes')
                                                     ->hiddenLabel()
@@ -682,7 +682,7 @@ class UserResource extends Resource
                                                             ->label('Serial Number'),
                                                         TextEntry::make('invoice.serial')
                                                             ->label('Invoice Serial No.')
-                                                            ->getStateUsing(fn($record) => $record->invoice ? $record->invoice->serial : '-'),
+                                                            ->getStateUsing(fn ($record) => $record->invoice ? $record->invoice->serial : '-'),
                                                         TextEntry::make('subtotal')
                                                             ->money('Kes'),
                                                         TextEntry::make('taxes')
@@ -694,12 +694,12 @@ class UserResource extends Resource
                                                                 ->link()
                                                                 ->color('gray')
                                                                 ->icon('heroicon-o-pencil-square')
-                                                                ->url(fn($record) => QuoteResource::getUrl('edit', ['record' => $record->id])),
+                                                                ->url(fn ($record) => QuoteResource::getUrl('edit', ['record' => $record->id])),
                                                             Action::make('View Quote')
                                                                 ->link()
                                                                 ->color('success')
                                                                 ->icon('heroicon-o-eye')
-                                                                ->url(fn($record) => QuoteResource::getUrl('view', ['record' => $record->id])),
+                                                                ->url(fn ($record) => QuoteResource::getUrl('view', ['record' => $record->id])),
                                                             Action::make('pdf')
                                                                 ->link()
                                                                 ->label('Download Quote')
@@ -708,13 +708,13 @@ class UserResource extends Resource
                                                                 ->url(fn ($record) => route('quote.download', $record))
                                                                 ->openUrlInNewTab(),
                                                             Action::make('View Invoice')
-                                                                ->visible(fn($record) => $record->invoice)
+                                                                ->visible(fn ($record) => $record->invoice)
                                                                 ->link()
                                                                 ->color('warning')
                                                                 ->icon('heroicon-o-eye')
-                                                                ->url(fn($record) => InvoiceResource::getUrl('view', ['record' => $record->invoice->id])),
+                                                                ->url(fn ($record) => InvoiceResource::getUrl('view', ['record' => $record->invoice->id])),
                                                             Action::make('Generate Invoice')
-                                                                ->hidden(fn($record) => $record->invoice)
+                                                                ->hidden(fn ($record) => $record->invoice)
                                                                 ->link()
                                                                 ->color('warning')
                                                                 ->icon('heroicon-o-document-check')
@@ -765,12 +765,12 @@ class UserResource extends Resource
                                                                     }
                                                                 }),
                                                         ])
-                                                        ->columnSpanFull()
+                                                            ->columnSpanFull(),
                                                     ])
-                                                    ->columns(5)
+                                                    ->columns(5),
                                             ]),
                                         Tabs\Tab::make('Invoices')
-                                            ->badge(fn($record) => $record->invoices->count())
+                                            ->badge(fn ($record) => $record->invoices->count())
                                             ->schema([
                                                 RepeatableEntry::make('invoices')
                                                     ->hiddenLabel()
@@ -779,7 +779,7 @@ class UserResource extends Resource
                                                             ->label('Serial Number'),
                                                         TextEntry::make('quote.serial')
                                                             ->label('Quote Serial No.')
-                                                            ->getStateUsing(fn($record) => $record->quote ? $record->quote->serial : '-'),
+                                                            ->getStateUsing(fn ($record) => $record->quote ? $record->quote->serial : '-'),
                                                         TextEntry::make('subtotal')
                                                             ->money('Kes'),
                                                         TextEntry::make('taxes')
@@ -800,13 +800,13 @@ class UserResource extends Resource
                                                                 ->icon('heroicon-o-pencil-square')
                                                                 ->link()
                                                                 ->color('gray')
-                                                                ->url(fn($record) => InvoiceResource::getUrl('edit', ['record' => $record->id])),
+                                                                ->url(fn ($record) => InvoiceResource::getUrl('edit', ['record' => $record->id])),
                                                             Action::make('view')
                                                                 ->label('View Invoice')
                                                                 ->icon('heroicon-o-eye')
                                                                 ->link()
                                                                 ->color('success')
-                                                                ->url(fn($record) => InvoiceResource::getUrl('view', ['record' => $record->id])),
+                                                                ->url(fn ($record) => InvoiceResource::getUrl('view', ['record' => $record->id])),
                                                             Action::make('pdf')
                                                                 ->link()
                                                                 ->label('Download Invoice')
@@ -815,12 +815,12 @@ class UserResource extends Resource
                                                                 ->url(fn ($record) => route('invoice.download', $record))
                                                                 ->openUrlInNewTab(),
                                                             Action::make('viewQuote')
-                                                                ->visible(fn($record) => $record->quote)
+                                                                ->visible(fn ($record) => $record->quote)
                                                                 ->label('View Quote')
                                                                 ->icon('heroicon-o-eye')
                                                                 ->link()
                                                                 ->color('success')
-                                                                ->url(fn($record) => QuoteResource::getUrl('view', ['record' => $record->quote->id])),
+                                                                ->url(fn ($record) => QuoteResource::getUrl('view', ['record' => $record->quote->id])),
                                                             Action::make('markPaid')
                                                                 ->label('Mark as Paid')
                                                                 ->link()
@@ -840,7 +840,7 @@ class UserResource extends Resource
                                                                     foreach ($recipients as $recipient) {
                                                                         Notification::make()
                                                                             ->title('Invoice paid')
-                                                                            ->body(auth()->user()->name.' marked ' . $record->serial . ' as paid')
+                                                                            ->body(auth()->user()->name.' marked '.$record->serial.' as paid')
                                                                             ->icon('heroicon-o-banknotes')
                                                                             ->warning()
                                                                             ->actions([
@@ -851,13 +851,13 @@ class UserResource extends Resource
                                                                             ->sendToDatabase($recipient);
                                                                     }
                                                                 }),
-                                                        ])->columnSpanFull()
+                                                        ])->columnSpanFull(),
                                                     ])
-                                                    ->columns(6)
+                                                    ->columns(6),
                                             ]),
-                                    ])
-                            ])
-                    ])
+                                    ]),
+                            ]),
+                    ]),
 
             ]);
     }

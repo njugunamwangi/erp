@@ -2,23 +2,12 @@
 
 namespace App\Filament\Resources\TaskResource\Pages;
 
-use App\Enums\Material;
 use App\Filament\Resources\TaskResource;
 use App\Models\Expense;
 use App\Models\Task;
 use Filament\Actions;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
-use Filament\Forms\Components\Actions\Action as ActionsAction;
-use Filament\Forms\Components\DatePicker;
-use Filament\Forms\Components\DateTimePicker;
-use Filament\Forms\Components\Placeholder;
-use Filament\Forms\Components\Repeater;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Tabs;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Get;
-use Filament\Forms\Set;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ViewRecord;
 use Filament\Support\Enums\MaxWidth;
@@ -49,10 +38,10 @@ class ViewTask extends ViewRecord
                         'misc' => $record->expense?->misc,
                     ])
                     ->form(Expense::getForm())
-                    ->action(function(array $data) {
+                    ->action(function (array $data) {
                         $task = $this->getRecord();
 
-                        if($task->expense) {
+                        if ($task->expense) {
                             $task->expense()->update([
                                 'accommodation' => $data['accommodation'],
                                 'subsistence' => $data['subsistence'],
@@ -73,8 +62,8 @@ class ViewTask extends ViewRecord
                             ]);
                         }
                     })
-                    ->after(function(Task $record) {
-                        if($record->expense) {
+                    ->after(function (Task $record) {
+                        if ($record->expense) {
                             Notification::make()
                                 ->title('Expense updated')
                                 ->info()
@@ -89,8 +78,8 @@ class ViewTask extends ViewRecord
                                 ->body('Task expenses have been created successfully')
                                 ->send();
                         }
-                    })
-            ])
+                    }),
+            ]),
         ];
     }
 }
