@@ -14,7 +14,7 @@ return new class extends Migration
     {
         Schema::create('brands', function (Blueprint $table) {
             $table->id();
-            $table->foreignIdFor(Media::class)->constrained()->cascadeOnDelete();
+            $table->foreignIdFor(Media::class)->nullable()->constrained()->cascadeOnDelete();
             $table->string('brand')->unique();
             $table->string('website')->unique();
             $table->softDeletes();
