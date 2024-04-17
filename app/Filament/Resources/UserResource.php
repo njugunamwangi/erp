@@ -391,7 +391,8 @@ class UserResource extends Resource
                                     ->columns(3)
                                     ->schema([
                                         TextEntry::make('name'),
-                                        TextEntry::make('email'),
+                                        TextEntry::make('email')
+                                            ->copyable(),
                                         PhoneEntry::make('phone')
                                             ->displayFormat(PhoneInputNumberType::INTERNATIONAL),
                                         Fieldset::make('Tags & Roles')
