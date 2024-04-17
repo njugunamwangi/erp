@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('tag');
             $table->string('color')->nullable();
+            $table->softDeletes();
             $table->timestamps();
         });
     }

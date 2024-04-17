@@ -17,6 +17,7 @@ return new class extends Migration
             $table->foreignIdFor(User::class)->constrained()->cascadeOnDelete();
             $table->string('file_path');
             $table->text('comments')->nullable();
+            $table->softDeletes();
             $table->timestamps();
         });
     }

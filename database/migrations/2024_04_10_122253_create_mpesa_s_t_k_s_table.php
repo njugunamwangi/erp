@@ -23,6 +23,7 @@ return new class extends Migration
             $table->string('transaction_date')->nullable();
             $table->string('phonenumber')->nullable();
             $table->foreignIdFor(Invoice::class)->nullable()->constrained()->cascadeOnDelete();
+            $table->softDeletes();
             $table->timestamps();
         });
     }
