@@ -8,6 +8,7 @@ use App\Enums\QuoteSeries;
 use App\Filament\Resources\QuoteResource\Pages;
 use App\Filament\Resources\QuoteResource\Widgets\QuoteOverviewStats;
 use App\Mail\SendInvoice;
+use App\Models\Currency;
 use App\Models\Invoice;
 use App\Models\Quote;
 use App\Models\Role;
@@ -94,6 +95,19 @@ class QuoteResource extends Resource
                                     ->relationship('vertical', 'vertical')
                                     ->searchable()
                                     ->preload(),
+                                Select::make('currency_id')
+                                    ->label('Currency')
+                                    ->options(Currency::all()->pluck('abbr', 'id'))
+                                    ->optionsLimit(40)
+                                    ->searchable()
+                                    ->live()
+                                    ->preload()
+                                    ->getSearchResultsUsing(fn (string $search): array => Currency::whereAny([
+                                        'name', 'abbr', 'symbol', 'code'], 'like', "%{$search}%")->limit(50)->pluck('abbr', 'id')->toArray())
+                                    ->getOptionLabelUsing(fn ($value): ?string => Currency::find($value)?->abbr)
+                                    ->loadingMessage('Loading currencies...')
+                                    ->searchPrompt('Search currencies by their symbol, abbreviation or country')
+                                    ->required(),
                             ]),
                         Fieldset::make('Quote Summary')
                             ->schema([
@@ -120,7 +134,7 @@ class QuoteResource extends Resource
                                                     ->label('Sub Total')
                                                     ->live()
                                                     ->content(function (Get $get) {
-                                                        return 'Kes '.number_format($get('quantity') * $get('unit_price'), 2, '.', ',');
+                                                        return number_format($get('quantity') * $get('unit_price'));
                                                     }),
                                             ])
                                             ->afterStateUpdated(function (Get $get, Set $set) {
@@ -134,7 +148,8 @@ class QuoteResource extends Resource
                                         Forms\Components\TextInput::make('subtotal')
                                             ->numeric()
                                             ->readOnly()
-                                            ->prefix('Kes')
+                                            ->live()
+                                            ->prefix(fn(Get $get) => Currency::where('id', $get('currency_id'))->first()->abbr ?? 'CUR')
                                             ->afterStateHydrated(function (Get $get, Set $set) {
                                                 self::updateTotals($get, $set);
                                             }),
@@ -150,7 +165,7 @@ class QuoteResource extends Resource
                                         Forms\Components\TextInput::make('total')
                                             ->numeric()
                                             ->readOnly()
-                                            ->prefix('Kes'),
+                                            ->prefix(fn(Get $get) => Currency::where('id', $get('currency_id'))->first()->abbr ?? 'CUR'),
                                     ])->columnSpan(4),
                             ])->columns(12),
                     ]),
@@ -169,8 +184,10 @@ class QuoteResource extends Resource
             $subtotal += $aggregate;
         }
 
-        $set('subtotal', number_format($subtotal, 2, '.', ''));
-        $set('total', number_format($subtotal + ($subtotal * ($get('taxes') / 100)), 2, '.', ''));
+        $currency =  Currency::where('id', $get('currency_id'))->first();
+
+        $set('subtotal', number_format($subtotal, $currency->precision, '.', ''));
+        $set('total', number_format($subtotal + ($subtotal * ($get('taxes') / 100)), $currency->precision, '.', ''));
     }
 
     public static function infolist(Infolist $infolist): Infolist
@@ -202,7 +219,7 @@ class QuoteResource extends Resource
                     ->sortable(),
                 Tables\Columns\TextColumn::make('subtotal')
                     ->numeric()
-                    ->money('Kes')
+                    ->money(fn(Quote $record) => $record->currency->symbol)
                     ->sortable(),
                 Tables\Columns\TextColumn::make('taxes')
                     ->numeric()
@@ -210,7 +227,7 @@ class QuoteResource extends Resource
                     ->sortable(),
                 Tables\Columns\TextColumn::make('total')
                     ->numeric()
-                    ->money('Kes')
+                    ->money(fn($record) => $record->currency->symbol)
                     ->sortable(),
                 Tables\Columns\TextColumn::make('deleted_at')
                     ->dateTime()

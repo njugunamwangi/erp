@@ -21,7 +21,7 @@ class QuoteOverviewStats extends BaseWidget
                 ->color('success')
                 ->description('Number of quotes generated')
                 ->descriptionIcon('heroicon-o-calculator'),
-            Stat::make('Quotes Total amount', Number::currency(Quote::all()->sum('subtotal'), 'Kes'))
+            Stat::make('Quotes Total amount', 0)
                 ->color('primary')
                 ->description('Exclusive of taxes')
                 ->descriptionIcon('heroicon-o-banknotes'),
