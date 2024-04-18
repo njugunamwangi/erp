@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Casts\Money;
 use App\Enums\QuoteSeries;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -21,6 +22,8 @@ class Quote extends Model
         return [
             'items' => 'json',
             'series' => QuoteSeries::class,
+            'total' => Money::class,
+            'subtotal' => Money::class,
         ];
     }
 
