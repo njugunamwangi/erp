@@ -20,6 +20,7 @@ use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
@@ -33,6 +34,7 @@ use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Factories\Relationship;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Facades\Mail;
@@ -73,15 +75,25 @@ class QuoteResource extends Resource
                             ]),
                         Grid::make(1)
                             ->schema([
+                                Toggle::make('task')
+                                    ->columnSpanFull()
+                                    ->label('List Tasks')
+                                    ->live(),
                                 Select::make('task_id')
+                                    ->visible(fn(Get $get) => $get('task') == true)
+                                    ->live()
                                     ->relationship('task', 'description', modifyQueryUsing: function (Builder $query, Get $get) {
                                         return $query->where('assigned_for', $get('user_id'))->whereDoesntHave('quote');
                                     })
-                                    ->getOptionLabelFromRecordUsing(fn (Model $record) => "{$record->description} \n\n Customer - {$record->assignedFor->name}, Staff - {$record->assignedTo->name}")
                                     ->label('Task')
                                     ->searchable()
+                                    ->preload(),
+                                Select::make('vertical_id')
+                                    ->live()
+                                    ->visible(fn(Get $get) => $get('task') == false)
+                                    ->relationship('vertical', 'vertical')
+                                    ->searchable()
                                     ->preload()
-                                    ->required(),
                             ]),
                         Fieldset::make('Quote Summary')
                             ->schema([

@@ -1,21 +1,23 @@
-<x-filament-panels::page class="">
-    <x-filament::section class="h-[300px] w-1/4">
-        <x-slot name="heading">
-            Messages
-        </x-slot>
+<x-filament-panels::page >
 
-        Content
-    </x-filament::section>
+        <x-filament::section class="w-1/4">
+            <x-slot name="heading">
+                Messages
+            </x-slot>
 
-    <x-filament::section class="h-[300px] w-3/4">
-        <x-slot name="heading">
-            Message Body
-        </x-slot>
+            Content
+        </x-filament::section>
 
-        <x-slot name="description">
-            This is all the information we hold about the user.
-        </x-slot>
+        <x-filament::section class="w-3/4">
+            <x-slot name="heading">
+                Message Body
+            </x-slot>
 
-        {{-- Content --}}
-    </x-filament::section>
+            <x-slot name="description">
+                This is all the information we hold about the user.
+            </x-slot>
+
+            Content
+        </x-filament::section>
+
 </x-filament-panels::page>
