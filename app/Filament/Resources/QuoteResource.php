@@ -73,7 +73,7 @@ class QuoteResource extends Resource
                                     ->preload()
                                     ->default(QuoteSeries::IN2QUT->name),
                             ]),
-                        Grid::make(1)
+                        Grid::make(2)
                             ->schema([
                                 Toggle::make('task')
                                     ->columnSpanFull()
@@ -82,7 +82,7 @@ class QuoteResource extends Resource
                                 Select::make('task_id')
                                     ->visible(fn(Get $get) => $get('task') == true)
                                     ->live()
-                                    ->relationship('task', 'description', modifyQueryUsing: function (Builder $query, Get $get) {
+                                    ->relationship('task', 'id', modifyQueryUsing: function (Builder $query, Get $get) {
                                         return $query->where('assigned_for', $get('user_id'))->whereDoesntHave('quote');
                                     })
                                     ->label('Task')
@@ -93,7 +93,7 @@ class QuoteResource extends Resource
                                     ->visible(fn(Get $get) => $get('task') == false)
                                     ->relationship('vertical', 'vertical')
                                     ->searchable()
-                                    ->preload()
+                                    ->preload(),
                             ]),
                         Fieldset::make('Quote Summary')
                             ->schema([
