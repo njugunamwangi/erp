@@ -13,6 +13,7 @@
         "awcodes/filament-curator": "^3.5",
         "awcodes/filament-tiptap-editor": "^3.3",
         "barryvdh/laravel-dompdf": "^2.1",
+        "brick/money": "^0.8.1",
         "filament/filament": "^3.2",
         "flowframe/laravel-trend": "^0.2.0",
         "iankumu/mpesa": "^1.3",
