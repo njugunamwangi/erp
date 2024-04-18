@@ -1,6 +1,7 @@
 <?php
 
 use App\Enums\QuoteSeries;
+use App\Models\Currency;
 use App\Models\Task;
 use App\Models\User;
 use App\Models\Vertical;
@@ -21,7 +22,6 @@ return new class extends Migration
             $table->foreignIdFor(Task::class)->nullable()->cascadeOnDelete();
             $table->foreignIdFor(User::class)->constrained()->cascadeOnDelete();
             $table->foreignIdFor(Vertical::class)->constrained()->cascadeOnDelete();
-            $table->string('currency')->default('KES');
             $table->integer('subtotal');
             $table->integer('taxes');
             $table->integer('total');
