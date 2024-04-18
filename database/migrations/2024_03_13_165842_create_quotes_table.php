@@ -1,5 +1,6 @@
 <?php
 
+use App\Enums\QuoteSeries;
 use App\Models\Task;
 use App\Models\User;
 use App\Models\Vertical;
@@ -16,10 +17,17 @@ return new class extends Migration
     {
         Schema::create('quotes', function (Blueprint $table) {
             $table->id();
+            $table->boolean('task');
             $table->foreignIdFor(Task::class)->nullable()->cascadeOnDelete();
             $table->foreignIdFor(User::class)->constrained()->cascadeOnDelete();
             $table->foreignIdFor(Vertical::class)->constrained()->cascadeOnDelete();
+            $table->string('currency')->default('KES');
+            $table->bigInteger('subtotal');
+            $table->bigInteger('taxes');
             $table->bigInteger('total');
+            $table->enum('series', QuoteSeries::values())->default(QuoteSeries::IN2QUT->name);
+            $table->integer('serial_number')->nullable();
+            $table->string('serial')->nullable();
             $table->json('items');
             $table->softDeletes();
             $table->timestamps();
