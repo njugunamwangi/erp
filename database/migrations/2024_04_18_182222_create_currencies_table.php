@@ -16,8 +16,9 @@ return new class extends Migration
             $table->string('name');
             $table->string('abbr');
             $table->string('code');
-            $table->string('entity');
+            $table->string('locale');
             $table->integer('precision');
+            $table->string('subunit_name');
             $table->integer('subunit');
             $table->string('symbol');
             $table->boolean('symbol_first');

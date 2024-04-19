@@ -65,7 +65,7 @@ class CurrencyResource extends Resource
                     ->searchable(),
                 Tables\Columns\TextColumn::make('code')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('entity')
+                Tables\Columns\TextColumn::make('subunit_name')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('precision')
                     ->numeric()

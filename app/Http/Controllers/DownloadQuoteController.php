@@ -48,6 +48,7 @@ class DownloadQuoteController extends Controller
             ->currencyDecimalPoint($record->currency->decimal_mark)
             ->currencyThousandsSeparator($record->currency->thousands_separator)
             ->currencyFormat($record->currency->symbol_first == true ? $record->currency->symbol . ' ' . '{VALUE}' : '{VALUE}' . ' ' . $record->currency->symbol)
+            ->currencyFraction($record->currency->subunit_name)
             ->addItems($items);
 
         return $invoice->download();
