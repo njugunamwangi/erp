@@ -97,10 +97,12 @@ class QuoteResource extends Resource
                                     ->searchable()
                                     ->preload(),
                                 Select::make('currency_id')
+                                    ->relationship('currency', 'abbr')
                                     ->label('Currency')
-                                    ->options(Currency::all()->pluck('abbr', 'id'))
                                     ->optionsLimit(40)
                                     ->searchable()
+                                    ->createOptionForm(Currency::getForm())
+                                    ->editOptionForm(Currency::getForm())
                                     ->live()
                                     ->preload()
                                     ->getSearchResultsUsing(fn (string $search): array => Currency::whereAny([

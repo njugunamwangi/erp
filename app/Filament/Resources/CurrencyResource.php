@@ -16,43 +16,13 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 class CurrencyResource extends Resource
 {
     protected static ?string $model = Currency::class;
-
-    protected static ?string $navigationGroup = 'Accounting & Finance';
+    protected static ?string $navigationGroup = 'Settings';
+    protected static ?string $navigationIcon = 'heroicon-o-currency-pound';
 
     public static function form(Form $form): Form
     {
         return $form
-            ->schema([
-                Forms\Components\TextInput::make('name')
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('abbr')
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('code')
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('entity')
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('precision')
-                    ->required()
-                    ->numeric(),
-                Forms\Components\TextInput::make('subunit')
-                    ->required()
-                    ->numeric(),
-                Forms\Components\TextInput::make('symbol')
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\Toggle::make('symbol_first')
-                    ->required(),
-                Forms\Components\TextInput::make('decimal_mark')
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\TextInput::make('thousands_separator')
-                    ->required()
-                    ->maxLength(255),
-            ]);
+            ->schema(Currency::getForm());
     }
 
     public static function table(Table $table): Table
