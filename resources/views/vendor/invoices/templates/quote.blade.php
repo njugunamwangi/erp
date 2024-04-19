@@ -298,7 +298,7 @@
                     @endif
 
                     <td class="text-right pr-0">
-                        Kes {{ number_format($item->sub_total_price, 2, '.', ',') }}
+                        {{ $invoice->formatCurrency($item->sub_total_price) }}
                     </td>
                 </tr>
                 @endforeach
@@ -317,7 +317,7 @@
                         <td colspan="{{ $invoice->table_columns - 2 }}" class="border-0"></td>
                         <td class="text-right pl-0">{{ __('invoices::invoice.taxable_amount') }}</td>
                         <td class="text-right pr-0">
-                            Kes {{ number_format($invoice->taxable_amount, 2, '.', ',') }}
+                            {{ $invoice->formatCurrency($invoice->taxable_amount) }}
                         </td>
                     </tr>
                 @endif
@@ -335,7 +335,7 @@
                         <td colspan="{{ $invoice->table_columns - 2 }}" class="border-0"></td>
                         <td class="text-right pl-0">{{ __('invoices::invoice.total_taxes') }}</td>
                         <td class="text-right pr-0">
-                            Kes {{ number_format($invoice->total_taxes, 2, '.', ',') }}
+                            {{ $invoice->formatCurrency($invoice->total_taxes) }}
                         </td>
                     </tr>
                 @endif
@@ -352,7 +352,7 @@
                         <td colspan="{{ $invoice->table_columns - 2 }}" class="border-0"></td>
                         <td class="text-right pl-0">{{ __('invoices::invoice.total_amount') }}</td>
                         <td class="text-right pr-0 total-amount">
-                            Kes {{ number_format($invoice->total_amount, 2, '.', ',') }}
+                            {{ $invoice->formatCurrency($invoice->total_amount) }}
                         </td>
                     </tr>
             </tbody>
