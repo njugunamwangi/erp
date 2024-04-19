@@ -20,9 +20,12 @@ class CreateQuote extends CreateRecord
     {
         $data['serial_number'] = (Quote::max('serial_number') ?? 0) + 1;
         $data['serial'] = $data['series'].'-'.str_pad($data['serial_number'], 5, '0', STR_PAD_LEFT);
-        if($data['task_id']) {
+        if(!empty($data['task_id'])) {
             $data['vertical_id'] = Task::where('id', $data['task_id'])->first()->vertical_id;
         }
+
+        $data['subtotal'] = str_replace(',', '', $data['subtotal']);
+        $data['total'] = str_replace(',', '', $data['total']);
 
         return $data;
     }
