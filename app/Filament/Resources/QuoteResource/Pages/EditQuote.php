@@ -26,4 +26,12 @@ class EditQuote extends EditRecord
     {
         return $this->getResource()::getUrl('view', ['record' => $this->getRecord()]);
     }
+
+    protected function mutateFormDataBeforeFill(array $data): array
+    {
+        $data['subtotal'] = str_replace(',', '', $data['subtotal']);
+        $data['total'] = str_replace(',', '', $data['total']);
+
+        return $data;
+    }
 }

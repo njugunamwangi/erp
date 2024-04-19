@@ -13,6 +13,7 @@ use App\Models\Invoice;
 use App\Models\Quote;
 use App\Models\Role;
 use App\Models\User;
+use Brick\Money\Money;
 use Filament\Forms;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Grid;
@@ -184,10 +185,10 @@ class QuoteResource extends Resource
             $subtotal += $aggregate;
         }
 
-        $currency =  Currency::where('id', $get('currency_id'))->first();
+        $currency = Currency::where('id', $get('currency_id'))->first();
 
-        $set('subtotal', number_format($subtotal, $currency->precision, '.', ''));
-        $set('total', number_format($subtotal + ($subtotal * ($get('taxes') / 100)), $currency->precision, '.', ''));
+        $set('subtotal', number_format($subtotal, $currency->precision ?? 0, '.', ''));
+        $set('total', number_format($subtotal + ($subtotal * ($get('taxes') / 100)), $currency->precision ?? 0, '.', ''));
     }
 
     public static function infolist(Infolist $infolist): Infolist
@@ -217,17 +218,16 @@ class QuoteResource extends Resource
                 Tables\Columns\TextColumn::make('vertical.vertical')
                     ->numeric()
                     ->sortable(),
+                Tables\Columns\TextColumn::make('symbol')
+                    ->getStateUsing(fn($record) => $record->currency->symbol),
                 Tables\Columns\TextColumn::make('subtotal')
-                    ->numeric()
-                    ->money(fn(Quote $record) => $record->currency->symbol)
+                    ->label('Sub-Total')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('taxes')
                     ->numeric()
                     ->suffix('%')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('total')
-                    ->numeric()
-                    ->money(fn($record) => $record->currency->symbol)
                     ->sortable(),
                 Tables\Columns\TextColumn::make('deleted_at')
                     ->dateTime()
