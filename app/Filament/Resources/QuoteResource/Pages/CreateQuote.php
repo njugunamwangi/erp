@@ -24,9 +24,6 @@ class CreateQuote extends CreateRecord
             $data['vertical_id'] = Task::where('id', $data['task_id'])->first()->vertical_id;
         }
 
-        $data['subtotal'] = str_replace(',', '', $data['subtotal']);
-        $data['total'] = str_replace(',', '', $data['total']);
-
         return $data;
     }
 }

@@ -19,12 +19,12 @@ return new class extends Migration
         Schema::create('quotes', function (Blueprint $table) {
             $table->id();
             $table->boolean('task');
-            $table->foreignIdFor(Task::class)->nullable()->cascadeOnDelete();
+            $table->foreignIdFor(Task::class)->nullable()->constrained()->cascadeOnDelete();
             $table->foreignIdFor(User::class)->constrained()->cascadeOnDelete();
             $table->foreignIdFor(Vertical::class)->constrained()->cascadeOnDelete();
-            $table->integer('subtotal');
-            $table->integer('taxes');
-            $table->integer('total');
+            $table->unsignedInteger('subtotal');
+            $table->unsignedInteger('taxes');
+            $table->unsignedInteger('total');
             $table->enum('series', QuoteSeries::values())->default(QuoteSeries::IN2QUT->name);
             $table->integer('serial_number')->nullable();
             $table->string('serial')->nullable();
