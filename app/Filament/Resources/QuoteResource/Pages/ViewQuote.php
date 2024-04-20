@@ -68,6 +68,7 @@ class ViewQuote extends ViewRecord
                         'series' => $data['series'],
                         'serial_number' => $serial_number = Invoice::max('serial_number') + 1,
                         'serial' => $data['series'].'-'.str_pad($serial_number, 5, '0', STR_PAD_LEFT),
+                        'currency_id' => $record->currency_id
                     ]);
 
                     $invoice->savePdf();

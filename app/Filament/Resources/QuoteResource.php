@@ -220,7 +220,7 @@ class QuoteResource extends Resource
                 Tables\Columns\TextColumn::make('vertical.vertical')
                     ->numeric()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('symbol')
+                Tables\Columns\TextColumn::make('currency')
                     ->getStateUsing(fn($record) => $record->currency->symbol),
                 Tables\Columns\TextColumn::make('subtotal')
                     ->label('Sub-Total')
@@ -286,6 +286,7 @@ class QuoteResource extends Resource
                                 'series' => $data['series'],
                                 'serial_number' => $serial_number = Invoice::max('serial_number') + 1,
                                 'serial' => $data['series'].'-'.str_pad($serial_number, 5, '0', STR_PAD_LEFT),
+                                'currency_id' => $record->currency_id
                             ]);
 
                             $invoice->savePdf();

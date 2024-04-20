@@ -6,6 +6,7 @@ use App\Enums\InvoiceSeries;
 use App\Enums\InvoiceStatus;
 use App\Filament\Resources\InvoiceResource\Pages;
 use App\Filament\Resources\InvoiceResource\Widgets\InvoiceStatsOverview;
+use App\Models\Currency;
 use App\Models\Invoice;
 use App\Models\MpesaSTK;
 use App\Models\Role;
@@ -54,15 +55,31 @@ class InvoiceResource extends Resource
             ->schema([
                 Section::make()
                     ->schema([
-                        Grid::make(1)
+                        Grid::make(2)
                             ->schema([
                                 Forms\Components\Select::make('user_id')
                                     ->relationship('user', 'name')
+                                    ->options(Role::find(Role::CUSTOMER)->users()->get()->pluck('name', 'id'))
                                     ->searchable()
                                     ->preload()
                                     ->required()
                                     ->getSearchResultsUsing(fn (string $search): array => User::where('name', 'like', "%{$search}%")->limit(50)->pluck('name', 'id')->toArray())
                                     ->getOptionLabelsUsing(fn (array $values): array => User::whereIn('id', $values)->pluck('name', 'id')->toArray()),
+                                Select::make('currency_id')
+                                    ->relationship('currency', 'abbr')
+                                    ->label('Currency')
+                                    ->optionsLimit(40)
+                                    ->searchable()
+                                    ->createOptionForm(Currency::getForm())
+                                    ->editOptionForm(Currency::getForm())
+                                    ->live()
+                                    ->preload()
+                                    ->getSearchResultsUsing(fn (string $search): array => Currency::whereAny([
+                                        'name', 'abbr', 'symbol', 'code'], 'like', "%{$search}%")->limit(50)->pluck('abbr', 'id')->toArray())
+                                    ->getOptionLabelUsing(fn ($value): ?string => Currency::find($value)?->abbr)
+                                    ->loadingMessage('Loading currencies...')
+                                    ->searchPrompt('Search currencies by their symbol, abbreviation or country')
+                                    ->required(),
                             ]),
                         Grid::make(2)
                             ->schema([
@@ -107,7 +124,7 @@ class InvoiceResource extends Resource
                                                     ->label('Sub Total')
                                                     ->live()
                                                     ->content(function (Get $get) {
-                                                        return 'Kes '.number_format($get('quantity') * $get('unit_price'), 2, '.', ',');
+                                                        return number_format($get('quantity') * $get('unit_price'));
                                                     }),
                                             ])
                                             ->afterStateUpdated(function (Get $get, Set $set) {
@@ -121,7 +138,7 @@ class InvoiceResource extends Resource
                                         Forms\Components\TextInput::make('subtotal')
                                             ->numeric()
                                             ->readOnly()
-                                            ->prefix('Kes')
+                                            ->prefix(fn(Get $get) => Currency::where('id', $get('currency_id'))->first()->abbr ?? 'CUR')
                                             ->afterStateHydrated(function (Get $get, Set $set) {
                                                 self::updateTotals($get, $set);
                                             }),
@@ -136,8 +153,8 @@ class InvoiceResource extends Resource
                                             }),
                                         Forms\Components\TextInput::make('total')
                                             ->numeric()
-                                            ->readOnly()
-                                            ->prefix('Kes'),
+                                            ->prefix(fn(Get $get) => Currency::where('id', $get('currency_id'))->first()->abbr ?? 'CUR')
+                                            ->readOnly(),
                                     ])->columnSpan(4),
                             ])->columns(12),
                     ]),
@@ -186,9 +203,9 @@ class InvoiceResource extends Resource
                     ->color('success')
                     ->icon('heroicon-o-user')
                     ->sortable(),
+                Tables\Columns\TextColumn::make('currency')
+                    ->getStateUsing(fn($record) => $record->currency->symbol),
                 Tables\Columns\TextColumn::make('subtotal')
-                    ->numeric()
-                    ->money('Kes')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('taxes')
                     ->numeric()
@@ -203,8 +220,6 @@ class InvoiceResource extends Resource
                         return $state->getIcon();
                     }),
                 Tables\Columns\TextColumn::make('total')
-                    ->numeric()
-                    ->money('Kes')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('deleted_at')
                     ->dateTime()

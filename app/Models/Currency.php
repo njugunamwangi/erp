@@ -18,6 +18,10 @@ class Currency extends Model
         return $this->hasMany(Quote::class);
     }
 
+    public function invoices(): HasMany {
+        return $this->hasMany(Invoice::class);
+    }
+
     public static function getForm(): array {
         return [
             TextInput::make('name')

@@ -19,7 +19,7 @@ return new class extends Migration
         Schema::create('quotes', function (Blueprint $table) {
             $table->id();
             $table->boolean('task');
-            $table->foreignIdFor(Task::class)->nullable()->constrained()->cascadeOnDelete();
+            $table->foreignIdFor(Task::class)->nullable()->cascadeOnDelete();
             $table->foreignIdFor(User::class)->constrained()->cascadeOnDelete();
             $table->foreignIdFor(Vertical::class)->constrained()->cascadeOnDelete();
             $table->unsignedInteger('subtotal');

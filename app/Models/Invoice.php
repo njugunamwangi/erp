@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Casts\Money;
 use App\Enums\InvoiceSeries;
 use App\Enums\InvoiceStatus;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -26,6 +27,8 @@ class Invoice extends Model
             'items' => 'json',
             'status' => InvoiceStatus::class,
             'series' => InvoiceSeries::class,
+            'subtotal' => Money::class,
+            'total' => Money::class,
         ];
     }
 
@@ -37,6 +40,10 @@ class Invoice extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function currency(): BelongsTo {
+        return $this->belongsTo(Currency::class);
     }
 
     public function stks(): HasMany
@@ -74,6 +81,13 @@ class Invoice extends Model
             ->sequence($this->serial_number)
             ->delimiter('-')
             ->addItems($items)
+            ->currencyCode($this->currency->abbr)
+            ->currencySymbol($this->currency->symbol)
+            ->currencyDecimals($this->currency->precision)
+            ->currencyDecimalPoint($this->currency->decimal_mark)
+            ->currencyThousandsSeparator($this->currency->thousands_separator)
+            ->currencyFormat($this->currency->symbol_first == true ? $this->currency->symbol . ' ' . '{VALUE}' : '{VALUE}' . ' ' . $this->currency->symbol)
+            ->currencyFraction($this->currency->subunit_name)
             ->save('public');
     }
 }

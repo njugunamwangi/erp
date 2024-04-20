@@ -17,7 +17,7 @@ class InvoiceStatsOverview extends BaseWidget
                 ->color('primary')
                 ->description('Number of invoices generated')
                 ->descriptionIcon('heroicon-o-calculator'),
-            Stat::make('Invoices Total amount', Number::currency(Invoice::all()->sum('subtotal'), 'Kes'))
+            Stat::make('Invoices Total amount', 0)
                 ->color('warning')
                 ->description('Exclusive of taxes')
                 ->descriptionIcon('heroicon-o-banknotes'),
