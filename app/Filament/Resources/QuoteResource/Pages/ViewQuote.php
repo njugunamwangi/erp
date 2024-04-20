@@ -13,6 +13,7 @@ use App\Models\User;
 use Filament\Actions;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Toggle;
 use Filament\Notifications\Actions\Action as ActionsAction;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ViewRecord;
@@ -55,6 +56,8 @@ class ViewQuote extends ViewRecord
                         ->searchable()
                         ->preload()
                         ->default(InvoiceSeries::IN2INV->name),
+                    Toggle::make('send')
+                        ->label('Send Email')
                 ])
                 ->action(function (array $data, $record) {
                     $invoice = Invoice::create([
@@ -71,9 +74,12 @@ class ViewQuote extends ViewRecord
                         'currency_id' => $record->currency_id
                     ]);
 
-                    $invoice->savePdf();
+                    if($data['send'] == true) {
 
-                    Mail::to($invoice->user->email)->send(new SendInvoice($invoice));
+                        $invoice->savePdf();
+
+                        Mail::to($invoice->user->email)->send(new SendInvoice($invoice));
+                    }
 
                     $recipients = User::role(Role::ADMIN)->get();
 

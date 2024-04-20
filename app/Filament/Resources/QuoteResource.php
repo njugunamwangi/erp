@@ -273,6 +273,8 @@ class QuoteResource extends Resource
                                 ->searchable()
                                 ->preload()
                                 ->default(InvoiceSeries::IN2INV->name),
+                            Toggle::make('send')
+                                ->label('Send Email')
                         ])
                         ->action(function (array $data, $record) {
                             $invoice = Invoice::create([
@@ -289,9 +291,12 @@ class QuoteResource extends Resource
                                 'currency_id' => $record->currency_id
                             ]);
 
-                            $invoice->savePdf();
+                            if($data['send'] == true) {
 
-                            Mail::to($invoice->user->email)->send(new SendInvoice($invoice));
+                                $invoice->savePdf();
+
+                                Mail::to($invoice->user->email)->send(new SendInvoice($invoice));
+                            }
 
                             $recipients = User::role(Role::ADMIN)->get();
 
