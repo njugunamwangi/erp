@@ -88,6 +88,6 @@ class Invoice extends Model
             ->currencyThousandsSeparator($this->currency->thousands_separator)
             ->currencyFormat($this->currency->symbol_first == true ? $this->currency->symbol . ' ' . '{VALUE}' : '{VALUE}' . ' ' . $this->currency->symbol)
             ->currencyFraction($this->currency->subunit_name)
-            ->save('public');
+            ->save('invoices');
     }
 }

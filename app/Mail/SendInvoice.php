@@ -54,7 +54,7 @@ class SendInvoice extends Mailable
         $name = 'invoice_'.$this->invoice->series->name.'_'.str_pad($this->invoice->serial_number, 5, '0', STR_PAD_LEFT).'.pdf';
 
         return [
-            Attachment::fromPath(storage_path('app/public/'.$name))
+            Attachment::fromPath(storage_path('app/public/invoices/'.$name))
                 ->withMime('application/pdf'),
         ];
     }
