@@ -31,6 +31,11 @@ class Task extends Model
         return $this->hasOne(Expense::class);
     }
 
+    public function feedback(): HasOne
+    {
+         return $this->hasOne(Feedback::class);
+    }
+
     public function assignedBy(): BelongsTo
     {
         return $this->belongsTo(User::class, 'assigned_by');
