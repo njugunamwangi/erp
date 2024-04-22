@@ -49,3 +49,5 @@ Route::middleware('signed')
 Route::middleware('signed')
     ->get('task/{task}/feedback', RequestFeedback::class)
     ->name('task.feedback');
+
+Route::view('success', 'success');

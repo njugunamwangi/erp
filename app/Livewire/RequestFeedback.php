@@ -82,6 +82,8 @@ class RequestFeedback extends SimplePage
             ->success()
             ->body('Thank you for taking your time to send feedback')
             ->send();
+
+        redirect('success');
     }
 
     public function getRegisterFormAction(): Action

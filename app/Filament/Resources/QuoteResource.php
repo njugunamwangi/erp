@@ -81,6 +81,8 @@ class QuoteResource extends Resource
                                 Toggle::make('task')
                                     ->columnSpanFull()
                                     ->label('List Tasks')
+                                    ->onIcon('heroicon-o-bolt')
+                                    ->offIcon('heroicon-o-bolt-slash')
                                     ->visible(fn(Get $get) => $get('user_id'))
                                     ->live(),
                                 Select::make('task_id')
@@ -223,7 +225,8 @@ class QuoteResource extends Resource
                     ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('currency')
-                    ->getStateUsing(fn($record) => $record->currency->symbol),
+                    ->getStateUsing(fn($record) => $record->currency->symbol)
+                    ->url(fn($record) => CurrencyResource::getUrl('view', ['record' => $record->currency_id])),
                 Tables\Columns\TextColumn::make('subtotal')
                     ->label('Sub-Total')
                     ->sortable(),
