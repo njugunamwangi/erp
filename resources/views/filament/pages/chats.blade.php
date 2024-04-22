@@ -1,19 +1,19 @@
-<x-filament-panels::page class="grid grid-col-2 flex flex-row">
+<x-filament-panels::page >
 
-        <x-filament::section class="w-1/5">
-            <x-slot name="heading">
-                Message List
-            </x-slot>
+    <x-filament::section class="w-1/4">
+        <x-slot name="heading">
+            Message List
+        </x-slot>
 
-            Content
-        </x-filament::section>
+        Content
+    </x-filament::section>
 
-        <x-filament::section class="w-3/5">
-            <x-slot name="heading">
-                Message Body
-            </x-slot>
+    <x-filament::section class="w-3/4">
+        <x-slot name="heading">
+            Message Body
+        </x-slot>
 
-            Content
-        </x-filament::section>
+        Content
+    </x-filament::section>
 
 </x-filament-panels::page>

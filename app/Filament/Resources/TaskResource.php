@@ -3,6 +3,7 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\TaskResource\Pages;
+use App\Mail\RequestFeedbackMail;
 use App\Models\Expense;
 use App\Models\Role;
 use App\Models\Task;
@@ -24,6 +25,7 @@ use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Facades\Mail;
 
 class TaskResource extends Resource
 {
@@ -66,6 +68,9 @@ class TaskResource extends Resource
                     ->orderBy('id', 'desc');
             })
             ->columns([
+                Tables\Columns\TextColumn::make('id')
+                    ->sortable()
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\TextColumn::make('assignedBy.name')
                     ->url(fn ($record) => UserResource::getUrl('view', ['record' => $record->assigned_by]))
                     ->icon('heroicon-o-user')
@@ -120,6 +125,8 @@ class TaskResource extends Resource
                         ->action(function (Task $record) {
                             $record->is_completed = true;
                             $record->save();
+
+                            Mail::to($record->assignedFor->email)->send(new RequestFeedbackMail($record));
                         })
                         ->after(function (Task $record) {
                             $recipients = User::role(Role::ADMIN)->get();
@@ -138,6 +145,18 @@ class TaskResource extends Resource
                                     ->sendToDatabase($recipient);
                             }
                         }),
+                    TablesActionsAction::make('feedback')
+                        ->label('Request Feedback')
+                        ->visible(fn($record) => $record->is_completed && !$record->feedback)
+                        ->color('success')
+                        ->icon('heroicon-o-chat-bubble-bottom-center-text')
+                        ->action(fn($record) => Mail::to($record->assignedFor->email)->send(new RequestFeedbackMail($record)))
+                        ->after(function($record) {
+                            Notification::make()
+                                ->title('Feedback requested for task #'. $record->id)
+                                ->send();
+                        })
+                        ,
                     TablesActionsAction::make('expenses')
                         ->icon('heroicon-o-arrow-trending-up')
                         ->color('danger')
@@ -211,10 +230,14 @@ class TaskResource extends Resource
                 Section::make('Task Overview')
                     ->headerActions([
                         ComponentsActionsAction::make('completed')
-                            ->label('Mark as completed')
+                            ->label('Mark as completed!')
                             ->requiresConfirmation()
                             ->visible(fn ($record) => $record->is_completed === false)
-                            ->action(fn ($record) => $record->completed())
+                            ->action(function ($record) {
+                                $record->completed();
+
+                                Mail::to($record->assignedFor->email)->send(new RequestFeedbackMail($record));
+                            })
                             ->after(function ($record) {
                                 $recipients = User::role(Role::ADMIN)->get();
 
@@ -231,6 +254,23 @@ class TaskResource extends Resource
                                         ])
                                         ->sendToDatabase($recipient);
                                 }
+                            }),
+                        ComponentsActionsAction::make('feedback')
+                            ->label('Request Feedback')
+                            ->color('success')
+                            ->requiresConfirmation()
+                            ->icon('heroicon-o-envelope-open')
+                            ->modalIcon('heroicon-o-envelope-open')
+                            ->modalSubmitActionLabel('Request Feedback')
+                            ->visible(fn ($record) => $record->is_completed === true && !$record->feedback)
+                            ->action(fn ($record) => Mail::to($record->assignedFor->email)->send(new RequestFeedbackMail($record)))
+                            ->after(function ($record) {
+                                Notification::make()
+                                    ->title('Feedback Requested')
+                                    ->body('Feedback requested for task #'.$record->id)
+                                    ->icon('heroicon-o-check')
+                                    ->success()
+                                    ->send();
                             }),
                     ])
                     ->schema([

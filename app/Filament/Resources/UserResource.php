@@ -6,6 +6,7 @@ use App\Enums\InvoiceSeries;
 use App\Enums\InvoiceStatus;
 use App\Filament\Resources\UserResource\Pages;
 use App\Filament\Resources\UserResource\RelationManagers\PipelinesRelationManager;
+use App\Mail\RequestFeedbackMail;
 use App\Mail\SendInvoice;
 use App\Models\CustomField;
 use App\Models\Invoice;
@@ -514,7 +515,26 @@ class UserResource extends Resource
                                                                     ->icon('heroicon-o-adjustments-horizontal'),
                                                                 TextEntry::make('due_date')
                                                                     ->hidden(fn ($state) => is_null($state))
-                                                                    ->date(),
+                                                                    ->date()
+                                                                    ->suffixAction(
+                                                                        Action::make('feedback')
+                                                                            ->label('Request Feedback')
+                                                                            ->color('success')
+                                                                            ->icon('heroicon-o-envelope-open')
+                                                                            ->requiresConfirmation()
+                                                                            ->modalIcon('heroicon-o-envelope-open')
+                                                                            ->modalSubmitActionLabel('Request Feedback')
+                                                                            ->button()
+                                                                            ->visible(fn(Task $record) => !$record->feedback)
+                                                                            ->action(fn(Task $record) => Mail::to($record->assignedFor->email)->send(new RequestFeedbackMail($record)))
+                                                                            ->after(function(Task $record) {
+                                                                                Notification::make()
+                                                                                    ->title('feedback requested')
+                                                                                    ->success()
+                                                                                    ->body('Feedback requested for task #' . $record->id)
+                                                                                    ->send();
+                                                                            }),
+                                                                    ),
                                                             ])
                                                             ->columns(3),
                                                     ]),
@@ -552,6 +572,8 @@ class UserResource extends Resource
                                                                             ->action(function (Task $record) {
                                                                                 $record->is_completed = true;
                                                                                 $record->save();
+
+                                                                                Mail::to($record->assignedFor->email)->send(new RequestFeedbackMail($record));
                                                                             })
                                                                             ->after(function (Task $record) {
                                                                                 $recipients = User::role(Role::ADMIN)->get();
@@ -603,7 +625,26 @@ class UserResource extends Resource
                                                                     ->icon('heroicon-o-adjustments-horizontal'),
                                                                 TextEntry::make('due_date')
                                                                     ->hidden(fn ($state) => is_null($state))
-                                                                    ->date(),
+                                                                    ->date()
+                                                                    ->suffixAction(
+                                                                        Action::make('feedback')
+                                                                            ->label('Request Feedback')
+                                                                            ->color('success')
+                                                                            ->button()
+                                                                            ->icon('heroicon-o-envelope-open')
+                                                                            ->requiresConfirmation()
+                                                                            ->modalIcon('heroicon-o-envelope-open')
+                                                                            ->modalSubmitActionLabel('Request Feedback')
+                                                                            ->visible(fn(Task $record) => !$record->feedback)
+                                                                            ->action(fn(Task $record) => Mail::to($record->assignedFor->email)->send(new RequestFeedbackMail($record)))
+                                                                            ->after(function(Task $record) {
+                                                                                Notification::make()
+                                                                                    ->title('feedback requested')
+                                                                                    ->success()
+                                                                                    ->body('Feedback requested for task #' . $record->id)
+                                                                                    ->send();
+                                                                            }),
+                                                                    ),
                                                             ])
                                                             ->columns(3),
                                                     ]),
@@ -641,6 +682,8 @@ class UserResource extends Resource
                                                                             ->action(function (Task $record) {
                                                                                 $record->is_completed = true;
                                                                                 $record->save();
+
+                                                                                Mail::to($record->assignedFor->email)->send(new RequestFeedbackMail($record));
                                                                             })
                                                                             ->after(function (Task $record) {
                                                                                 $recipients = User::role(Role::ADMIN)->get();

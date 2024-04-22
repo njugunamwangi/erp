@@ -7,6 +7,7 @@ use App\Http\Controllers\ViewInvoiceController;
 use App\Http\Controllers\ViewQuoteController;
 use App\Livewire\AcceptInvitation;
 use App\Livewire\Chats;
+use App\Livewire\RequestFeedback;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -44,3 +45,7 @@ Route::middleware([
 Route::middleware('signed')
     ->get('invitation/{invitation}/accept', AcceptInvitation::class)
     ->name('invitation.accept');
+
+Route::middleware('signed')
+    ->get('task/{task}/feedback', RequestFeedback::class)
+    ->name('task.feedback');
