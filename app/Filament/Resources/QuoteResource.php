@@ -64,6 +64,7 @@ class QuoteResource extends Resource
                                     ->options(Role::find(Role::CUSTOMER)->users()->get()->pluck('name', 'id'))
                                     ->searchable()
                                     ->preload()
+                                    ->live()
                                     ->required()
                                     ->getSearchResultsUsing(fn (string $search): array => User::where('name', 'like', "%{$search}%")->limit(50)->pluck('name', 'id')->toArray())
                                     ->getOptionLabelsUsing(fn (array $values): array => User::whereIn('id', $values)->pluck('name', 'id')->toArray()),
@@ -80,6 +81,7 @@ class QuoteResource extends Resource
                                 Toggle::make('task')
                                     ->columnSpanFull()
                                     ->label('List Tasks')
+                                    ->visible(fn(Get $get) => $get('user_id'))
                                     ->live(),
                                 Select::make('task_id')
                                     ->visible(fn(Get $get) => $get('task') == true)
