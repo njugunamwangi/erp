@@ -17,6 +17,7 @@
         "filament/filament": "^3.2",
         "flowframe/laravel-trend": "^0.2.0",
         "iankumu/mpesa": "^1.3",
+        "ibrahimbougaoua/filament-rating-star": "^1.0",
         "laravel/framework": "^11.0",
         "laravel/jetstream": "^5.0",
         "laravel/pulse": "^1.0@beta",
