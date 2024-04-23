@@ -8,7 +8,9 @@ use App\Models\Expense;
 use App\Models\Role;
 use App\Models\Task;
 use App\Models\User;
+use App\Models\Vertical;
 use Filament\Forms;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Form;
 use Filament\Infolists\Components\Actions\Action as ComponentsActionsAction;
 use Filament\Infolists\Components\Section;
@@ -51,10 +53,15 @@ class TaskResource extends Resource
                     ->searchable()
                     ->preload()
                     ->required(),
+                Forms\Components\DatePicker::make('due_date'),
+                Select::make('vertical_id')
+                    ->relationship('vertical', 'vertical')
+                    ->searchable()
+                    ->preload()
+                    ->required(),
                 Forms\Components\RichEditor::make('description')
                     ->required()
                     ->columnSpanFull(),
-                Forms\Components\DatePicker::make('due_date'),
                 Forms\Components\Toggle::make('is_completed')
                     ->required(),
             ]);
