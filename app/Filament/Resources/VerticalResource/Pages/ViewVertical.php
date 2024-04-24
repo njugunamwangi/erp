@@ -14,7 +14,7 @@ class ViewVertical extends ViewRecord
     {
         return [
             Actions\EditAction::make()
-                ->icon('heroicon-o-square-plus'),
+                ->icon('heroicon-o-pencil-square'),
         ];
     }
 }
