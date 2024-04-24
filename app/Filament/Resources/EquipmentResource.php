@@ -23,26 +23,7 @@ class EquipmentResource extends Resource
     public static function form(Form $form): Form
     {
         return $form
-            ->schema([
-                Forms\Components\TextInput::make('registration')
-                    ->required()
-                    ->maxLength(255),
-                Forms\Components\Select::make('vertical_id')
-                    ->relationship('vertical', 'vertical')
-                    ->required()
-                    ->searchable()
-                    ->preload(),
-                Forms\Components\Select::make('type')
-                    ->enum(EquipmentType::class)
-                    ->options(EquipmentType::class)
-                    ->required()
-                    ->searchable(),
-                Forms\Components\Select::make('brand_id')
-                    ->relationship('brand', 'brand')
-                    ->required()
-                    ->searchable()
-                    ->preload(),
-            ]);
+            ->schema(Equipment::getForm());
     }
 
     public static function table(Table $table): Table

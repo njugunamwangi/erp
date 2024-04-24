@@ -3,6 +3,8 @@
 namespace App\Models;
 
 use App\Enums\EquipmentType;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -36,5 +38,29 @@ class Equipment extends Model
     public function vertical(): BelongsTo
     {
          return $this->belongsTo(Vertical::class);
+    }
+
+    public static function getForm(): array
+    {
+         return [
+            TextInput::make('registration')
+                ->required()
+                ->maxLength(255),
+            Select::make('vertical_id')
+                ->relationship('vertical', 'vertical')
+                ->required()
+                ->searchable()
+                ->preload(),
+            Select::make('type')
+                ->enum(EquipmentType::class)
+                ->options(EquipmentType::class)
+                ->required()
+                ->searchable(),
+            Select::make('brand_id')
+                ->relationship('brand', 'brand')
+                ->required()
+                ->searchable()
+                ->preload(),
+         ];
     }
 }
