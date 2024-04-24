@@ -22,6 +22,7 @@ return new class extends Migration
             $table->text('description');
             $table->date('due_date')->nullable();
             $table->boolean('is_completed')->default(false);
+            $table->boolean('requires_equipment')->default(false);
             $table->softDeletes();
             $table->timestamps();
         });
