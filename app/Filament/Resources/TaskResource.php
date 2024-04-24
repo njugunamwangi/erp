@@ -4,15 +4,20 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\TaskResource\Pages;
 use App\Mail\RequestFeedbackMail;
+use App\Models\Equipment;
 use App\Models\Expense;
 use App\Models\Role;
 use App\Models\Task;
 use App\Models\User;
 use App\Models\Vertical;
 use Filament\Forms;
+use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
+use Filament\Forms\Get;
 use Filament\Infolists\Components\Actions\Action as ComponentsActionsAction;
+use Filament\Infolists\Components\RepeatableEntry;
 use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Infolist;
@@ -25,6 +30,7 @@ use Filament\Tables;
 use Filament\Tables\Actions\Action as TablesActionsAction;
 use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Table;
+use FilamentTiptapEditor\TiptapEditor;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Facades\Mail;
@@ -58,12 +64,23 @@ class TaskResource extends Resource
                     ->relationship('vertical', 'vertical')
                     ->searchable()
                     ->preload()
+                    ->live()
                     ->required(),
-                Forms\Components\RichEditor::make('description')
+                TiptapEditor::make('description')
                     ->required()
+                    ->extraInputAttributes(['style' => 'min-height: 12rem;'])
                     ->columnSpanFull(),
                 Forms\Components\Toggle::make('is_completed')
                     ->required(),
+                Toggle::make('requires_equipment')
+                    ->live(),
+                Select::make('equipment')
+                    ->visible(fn(Get $get) => $get('requires_equipment'))
+                    ->relationship('equipment', 'registration', modifyQueryUsing: fn(Get $get, Builder $query) => $query->vertical == $get('vertical_id'))
+                    ->searchable()
+                    ->preload()
+                    ->createOptionForm(Equipment::getForm())
+                    ->multiple()
             ]);
     }
 
@@ -300,6 +317,12 @@ class TaskResource extends Resource
                         TextEntry::make('description')
                             ->html()
                             ->columnSpanFull(),
+                        RepeatableEntry::make('equipment')
+                            ->schema([
+                                TextEntry::make('registration')
+                                    ->url(fn($record) => EquipmentResource::getUrl('view', ['record' => $record->id]))
+                            ])
+                            ->grid(2)
                     ])->columns(3),
             ]);
     }
