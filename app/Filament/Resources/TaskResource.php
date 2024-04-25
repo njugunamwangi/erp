@@ -76,7 +76,8 @@ class TaskResource extends Resource
                     ->live(),
                 Select::make('equipment')
                     ->visible(fn(Get $get) => $get('requires_equipment'))
-                    ->relationship('equipment', 'registration', modifyQueryUsing: fn(Get $get, Builder $query) => $query->vertical == $get('vertical_id'))
+                    ->relationship('equipment', 'registration', modifyQueryUsing: fn(Get $get) => Equipment::query()->where('vertical_id', $get('vertical_id')))
+                    ->live()
                     ->searchable()
                     ->preload()
                     ->createOptionForm(Equipment::getForm())
