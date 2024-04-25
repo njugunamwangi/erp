@@ -6,7 +6,6 @@ use App\Http\Controllers\MPesaSTKPushController;
 use App\Http\Controllers\ViewInvoiceController;
 use App\Http\Controllers\ViewQuoteController;
 use App\Livewire\AcceptInvitation;
-use App\Livewire\Chats;
 use App\Livewire\RequestFeedback;
 use Illuminate\Support\Facades\Route;
 
@@ -36,8 +35,6 @@ Route::middleware([
 
     Route::get('invoice/download/{record}/pdf', DownloadInvoiceController::class)
         ->name('invoice.download');
-
-    Route::get('chats', Chats::class)->name('chats');
 
     Route::post('stk-push', [MPesaSTKPushController::class, 'STKPush'])->name('mpesa.stk-push');
 });
