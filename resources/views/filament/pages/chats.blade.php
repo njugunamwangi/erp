@@ -1,19 +1,373 @@
 <x-chats-layout >
 
-    <x-filament::section class="w-1/4">
-        <x-slot name="heading">
-            Message List
-        </x-slot>
-
-        Content
+    <!-- ====== Chat List Section Start -->
+    <x-filament::section class="w-1/4 h-[1230px] ">
+        <div class="mx-auto px-4 md:container">
+            <div class="shadow-1 dark:shadow-box-dark mx-auto max-w-[450px] rounded-lg bg-white dark:bg-slate-900 py-8 px-2">
+                <div class="mb-8 flex items-center justify-between">
+                    <h3 class="text-xl font-semibold text-dark dark:text-white">Messages</h3>
+                    <div class="relative">
+                    <button
+                        @click="openDropDown = !openDropDown"
+                        class="text-dark dark:text-white"
+                        >
+                        <svg
+                            width="24"
+                            height="24"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            xmlns="http://www.w3.org/2000/svg"
+                            class="fill-current"
+                            >
+                            <path
+                                d="M5 14C6.10457 14 7 13.1046 7 12C7 10.8954 6.10457 10 5 10C3.89543 10 3 10.8954 3 12C3 13.1046 3.89543 14 5 14Z"
+                                />
+                            <path
+                                d="M12 14C13.1046 14 14 13.1046 14 12C14 10.8954 13.1046 10 12 10C10.8954 10 10 10.8954 10 12C10 13.1046 10.8954 14 12 14Z"
+                                />
+                            <path
+                                d="M19 14C20.1046 14 21 13.1046 21 12C21 10.8954 20.1046 10 19 10C17.8954 10 17 10.8954 17 12C17 13.1046 17.8954 14 19 14Z"
+                                />
+                        </svg>
+                    </button>
+                    <div
+                        x-show="openDropDown"
+                        @click.outside="openDropDown = false"
+                        class="absolute right-0 top-full z-40 w-[200px] space-y-1 rounded bg-white dark:bg-dark p-2 shadow-card"
+                        >
+                        <button
+                            class="w-full rounded py-2 px-3 text-left text-sm text-body-color dark:text-dark-6 hover:bg-gray-2 dark:hover:bg-dark-2"
+                            >
+                        All Conversations
+                        </button>
+                        <button
+                            class="w-full rounded py-2 px-3 text-left text-sm text-body-color dark:text-dark-6 hover:bg-gray-2 dark:hover:bg-dark-2"
+                            >
+                        Mark as Read
+                        </button>
+                    </div>
+                    </div>
+                </div>
+                <form class="relative mb-7">
+                    <input
+                    type="text"
+                    class="w-full bg-transparent rounded-full border border-stroke dark:border-dark-3 py-[10px] pl-5 pr-10 text-base text-body-color dark:text-dark-6 outline-none focus:border-primary"
+                    placeholder="Search.."
+                    />
+                    <button class="absolute right-4 top-1/2 -translate-y-1/2 text-body-color dark:text-dark-6 hover:text-primary">
+                    <svg
+                        width="16"
+                        height="16"
+                        viewBox="0 0 16 16"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                        class="fill-current stroke-current"
+                        >
+                        <path
+                            d="M15.0348 14.3131L15.0348 14.3132L15.0377 14.3154C15.0472 14.323 15.0514 14.3294 15.0536 14.3334C15.0559 14.3378 15.0576 14.343 15.0581 14.3496C15.0592 14.3621 15.0563 14.3854 15.0346 14.4127C15.0307 14.4175 15.0275 14.4196 15.0249 14.4208C15.0224 14.422 15.0152 14.425 15 14.425C15.0038 14.425 14.9998 14.4256 14.9885 14.4215C14.9785 14.4178 14.9667 14.4118 14.9549 14.4036L10.7893 11.0362L10.4555 10.7663L10.1383 11.0554C9.10154 12 7.79538 12.525 6.4 12.525C4.933 12.525 3.56006 11.953 2.52855 10.9215C0.398817 8.79172 0.398817 5.3083 2.52855 3.17857C3.56006 2.14706 4.933 1.57501 6.4 1.57501C7.867 1.57501 9.23994 2.14706 10.2714 3.17857L10.2714 3.17857L10.2735 3.18065C12.2161 5.10036 12.3805 8.14757 10.8214 10.2799L10.5409 10.6635L10.9098 10.9631L15.0348 14.3131ZM2.62145 10.8286C3.63934 11.8465 4.96616 12.4 6.4 12.4C7.82815 12.4 9.1825 11.8504 10.1798 10.8273C12.2759 8.75493 12.2713 5.36421 10.1786 3.27146C9.16066 2.25356 7.83384 1.70001 6.4 1.70001C4.96672 1.70001 3.64038 2.25313 2.62264 3.27027C0.524101 5.34244 0.527875 8.73499 2.62145 10.8286Z"
+                            />
+                    </svg>
+                    </button>
+                </form>
+                <div class="space-y-3">
+                    <div
+                    class="flex cursor-pointer items-center rounded-[5px] py-[10px] px-4 hover:bg-gray-1 dark:hover:bg-dark-3"
+                    >
+                    <div
+                        class="relative mr-[14px] h-11 w-full max-w-[44px] rounded-full"
+                        >
+                        <img
+                            src="https://cdn.tailgrids.com/2.0/image/dashboard/images/chat-list/image-01.png"
+                            alt="profile"
+                            class="h-full w-full object-cover object-center"
+                            />
+                        <span
+                            class="absolute bottom-0 right-0 block h-3 w-3 rounded-full border-2 border-[#F8FAFC] dark:border-dark-2 bg-green"
+                            ></span>
+                    </div>
+                    <div class="w-full">
+                        <div class="mb-1 flex justify-between">
+                            <h5 class="text-sm font-medium text-dark dark:text-white">Danish Hebo</h5>
+                            <span class="text-xs text-body-color dark:text-dark-6"> Dec, 8 </span>
+                        </div>
+                        <div class="flex justify-between">
+                            <p class="text-sm text-dark dark:text-white">
+                                Hello devid, how are you today?
+                            </p>
+                            <span
+                                class="flex h-4 w-full max-w-[16px] items-center justify-center rounded-full bg-primary text-[10px] font-medium leading-none text-white"
+                                >
+                            5
+                            </span>
+                        </div>
+                    </div>
+                    </div>
+                    <div
+                    class="flex cursor-pointer items-center rounded-[5px] py-[10px] px-4 hover:bg-gray-1 dark:hover:bg-dark-3"
+                    >
+                    <div
+                        class="relative mr-[14px] h-11 w-full max-w-[44px] rounded-full"
+                        >
+                        <img
+                            src="https://cdn.tailgrids.com/2.0/image/dashboard/images/chat-list/image-02.png"
+                            alt="profile"
+                            class="h-full w-full object-cover object-center"
+                            />
+                        <span
+                            class="absolute bottom-0 right-0 block h-3 w-3 rounded-full border-2 border-[#F8FAFC] dark:border-dark-2 bg-green"
+                            ></span>
+                    </div>
+                    <div class="w-full">
+                        <div class="mb-1 flex justify-between">
+                            <h5 class="text-sm font-medium text-dark dark:text-white">Mariya Desoja</h5>
+                            <span class="text-xs text-body-color dark:text-dark-6"> Dec, 8 </span>
+                        </div>
+                        <div class="flex justify-between">
+                            <p class="text-sm text-body-color dark:text-dark-6">How are you today?</p>
+                        </div>
+                    </div>
+                    </div>
+                    <div
+                    class="flex cursor-pointer items-center rounded-[5px] py-[10px] px-4 hover:bg-gray-1 dark:hover:bg-dark-3"
+                    >
+                    <div
+                        class="relative mr-[14px] h-11 w-full max-w-[44px] rounded-full"
+                        >
+                        <img
+                            src="https://cdn.tailgrids.com/2.0/image/dashboard/images/chat-list/image-03.png"
+                            alt="profile"
+                            class="h-full w-full object-cover object-center"
+                            />
+                        <span
+                            class="absolute bottom-0 right-0 block h-3 w-3 rounded-full border-2 border-[#F8FAFC] dark:border-dark-2 bg-green"
+                            ></span>
+                    </div>
+                    <div class="w-full">
+                        <div class="mb-1 flex justify-between">
+                            <h5 class="text-sm font-medium text-dark dark:text-white">Jenny Wilson</h5>
+                            <span class="text-xs text-body-color dark:text-dark-6"> Dec, 8 </span>
+                        </div>
+                        <div class="flex justify-between">
+                            <p class="text-sm text-body-color dark:text-dark-6">
+                                I'm waiting for you response!
+                            </p>
+                        </div>
+                    </div>
+                    </div>
+                    <div
+                    class="flex cursor-pointer items-center rounded-[5px] py-[10px] px-4 hover:bg-gray-1 dark:hover:bg-dark-3"
+                    >
+                    <div
+                        class="relative mr-[14px] h-11 w-full max-w-[44px] rounded-full"
+                        >
+                        <img
+                            src="https://cdn.tailgrids.com/2.0/image/dashboard/images/chat-list/image-05.png"
+                            alt="profile"
+                            class="h-full w-full object-cover object-center"
+                            />
+                        <span
+                            class="absolute bottom-0 right-0 block h-3 w-3 rounded-full border-2 border-[#F8FAFC] dark:border-dark-2 bg-green"
+                            ></span>
+                    </div>
+                    <div class="w-full">
+                        <div class="mb-1 flex justify-between">
+                            <h5 class="text-sm font-medium text-dark dark:text-white">Henry Fisher</h5>
+                            <span class="text-xs text-body-color dark:text-dark-6"> Dec, 8 </span>
+                        </div>
+                        <div class="flex justify-between">
+                            <p class="text-sm text-dark dark:text-white">
+                                What do you think about it?
+                            </p>
+                            <span
+                                class="flex h-4 w-full max-w-[16px] items-center justify-center rounded-full bg-primary text-[10px] font-medium leading-none text-white"
+                                >
+                            2
+                            </span>
+                        </div>
+                    </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </x-filament::section>
+    <!-- ====== Chat List Section End -->
 
-    <x-filament::section class="w-3/4">
+    <x-filament::section class="w-3/4 h-[1230px]">
         <x-slot name="heading">
-            Message Body
+            <div class="flex items-center">
+                <div
+                    class="mr-4 h-[50px] w-full max-w-[50px] overflow-hidden rounded-full"
+                    >
+                    <img
+                        src="https://cdn.tailgrids.com/2.0/image/dashboard/images/chat-box/chat-box-03/image-01.jpg"
+                        alt="avatar"
+                        class="h-full w-full object-cover object-center"
+                        />
+                </div>
+                <div>
+                    <h5 class="text-base font-medium ">Robert Henry</h5>
+                    <p class="text-sm text-body-color dark:text-dark-6">
+                        <span
+                            class="mr-[6px] inline-block h-2 w-2 rounded-full bg-green-600"
+                            ></span>
+                        <span>Active</span>
+                    </p>
+                </div>
+            </div>
         </x-slot>
 
-        Content
+        <div class="mx-auto md:container">
+            <div class="mx-auto w-full align-baseline bg-white dark:bg-slate-900">
+                <div class="py-[30px] max-h-[1000px] px-5 sm:px-[30px] overflow-y-auto flex-grow overscroll-contain overflow-x-hidden my-auto ">
+                    <div class="mb-9 space-y-6">
+                        <div class="flex w-450px max-w-[700px]">
+                            <div class="mr-[14px] shrink-0 h-10 w-full max-w-[40px] rounded-full">
+                                <img
+                                    src="https://cdn.tailgrids.com/2.0/image/dashboard/images/chat-box/chat-box-03/image-01.jpg"
+                                    alt="avatar"
+                                    class="h-full w-full rounded-full object-cover object-center"
+                                    />
+                            </div>
+                            <div>
+                                <p class="mb-[10px] text-base font-medium ">
+                                    <span>Nagita salavina</span>
+                                    <span class="pl-[10px] text-sm text-body-color dark:text-dark-6"> 1d </span>
+                                </p>
+                                <div class="inline-block rounded-[20px] dark:text-white rounded-tl-none bg-[#F6F5F8] dark:bg-slate-300 py-2 px-4">
+                                    <p class="text-base ">
+                                    Hi, are we going on new year's holiday? we can visite
+                                    india.
+                                    Lorem ipsum dolor sit, amet consectetur adipisicing elit. Ut voluptate molestias perspiciatis neque natus pariatur id laboriosam libero, aspernatur tenetur deserunt eius sequi, dicta soluta quis fugit earum error deleniti?
+                                    Lorem ipsum dolor sit, amet consectetur adipisicing elit. Ut voluptate molestias perspiciatis neque natus pariatur id laboriosam libero, aspernatur tenetur deserunt eius sequi, dicta soluta quis fugit earum error deleniti?
+                                    Lorem ipsum dolor sit, amet consectetur adipisicing elit. Ut voluptate molestias perspiciatis neque natus pariatur id laboriosam libero, aspernatur tenetur deserunt eius sequi, dicta soluta quis fugit earum error deleniti?
+                                    Lorem ipsum dolor sit, amet consectetur adipisicing elit. Ut voluptate molestias perspiciatis neque natus pariatur id laboriosam libero, aspernatur tenetur deserunt eius sequi, dicta soluta quis fugit earum error deleniti?
+                                    Lorem ipsum dolor sit, amet consectetur adipisicing elit. Ut voluptate molestias perspiciatis neque natus pariatur id laboriosam libero, aspernatur tenetur deserunt eius sequi, dicta soluta quis fugit earum error deleniti?
+                                    Lorem ipsum dolor sit, amet consectetur adipisicing elit. Ut voluptate molestias perspiciatis neque natus pariatur id laboriosam libero, aspernatur tenetur deserunt eius sequi, dicta soluta quis fugit earum error deleniti?
+                                    Lorem ipsum dolor sit, amet consectetur adipisicing elit. Ut voluptate molestias perspiciatis neque natus pariatur id laboriosam libero, aspernatur tenetur deserunt eius sequi, dicta soluta quis fugit earum error deleniti?
+                                    Lorem ipsum dolor sit, amet consectetur adipisicing elit. Ut voluptate molestias perspiciatis neque natus pariatur id laboriosam libero, aspernatur tenetur deserunt eius sequi, dicta soluta quis fugit earum error deleniti?
+                                    Lorem ipsum dolor sit, amet consectetur adipisicing elit. Ut voluptate molestias perspiciatis neque natus pariatur id laboriosam libero, aspernatur tenetur deserunt eius sequi, dicta soluta quis fugit earum error deleniti?
+                                    Lorem ipsum dolor sit, amet consectetur adipisicing elit. Ut voluptate molestias perspiciatis neque natus pariatur id laboriosam libero, aspernatur tenetur deserunt eius sequi, dicta soluta quis fugit earum error deleniti?
+                                    Lorem ipsum dolor sit, amet consectetur adipisicing elit. Ut voluptate molestias perspiciatis neque natus pariatur id laboriosam libero, aspernatur tenetur deserunt eius sequi, dicta soluta quis fugit earum error deleniti?
+                                    Lorem ipsum dolor sit, amet consectetur adipisicing elit. Ut voluptate molestias perspiciatis neque natus pariatur id laboriosam libero, aspernatur tenetur deserunt eius sequi, dicta soluta quis fugit earum error deleniti?
+                                    Lorem ipsum dolor sit, amet consectetur adipisicing elit. Ut voluptate molestias perspiciatis neque natus pariatur id laboriosam libero, aspernatur tenetur deserunt eius sequi, dicta soluta quis fugit earum error deleniti?
+                                    Lorem ipsum dolor sit, amet consectetur adipisicing elit. Ut voluptate molestias perspiciatis neque natus pariatur id laboriosam libero, aspernatur tenetur deserunt eius sequi, dicta soluta quis fugit earum error deleniti?
+                                    Lorem ipsum dolor sit, amet consectetur adipisicing elit. Ut voluptate molestias perspiciatis neque natus pariatur id laboriosam libero, aspernatur tenetur deserunt eius sequi, dicta soluta quis fugit earum error deleniti?
+                                    Lorem ipsum dolor sit, amet consectetur adipisicing elit. Ut voluptate molestias perspiciatis neque natus pariatur id laboriosam libero, aspernatur tenetur deserunt eius sequi, dicta soluta quis fugit earum error deleniti?
+                                    Lorem ipsum dolor sit, amet consectetur adipisicing elit. Ut voluptate molestias perspiciatis neque natus pariatur id laboriosam libero, aspernatur tenetur deserunt eius sequi, dicta soluta quis fugit earum error deleniti?
+                                    Lorem ipsum dolor sit, amet consectetur adipisicing elit. Ut voluptate molestias perspiciatis neque natus pariatur id laboriosam libero, aspernatur tenetur deserunt eius sequi, dicta soluta quis fugit earum error deleniti?
+                                    Lorem ipsum dolor sit, amet consectetur adipisicing elit. Ut voluptate molestias perspiciatis neque natus pariatur id laboriosam libero, aspernatur tenetur deserunt eius sequi, dicta soluta quis fugit earum error deleniti?
+                                    Lorem ipsum dolor sit, amet consectetur adipisicing elit. Ut voluptate molestias perspiciatis neque natus pariatur id laboriosam libero, aspernatur tenetur deserunt eius sequi, dicta soluta quis fugit earum error deleniti?
+                                    Lorem ipsum dolor sit, amet consectetur adipisicing elit. Ut voluptate molestias perspiciatis neque natus pariatur id laboriosam libero, aspernatur tenetur deserunt eius sequi, dicta soluta quis fugit earum error deleniti?
+                                    Lorem ipsum dolor sit, amet consectetur adipisicing elit. Ut voluptate molestias perspiciatis neque natus pariatur id laboriosam libero, aspernatur tenetur deserunt eius sequi, dicta soluta quis fugit earum error deleniti?
+                                    Lorem ipsum dolor sit, amet consectetur adipisicing elit. Ut voluptate molestias perspiciatis neque natus pariatur id laboriosam libero, aspernatur tenetur deserunt eius sequi, dicta soluta quis fugit earum error deleniti?
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="ml-auto flex w-450px max-w-[700px] justify-end">
+                            <div>
+                                <p
+                                    class="mb-[10px] text-right text-base font-medium "
+                                    >
+                                    <span>You</span>
+                                    <span class="pl-[10px] text-sm text-body-color dark:text-dark-6">
+                                    10mins
+                                    </span>
+                                </p>
+                                <div
+                                    class="inline-block rounded-[20px] rounded-tr-none bg-blue-600 py-2 px-4"
+                                    >
+                                    <p class="text-base text-white">
+                                    Hi, are we going on new year's holiday? we can visite
+                                    india.
+
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="ml-[14px] h-10 w-full max-w-[40px] rounded-full">
+                                <img
+                                    src="https://cdn.tailgrids.com/2.0/image/dashboard/images/chat-box/chat-box-03/image-01.jpg"
+                                    alt="avatar"
+                                    class="h-full w-full rounded-full object-cover object-center"
+                                    />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="px-5 py-[30px] ">
+                    <form class="relative">
+                        <input
+                            type="text"
+                            placeholder="Type something here..."
+                            class="h-[58px] w-full rounded-lg border border-stroke dark:border-dark-3 bg-gray-1 dark:bg-transparent pl-4 pr-[135px] text-base text-body-color dark:text-dark-6 outline-none focus:border-primary sm:pl-6"
+                            />
+                        <div
+                            class="absolute right-4 top-1/2 inline-flex -translate-y-1/2 items-center justify-end"
+                            >
+                            <button class="text-body-color dark:text-dark-6 hover:text-primary mr-[14px]">
+                                <svg
+                                    width="18"
+                                    height="18"
+                                    viewBox="0 0 18 18"
+                                    fill="none"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    class="fill-current"
+                                    >
+                                    <path
+                                    d="M9 10.6594C10.7438 10.6594 12.1781 9.22497 12.1781 7.48123V3.68435C12.1781 1.9406 10.7438 0.506226 9 0.506226C7.25625 0.506226 5.82188 1.9406 5.82188 3.68435V7.48123C5.82188 9.22497 7.25625 10.6594 9 10.6594ZM7.0875 3.68435C7.0875 2.6156 7.95938 1.77185 9 1.77185C10.0688 1.77185 10.9125 2.64373 10.9125 3.68435V7.48123C10.9125 8.54998 10.0406 9.39373 9 9.39373C7.93125 9.39373 7.0875 8.52185 7.0875 7.48123V3.68435V3.68435Z"
+                                    />
+                                    <path
+                                    d="M14.3438 7.62184C14.3438 7.28434 14.0625 6.97496 13.6969 6.97496C13.3313 6.97496 13.05 7.25621 13.05 7.62184C13.0781 9.84371 11.25 11.6437 9 11.6437C6.75 11.6437 4.92188 9.84371 4.92188 7.59371C4.92188 7.25621 4.64063 6.94684 4.275 6.94684C3.90938 6.94684 3.62813 7.22809 3.62813 7.59371C3.62813 10.2937 5.68125 12.5437 8.325 12.8531V16.875C8.325 17.2125 8.60625 17.5218 8.97188 17.5218C9.30938 17.5218 9.61875 17.2406 9.61875 16.875V12.8812C12.2906 12.5718 14.3438 10.3218 14.3438 7.62184Z"
+                                    />
+                                </svg>
+                            </button>
+                            <button class="text-body-color dark:text-dark-6 hover:text-primary mr-[18px]">
+                                <svg
+                                    width="18"
+                                    height="18"
+                                    viewBox="0 0 18 18"
+                                    fill="none"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    class="fill-current"
+                                    >
+                                    <path
+                                    d="M9.225 17.5219C9.16875 17.5219 9.14062 17.5219 9.08437 17.5219C7.79062 17.5219 6.38438 16.9875 5.5125 16.1719C4.58438 15.3 4.07812 14.1188 4.07812 12.9094V4.19063C4.07812 2.98126 4.66875 1.88438 5.70937 1.18126C6.72187 0.478134 7.9875 0.309384 9.16875 0.731259L9.225 0.759384C9.36562 0.815634 9.53438 0.843759 9.70312 0.956259C10.9969 1.63126 11.7844 2.84063 11.7844 4.21876V11.6719C11.7844 12.4313 11.5312 13.1344 11.0531 13.6969C10.9688 13.8094 10.9125 13.8656 10.8562 13.8938C10.3219 14.3719 9.70312 14.625 9 14.625C8.2125 14.625 7.45313 14.2594 6.94688 13.6688C6.46875 13.1063 6.1875 12.375 6.1875 11.6156V5.40001C6.1875 5.06251 6.46875 4.75313 6.83437 4.75313C7.2 4.75313 7.48125 5.03438 7.48125 5.40001V11.6438C7.48125 12.0938 7.65 12.5438 7.93125 12.8813C8.18438 13.1906 8.60625 13.3875 9 13.3875C9.36562 13.3875 9.675 13.2469 9.95625 12.9938C9.98438 12.9656 10.0125 12.9375 10.0687 12.8813C10.35 12.5438 10.5188 12.1219 10.5188 11.6719V4.19063C10.5188 3.29063 10.0125 2.50313 9.1125 2.05313L9.08437 2.02501C9.02812 1.99688 8.97188 1.96876 8.85938 1.94063L8.775 1.91251C7.95938 1.63126 7.11562 1.74376 6.4125 2.22188C5.70937 2.67188 5.34375 3.37501 5.34375 4.16251V12.8813C5.34375 13.725 5.7375 14.5969 6.38438 15.2156C7.03125 15.8063 8.12813 16.2281 9.1125 16.2281C10.0688 16.2563 10.9688 15.8906 11.6719 15.2438C12.3469 14.5969 12.7125 13.7531 12.6844 12.8813V6.10313C12.6844 5.76563 12.9656 5.45626 13.3313 5.45626C13.6969 5.45626 13.9781 5.73751 13.9781 6.10313V12.8813C14.0063 14.0906 13.5 15.2719 12.5719 16.1719C11.6438 17.0156 10.4344 17.5219 9.225 17.5219Z"
+                                    />
+                                </svg>
+                            </button>
+                            <button
+                                class="flex h-9 w-9 items-center justify-center rounded-full bg-blue-600 hover:bg-blue-dark"
+                                >
+                                <svg
+                                    width="16"
+                                    height="16"
+                                    viewBox="0 0 16 16"
+                                    fill="none"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    >
+                                    <g clip-path="url(#clip0_1061_11601)">
+                                    <path
+                                        d="M14.8999 7.42497C14.7999 7.24997 14.6499 7.12497 14.4749 7.02497L2.94994 0.574974C2.74994 0.474974 2.52494 0.424974 2.29994 0.449974C2.07494 0.474974 1.87494 0.549974 1.69994 0.699974C1.52494 0.849974 1.39994 1.04997 1.34994 1.24997C1.27494 1.47497 1.29994 1.69997 1.37494 1.92497L3.52494 7.99997L1.37494 14.075C1.29994 14.3 1.29994 14.525 1.34994 14.725C1.39994 14.95 1.52494 15.125 1.69994 15.275C1.87494 15.425 2.07494 15.5 2.29994 15.525C2.32494 15.525 2.37494 15.525 2.39994 15.525C2.57494 15.525 2.77494 15.475 2.94994 15.375L14.4749 8.92497C14.6499 8.82497 14.7999 8.69997 14.8999 8.52497C14.9999 8.34997 15.0499 8.14997 15.0499 7.97497C15.0499 7.79997 14.9999 7.59997 14.8999 7.42497ZM2.44994 1.57497L12.8999 7.42497H4.52494L2.44994 1.57497ZM2.44994 14.425L4.54994 8.57497H12.9249L2.44994 14.425Z"
+                                        fill="white"
+                                        />
+                                    </g>
+                                    <defs>
+                                    <clipPath id="clip0_1061_11601">
+                                        <rect
+                                            width="16"
+                                            height="16"
+                                            fill="white"
+                                            />
+                                    </clipPath>
+                                    </defs>
+                                </svg>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
     </x-filament::section>
 
 </x-chats-layout>
