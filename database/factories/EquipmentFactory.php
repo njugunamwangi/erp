@@ -2,6 +2,9 @@
 
 namespace Database\Factories;
 
+use App\Enums\EquipmentType;
+use App\Models\Brand;
+use App\Models\Vertical;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -17,7 +20,10 @@ class EquipmentFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'registration' => fake()->name(),
+            'vertical_id' => fake()->randomElement(Vertical::all()->pluck('id')),
+            'type' => fake()->randomElement(EquipmentType::values()),
+            'brand_id' => fake()->randomElement(Brand::all()->pluck('id'))
         ];
     }
 }

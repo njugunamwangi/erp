@@ -26,6 +26,7 @@ class DatabaseSeeder extends Seeder
             CustomFieldSeeder::class,
             CountySeeder::class,
             BrandSeeder::class,
+            EquipmentSeeder::class,
         ]);
     }
 }
