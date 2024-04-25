@@ -70,10 +70,9 @@ class TaskResource extends Resource
                     ->required()
                     ->extraInputAttributes(['style' => 'min-height: 12rem;'])
                     ->columnSpanFull(),
-                Forms\Components\Toggle::make('is_completed')
-                    ->required(),
                 Toggle::make('requires_equipment')
                     ->live(),
+                Forms\Components\Toggle::make('is_completed'),
                 Select::make('equipment')
                     ->visible(fn(Get $get) => $get('requires_equipment'))
                     ->relationship('equipment', 'registration', modifyQueryUsing: fn(Get $get) => Equipment::query()->where('vertical_id', $get('vertical_id')))

@@ -1,4 +1,4 @@
-<x-filament-panels::page >
+<x-chats-layout >
 
     <x-filament::section class="w-1/4">
         <x-slot name="heading">
@@ -16,4 +16,4 @@
         Content
     </x-filament::section>
 
-</x-filament-panels::page>
+</x-chats-layout>

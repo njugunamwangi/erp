@@ -6,7 +6,7 @@ use Filament\Pages\Page;
 
 class Chats extends Page
 {
-    protected static ?string $navigationIcon = 'heroicon-o-chat-bubble-left-right';
+    protected static ?string $navigationIcon = 'heroicon-o-document-text';
 
     protected static string $view = 'filament.pages.chats';
 }
