@@ -6,6 +6,7 @@ use App\Filament\Resources\TaskResource;
 use App\Filament\Staff\Resources\TaskResource as ResourcesTaskResource;
 use Filament\Notifications\Actions\Action;
 use Filament\Notifications\Notification;
+use Filament\Pages\Dashboard;
 use Filament\Resources\Pages\CreateRecord;
 
 class CreateTask extends CreateRecord
@@ -31,7 +32,7 @@ class CreateTask extends CreateRecord
             ->actions([
                 Action::make('view')
                     ->markAsRead()
-                    ->url(ResourcesTaskResource::getUrl('view', ['record' => $task->id]))
+                    ->url(ResourcesTaskResource::getUrl('view', ['record' => $task->id], panel: 'staff'))
                     ->color('warning'),
             ])
             ->sendToDatabase($task->assignedTo);
