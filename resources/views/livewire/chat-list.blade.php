@@ -4,9 +4,9 @@
 
             <div class="shrink-0 relative mr-[14px] h-11 w-full max-w-[44px] rounded-full">
                 <img
-                    src="https://cdn.tailgrids.com/2.0/image/dashboard/images/chat-list/image-01.png"
-                    alt="profile"
-                    class="h-full w-full object-cover object-center"
+                    src="{{ $chat->getFilamentAvatarUrl() }}"
+                    alt="{{ $chat->name }}"
+                    class="h-full w-full rounded-full object-cover object-center"
                     />
                 <span class="absolute bottom-0 right-0 block h-3 w-3 rounded-full border-2 border-[#F8FAFC] dark:border-dark-2 bg-green-600 dark:bg-green-600"></span>
             </div>

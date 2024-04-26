@@ -7,6 +7,7 @@ use App\Filament\Resources\CountyResource;
 use App\Filament\Resources\CustomFieldResource;
 use App\Filament\Resources\VerticalResource;
 use Awcodes\Curator\CuratorPlugin;
+use Filament\Forms\Components\FileUpload;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
@@ -26,6 +27,7 @@ use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+use Jeffgreco13\FilamentBreezy\BreezyCore;
 use Saade\FilamentFullCalendar\FilamentFullCalendarPlugin;
 
 class AdminPanelProvider extends PanelProvider
@@ -49,13 +51,20 @@ class AdminPanelProvider extends PanelProvider
             ->plugins([
                 FilamentSpatieRolesPermissionsPlugin::make(),
                 FilamentFullCalendarPlugin::make(),
+                BreezyCore::make()
+                    ->avatarUploadComponent(fn($fileUpload) => $fileUpload->disableLabel())
+                    ->myProfile(
+                        shouldRegisterUserMenu: true, // Sets the 'account' link in the panel User Menu (default = true)
+                        shouldRegisterNavigation: false, // Adds a main navigation item for the My Profile page (default = false)
+                        hasAvatars: true, // Enables the avatar upload form component (default = false)
+                        slug: 'profile' // Sets the slug for the profile page (default = 'my-profile')
+                    ),
                 CuratorPlugin::make()
                     ->label('Media')
                     ->pluralLabel('Media')
                     ->navigationIcon('heroicon-o-photo')
                     ->navigationGroup('Content')
-                    ->navigationSort(3)
-                    // ->navigationCountBadge(),
+                    ->navigationSort(3),
             ])
             ->sidebarCollapsibleOnDesktop()
             ->middleware([

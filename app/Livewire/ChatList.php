@@ -9,7 +9,7 @@ class ChatList extends Component
 {
     public function render()
     {
-        $list = Role::find(Role::STAFF)->users()->get();
+        $list = Role::find(Role::ADMIN)->users()->get();
 
         return view('livewire.chat-list', compact('list'));
     }
