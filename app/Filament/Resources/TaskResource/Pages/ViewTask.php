@@ -52,7 +52,6 @@ class ViewTask extends ViewRecord
                             ]);
                         } else {
                             $task->expense()->create([
-                                'task_id' => $task->id,
                                 'accommodation' => $data['accommodation'],
                                 'subsistence' => $data['subsistence'],
                                 'fuel' => $data['fuel'],
