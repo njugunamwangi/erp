@@ -53,6 +53,7 @@ class AdminPanelProvider extends PanelProvider
                 FilamentFullCalendarPlugin::make(),
                 BreezyCore::make()
                     ->avatarUploadComponent(fn($fileUpload) => $fileUpload->disableLabel())
+                    // ->avatarUploadComponent(fn() => FileUpload::make('avatar_url')->disk('profile-photos'))
                     ->myProfile(
                         shouldRegisterUserMenu: true, // Sets the 'account' link in the panel User Menu (default = true)
                         shouldRegisterNavigation: false, // Adds a main navigation item for the My Profile page (default = false)

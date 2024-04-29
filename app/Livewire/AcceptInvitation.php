@@ -77,11 +77,10 @@ class AcceptInvitation extends SimplePage
 
         $user->assignRole(Role::STAFF);
 
-        auth()->login($user);
-
         $this->invitationModel->delete();
 
-        $this->redirect(Dashboard::getUrl());
+        $this->redirect(Dashboard::getUrl(panel: 'staff'));
+
     }
 
     /**
