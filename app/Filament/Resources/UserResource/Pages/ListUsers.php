@@ -26,6 +26,7 @@ class ListUsers extends ListRecords
             Actions\Action::make('inviteUser')
                 ->icon('heroicon-o-envelope')
                 ->modalIcon('heroicon-o-envelope')
+                ->modalSubmitActionLabel('Invite User')
                 ->form([
                     TextInput::make('email')
                         ->email()
