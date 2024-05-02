@@ -20,13 +20,15 @@ class DatabaseSeeder extends Seeder
             VerticalSeeder::class,
             RoleSeeder::class,
             AdminSeeder::class,
+            TechnicianSeeder::class,
             StaffSeeder::class,
             CustomerSeeder::class,
-            TaskSeeder::class,
             CustomFieldSeeder::class,
             CountySeeder::class,
             BrandSeeder::class,
             EquipmentSeeder::class,
+            ServiceSeeder::class,
+            TaskSeeder::class,
         ]);
     }
 }
