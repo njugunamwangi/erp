@@ -41,7 +41,7 @@
                                 <p class="grow truncate text-sm text-dark dark:text-white">
                                     Lorem ipsum dolor
                                 </p>
-                                <span class="font-bold p-px px-2 text-xs shrink-0 rounded-full bg-blue-500 text-dark dark:text-white" >5</span>
+                                <span class="font-bold p-px px-2 text-xs shrink-0 text-indigo-600 rounded-full dark:bg-blue-500 text-dark dark:text-white" >5</span>
                             </div>
                         </div>
                     </aside>
