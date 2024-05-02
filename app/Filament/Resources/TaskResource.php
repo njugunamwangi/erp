@@ -317,11 +317,11 @@ class TaskResource extends Resource
                             ->html()
                             ->columnSpanFull(),
                         RepeatableEntry::make('equipment')
+                            ->columnSpanFull()
                             ->schema([
                                 TextEntry::make('registration')
                                     ->url(fn($record) => EquipmentResource::getUrl('view', ['record' => $record->id]))
                             ])
-                            ->grid(2)
                     ])->columns(3),
             ]);
     }

@@ -91,7 +91,9 @@ class User extends Authenticatable implements FilamentUser
 
         } else {
 
-            return $this->hasRole(Role::STAFF);
+            return $this->hasRole([
+                Role::STAFF,
+            ]);
 
         }
     }

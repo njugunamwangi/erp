@@ -726,12 +726,10 @@ class UserResource extends Resource
                                                         TextEntry::make('invoice.serial')
                                                             ->label('Invoice Serial No.')
                                                             ->getStateUsing(fn ($record) => $record->invoice ? $record->invoice->serial : '-'),
-                                                        TextEntry::make('subtotal')
-                                                            ->money('Kes'),
+                                                        TextEntry::make('subtotal'),
                                                         TextEntry::make('taxes')
                                                             ->suffix('%'),
-                                                        TextEntry::make('total')
-                                                            ->money('Kes'),
+                                                        TextEntry::make('total'),
                                                         Actions::make([
                                                             Action::make('Edit Quote')
                                                                 ->link()
@@ -823,12 +821,10 @@ class UserResource extends Resource
                                                         TextEntry::make('quote.serial')
                                                             ->label('Quote Serial No.')
                                                             ->getStateUsing(fn ($record) => $record->quote ? $record->quote->serial : '-'),
-                                                        TextEntry::make('subtotal')
-                                                            ->money('Kes'),
+                                                        TextEntry::make('subtotal'),
                                                         TextEntry::make('taxes')
                                                             ->suffix('%'),
-                                                        TextEntry::make('total')
-                                                            ->money('Kes'),
+                                                        TextEntry::make('total'),
                                                         TextEntry::make('status')
                                                             ->badge()
                                                             ->color(function ($state) {
