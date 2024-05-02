@@ -21,6 +21,7 @@ use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+use Jeffgreco13\FilamentBreezy\BreezyCore;
 use Saade\FilamentFullCalendar\FilamentFullCalendarPlugin;
 
 class StaffPanelProvider extends PanelProvider
@@ -46,6 +47,15 @@ class StaffPanelProvider extends PanelProvider
             ])
             ->plugins([
                 FilamentFullCalendarPlugin::make(),
+                BreezyCore::make()
+                    ->avatarUploadComponent(fn($fileUpload) => $fileUpload->disableLabel())
+                    // ->avatarUploadComponent(fn() => FileUpload::make('avatar_url')->disk('profile-photos'))
+                    ->myProfile(
+                        shouldRegisterUserMenu: true, // Sets the 'account' link in the panel User Menu (default = true)
+                        shouldRegisterNavigation: false, // Adds a main navigation item for the My Profile page (default = false)
+                        hasAvatars: true, // Enables the avatar upload form component (default = false)
+                        slug: 'profile' // Sets the slug for the profile page (default = 'my-profile')
+                    ),
             ])
             ->navigationGroups([
                 NavigationGroup::make()
