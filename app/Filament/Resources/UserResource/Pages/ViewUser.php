@@ -9,11 +9,13 @@ use App\Filament\Resources\InvoiceResource;
 use App\Filament\Resources\QuoteResource;
 use App\Filament\Resources\UserResource;
 use App\Filament\Resources\UserResource\Widgets\TasksWidget;
+use App\Models\Currency;
 use App\Models\Invoice;
 use App\Models\Quote;
 use App\Models\Role;
 use App\Models\Task;
 use App\Models\User;
+use App\Models\Vertical;
 use Filament\Actions;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
@@ -25,6 +27,7 @@ use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
 use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Filament\Notifications\Actions\Action as ActionsAction;
@@ -78,15 +81,28 @@ class ViewUser extends ViewRecord
                     ->form([
                         Grid::make(2)
                             ->schema([
+                                Toggle::make('task')
+                                    ->live()
+                                    ->columnSpanFull()
+                                    ->label('List Tasks')
+                                    ->onIcon('heroicon-o-bolt')
+                                    ->offIcon('heroicon-o-bolt-slash'),
                                 Select::make('task_id')
+                                    ->visible(fn(Get $get) => $get('task') == true)
                                     ->label('Task')
                                     ->options(Task::where('assigned_for', '=', $this->record->id)
                                         ->where(fn (Builder $query) => $query->whereDoesntHave('quote'))
                                         ->get()
-                                        ->pluck('description', 'id'))
+                                        ->pluck('id'))
                                     ->searchable()
-                                    ->preload()
-                                    ->required(),
+                                    ->preload(),
+                                Select::make('vertical_id')
+                                    ->live()
+                                    ->label('Vertical')
+                                    ->visible(fn(Get $get) => $get('task') == false)
+                                    ->options(Vertical::all()->pluck('vertical', 'id'))
+                                    ->searchable()
+                                    ->preload(),
                                 Select::make('series')
                                     ->required()
                                     ->enum(QuoteSeries::class)
@@ -95,6 +111,19 @@ class ViewUser extends ViewRecord
                                     ->preload()
                                     ->default(QuoteSeries::IN2QUT->name),
                             ]),
+                        Select::make('currency_id')
+                            ->label('Currency')
+                            ->optionsLimit(40)
+                            ->searchable()
+                            ->createOptionForm(Currency::getForm())
+                            ->live()
+                            ->preload()
+                            ->getSearchResultsUsing(fn (string $search): array => Currency::whereAny([
+                                'name', 'abbr', 'symbol', 'code'], 'like', "%{$search}%")->limit(50)->pluck('abbr', 'id')->toArray())
+                            ->getOptionLabelUsing(fn ($value): ?string => Currency::find($value)?->abbr)
+                            ->loadingMessage('Loading currencies...')
+                            ->searchPrompt('Search currencies by their symbol, abbreviation or country')
+                            ->required(),
                         Fieldset::make('Quote Summary')
                             ->schema([
                                 Section::make()
@@ -120,7 +149,7 @@ class ViewUser extends ViewRecord
                                                     ->label('Sub Total')
                                                     ->live()
                                                     ->content(function (Get $get) {
-                                                        return 'Kes '.number_format($get('quantity') * $get('unit_price'), 2, '.', ',');
+                                                        return number_format($get('quantity') * $get('unit_price'));
                                                     }),
                                             ])
                                             ->afterStateUpdated(function (Get $get, Set $set) {
@@ -134,7 +163,7 @@ class ViewUser extends ViewRecord
                                         TextInput::make('subtotal')
                                             ->numeric()
                                             ->readOnly()
-                                            ->prefix('Kes')
+                                            ->prefix(fn(Get $get) => Currency::where('id', $get('currency_id'))->first()->abbr ?? 'CUR')
                                             ->afterStateHydrated(function (Get $get, Set $set) {
                                                 self::updateTotals($get, $set);
                                             }),
@@ -150,16 +179,18 @@ class ViewUser extends ViewRecord
                                         TextInput::make('total')
                                             ->numeric()
                                             ->readOnly()
-                                            ->prefix('Kes'),
+                                            ->prefix(fn(Get $get) => Currency::where('id', $get('currency_id'))->first()->abbr ?? 'CUR'),
                                     ]),
                             ]),
                     ])
                     ->action(function (array $data, $record) {
+                        // if()
                         $quote = $record->quotes()->create([
-                            'user_id' => $record->id,
-                            'task_id' => $task_id = $data['task_id'],
-                            'vertical_id' => Task::where('id', $task_id)->first()->vertical_id,
+                            'task' => $data['task'],
+                            'task_id' => empty($data['task_id']) ? null : $data['task_id'],
+                            'vertical_id' => empty($data['task_id']) ? $data['vertical_id'] : Task::query()->where('id', $data['task_id'])->first()->vertical_id,
                             'subtotal' => $data['subtotal'],
+                            'currency_id' => $data['currency_id'],
                             'taxes' => $data['taxes'],
                             'total' => $data['total'],
                             'items' => $data['items'],
@@ -207,6 +238,19 @@ class ViewUser extends ViewRecord
                                     ->preload()
                                     ->default(InvoiceSeries::IN2INV->name),
                             ]),
+                            Select::make('currency_id')
+                                ->label('Currency')
+                                ->optionsLimit(40)
+                                ->searchable()
+                                ->createOptionForm(Currency::getForm())
+                                ->live()
+                                ->preload()
+                                ->getSearchResultsUsing(fn (string $search): array => Currency::whereAny([
+                                    'name', 'abbr', 'symbol', 'code'], 'like', "%{$search}%")->limit(50)->pluck('abbr', 'id')->toArray())
+                                ->getOptionLabelUsing(fn ($value): ?string => Currency::find($value)?->abbr)
+                                ->loadingMessage('Loading currencies...')
+                                ->searchPrompt('Search currencies by their symbol, abbreviation or country')
+                                ->required(),
                         Fieldset::make('Invoice Summary')
                             ->schema([
                                 Section::make()
@@ -232,7 +276,7 @@ class ViewUser extends ViewRecord
                                                     ->label('Sub Total')
                                                     ->live()
                                                     ->content(function (Get $get) {
-                                                        return 'Kes '.number_format($get('quantity') * $get('unit_price'), 2, '.', ',');
+                                                        return number_format($get('quantity') * $get('unit_price'));
                                                     }),
                                             ])
                                             ->afterStateUpdated(function (Get $get, Set $set) {
@@ -246,7 +290,7 @@ class ViewUser extends ViewRecord
                                         TextInput::make('subtotal')
                                             ->numeric()
                                             ->readOnly()
-                                            ->prefix('Kes')
+                                            ->prefix(fn(Get $get) => Currency::where('id', $get('currency_id'))->first()->abbr ?? 'CUR')
                                             ->afterStateHydrated(function (Get $get, Set $set) {
                                                 self::updateTotals($get, $set);
                                             }),
@@ -262,15 +306,15 @@ class ViewUser extends ViewRecord
                                         TextInput::make('total')
                                             ->numeric()
                                             ->readOnly()
-                                            ->prefix('Kes'),
+                                            ->prefix(fn(Get $get) => Currency::where('id', $get('currency_id'))->first()->abbr ?? 'CUR'),
                                     ]),
                             ]),
                     ])
                     ->action(function (array $data, $record) {
                         $invoice = $record->invoices()->create([
-                            'user_id' => $record->id,
                             'status' => $data['status'],
                             'subtotal' => $data['subtotal'],
+                            'currency_id' => $data['currency_id'],
                             'taxes' => $data['taxes'],
                             'total' => $data['total'],
                             'items' => $data['items'],
@@ -284,7 +328,7 @@ class ViewUser extends ViewRecord
                         foreach ($recipients as $recipient) {
                             Notification::make()
                                 ->title('Invoice generated')
-                                ->body(auth()->user()->name.' generated a quote for '.$record->name)
+                                ->body(auth()->user()->name.' generated an invoice for '.$record->name)
                                 ->icon('heroicon-o-check-badge')
                                 ->success()
                                 ->actions([

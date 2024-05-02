@@ -21,6 +21,7 @@ use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Section as ComponentsSection;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Infolists\Components\Actions;
@@ -770,10 +771,13 @@ class UserResource extends Resource
                                                                         ->searchable()
                                                                         ->preload()
                                                                         ->default(InvoiceSeries::IN2INV->name),
+                                                                    Toggle::make('mail')
+                                                                        ->label('Mail invoice to customer?')
                                                                 ])
                                                                 ->action(function (array $data, $record) {
                                                                     $invoice = Invoice::create([
                                                                         'user_id' => $record->user_id,
+                                                                        'currency_id' => $record->currency_id,
                                                                         'quote_id' => $record->id,
                                                                         'items' => $record->items,
                                                                         'subtotal' => $record->subtotal,
@@ -785,9 +789,12 @@ class UserResource extends Resource
                                                                         'serial' => $data['series'].'-'.str_pad($serial_number, 5, '0', STR_PAD_LEFT),
                                                                     ]);
 
-                                                                    $invoice->savePdf();
+                                                                    if($data['mail']) {
 
-                                                                    Mail::to($invoice->user->email)->send(new SendInvoice($invoice));
+                                                                        $invoice->savePdf();
+
+                                                                        Mail::to($invoice->user->email)->send(new SendInvoice($invoice));
+                                                                    }
 
                                                                     $recipients = User::role(Role::ADMIN)->get();
 
