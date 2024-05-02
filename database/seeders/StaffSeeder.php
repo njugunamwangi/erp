@@ -13,7 +13,7 @@ class StaffSeeder extends Seeder
      */
     public function run(): void
     {
-        User::factory(9, [
+        User::factory(7, [
             'lead_id' => null,
             'stage_id' => null,
         ])

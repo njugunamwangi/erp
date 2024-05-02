@@ -4,8 +4,10 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\ServiceResource\Pages;
 use App\Filament\Resources\ServiceResource\RelationManagers;
+use App\Models\Role;
 use App\Models\Service;
 use Filament\Forms;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -37,6 +39,13 @@ class ServiceResource extends Resource
                     ->searchable()
                     ->preload()
                     ->required(),
+                Select::make('user_id')
+                    ->relationship('user', 'name')
+                    ->options(Role::find(Role::TECHNICIAN)->users()->get()->pluck('name', 'id'))
+                    ->required()
+                    ->label('Technician')
+                    ->searchable()
+                    ->preload(),
                 TiptapEditor::make('description')
                     ->required()
                     ->extraInputAttributes(['style' => 'min-height: 12rem;'])
@@ -49,7 +58,10 @@ class ServiceResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('equipment.registration')
-                    ->numeric()
+                    ->sortable(),
+                Tables\Columns\TextColumn::make('user.name')
+                    ->label('Technician')
+                    ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()

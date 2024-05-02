@@ -16,4 +16,9 @@ class Service extends Model
     {
          return $this->belongsTo(Equipment::class);
     }
+
+    public function user(): BelongsTo
+    {
+         return $this->belongsTo(User::class);
+    }
 }

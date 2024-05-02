@@ -14,4 +14,6 @@ class Role extends ModelsRole
     public const CUSTOMER = 2;
 
     public const STAFF = 3;
+
+    public const TECHNICIAN = 4;
 }

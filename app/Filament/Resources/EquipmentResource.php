@@ -6,8 +6,16 @@ use App\Enums\EquipmentType;
 use App\Filament\Resources\EquipmentResource\Pages;
 use App\Filament\Resources\EquipmentResource\RelationManagers;
 use App\Models\Equipment;
+use Filament\Actions\Action;
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Infolists\Components\Actions;
+use Filament\Infolists\Components\Actions\Action as ActionsAction;
+use Filament\Infolists\Components\RepeatableEntry;
+use Filament\Infolists\Components\Section;
+use Filament\Infolists\Components\Tabs;
+use Filament\Infolists\Components\TextEntry;
+use Filament\Infolists\Infolist;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -66,6 +74,70 @@ class EquipmentResource extends Resource
                     Tables\Actions\ForceDeleteBulkAction::make(),
                     Tables\Actions\RestoreBulkAction::make(),
                 ]),
+            ]);
+    }
+
+    public static function infolist(Infolist $infolist): Infolist
+    {
+        return $infolist
+            ->schema([
+                Section::make('Overview')
+                    ->schema([
+                        TextEntry::make('registration'),
+                        TextEntry::make('brand.brand')
+                            ->url(fn($record) => BrandResource::getUrl('view', ['record' => $record->brand->id])),
+                        TextEntry::make('vertical.vertical')
+                            ->url(fn($record) => VerticalResource::getUrl('view', ['record' => $record->vertical->id])),
+                        TextEntry::make('type'),
+                    ])
+                    ->columns(4),
+                Tabs::make()
+                    ->columnSpanFull()
+                    ->tabs([
+                        Tabs\Tab::make('Service History')
+                            ->badge(fn($record) => $record->services->count())
+                            ->schema([
+                                RepeatableEntry::make('services')
+                                    ->hiddenLabel()
+                                    ->schema([
+                                        TextEntry::make('user.name')
+                                            ->label('Technician'),
+                                        TextEntry::make('created_at')
+                                            ->label('Date')
+                                            ->date(),
+                                        Actions::make([
+                                            ActionsAction::make('view')
+                                                ->url(fn($record) => ServiceResource::getUrl('view', ['record' => $record->id]))
+                                                ->link()
+                                                ->color('gray')
+                                                ->icon('heroicon-o-eye')
+                                        ])
+                                    ])
+                                    ->columns(2)
+                            ]),
+                        Tabs\Tab::make('Work History')
+                            ->badge(fn($record) => $record->services->count())
+                            ->schema([
+                                RepeatableEntry::make('tasks')
+                                    ->hiddenLabel()
+                                    ->schema([
+                                        TextEntry::make('task')
+                                            ->getStateUsing(fn($record) => '#' . $record->id),
+                                        TextEntry::make('due_date')
+                                            ->label('Date')
+                                            ->date(),
+                                        Actions::make([
+                                            ActionsAction::make('view')
+                                                ->url(fn($record) => TaskResource::getUrl('view', ['record' => $record->id]))
+                                                ->link()
+                                                ->color('gray')
+                                                ->icon('heroicon-o-eye')
+                                        ])
+                                    ])
+                                    ->columns(2)
+                            ]),
+                    ])
+
             ]);
     }
 

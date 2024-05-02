@@ -27,6 +27,7 @@ class TaskFactory extends Factory
             'description' => fake()->paragraph(),
             'due_date' => Carbon::now()->addDays(fake()->numberBetween(5, 30)),
             'is_completed' => fake()->randomElement([true, false]),
+            'requires_equipment' => fake()->randomElement([true, false]),
         ];
     }
 }
