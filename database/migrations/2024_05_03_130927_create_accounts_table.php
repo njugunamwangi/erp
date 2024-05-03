@@ -32,6 +32,7 @@ return new class extends Migration
             $table->string('aba_routing_number', 9)->nullable();
             $table->string('ach_routing_number', 9)->nullable();
             $table->boolean('enabled')->default(true);
+            $table->softDeletes();
             $table->timestamps();
         });
     }
