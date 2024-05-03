@@ -27,7 +27,8 @@ class Quote extends Model
         ];
     }
 
-    public function currency(): BelongsTo {
+    public function currency(): BelongsTo
+    {
         return $this->belongsTo(Currency::class);
     }
 

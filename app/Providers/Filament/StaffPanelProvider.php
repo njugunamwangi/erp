@@ -48,7 +48,7 @@ class StaffPanelProvider extends PanelProvider
             ->plugins([
                 FilamentFullCalendarPlugin::make(),
                 BreezyCore::make()
-                    ->avatarUploadComponent(fn($fileUpload) => $fileUpload->disableLabel())
+                    ->avatarUploadComponent(fn ($fileUpload) => $fileUpload->disableLabel())
                     // ->avatarUploadComponent(fn() => FileUpload::make('avatar_url')->disk('profile-photos'))
                     ->myProfile(
                         shouldRegisterUserMenu: true, // Sets the 'account' link in the panel User Menu (default = true)

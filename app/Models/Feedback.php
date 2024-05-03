@@ -14,13 +14,13 @@ class Feedback extends Model
 
     protected function casts(): array
     {
-         return [
+        return [
             //
-         ];
+        ];
     }
 
     public function task(): BelongsTo
     {
-         return $this->belongsTo(Task::class);
+        return $this->belongsTo(Task::class);
     }
 }

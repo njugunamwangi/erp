@@ -1,7 +1,6 @@
 <?php
 
 use App\Enums\QuoteSeries;
-use App\Models\Currency;
 use App\Models\Task;
 use App\Models\User;
 use App\Models\Vertical;

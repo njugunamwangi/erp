@@ -13,6 +13,7 @@ enum EntityType: string implements HasLabel
     case LimitedLiabilityCompany = 'limited_liability_company';
     case Corporation = 'corporation';
     case Nonprofit = 'nonprofit';
+
     public const DEFAULT = self::LimitedLiabilityCompany->value;
 
     public function getLabel(): ?string

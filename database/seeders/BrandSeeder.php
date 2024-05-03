@@ -3,7 +3,6 @@
 namespace Database\Seeders;
 
 use App\Models\Brand;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class BrandSeeder extends Seeder
@@ -28,6 +27,8 @@ class BrandSeeder extends Seeder
             ],
         ];
 
-        foreach($brands as $brand) { Brand::create($brand); }
+        foreach ($brands as $brand) {
+            Brand::create($brand);
+        }
     }
 }

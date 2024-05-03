@@ -6,7 +6,6 @@ use App\Enums\InvoiceStatus;
 use App\Models\Invoice;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
-use Illuminate\Support\Number;
 
 class InvoiceStatsOverview extends BaseWidget
 {

@@ -139,7 +139,7 @@ class InvoiceResource extends Resource
                                         Forms\Components\TextInput::make('subtotal')
                                             ->numeric()
                                             ->readOnly()
-                                            ->prefix(fn(Get $get) => Currency::where('id', $get('currency_id'))->first()->abbr ?? 'CUR')
+                                            ->prefix(fn (Get $get) => Currency::where('id', $get('currency_id'))->first()->abbr ?? 'CUR')
                                             ->afterStateHydrated(function (Get $get, Set $set) {
                                                 self::updateTotals($get, $set);
                                             }),
@@ -154,15 +154,15 @@ class InvoiceResource extends Resource
                                             }),
                                         Forms\Components\TextInput::make('total')
                                             ->numeric()
-                                            ->prefix(fn(Get $get) => Currency::where('id', $get('currency_id'))->first()->abbr ?? 'CUR')
+                                            ->prefix(fn (Get $get) => Currency::where('id', $get('currency_id'))->first()->abbr ?? 'CUR')
                                             ->readOnly(),
                                     ])->columnSpan(4),
                             ])
                             ->columns(12),
-                            RichEditor::make('notes')
-                                ->disableToolbarButtons([
-                                    'attachFiles',
-                                ])
+                        RichEditor::make('notes')
+                            ->disableToolbarButtons([
+                                'attachFiles',
+                            ]),
                     ]),
             ]);
     }
@@ -210,7 +210,7 @@ class InvoiceResource extends Resource
                     ->icon('heroicon-o-user')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('currency')
-                    ->getStateUsing(fn($record) => $record->currency->symbol),
+                    ->getStateUsing(fn ($record) => $record->currency->symbol),
                 Tables\Columns\TextColumn::make('subtotal')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('taxes')

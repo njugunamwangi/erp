@@ -15,9 +15,9 @@ class TaskSeeder extends Seeder
     {
         Task::factory(100)
             ->create()
-            ->each(function(Task $task) {
+            ->each(function (Task $task) {
 
-                if($task->requires_equipment) {
+                if ($task->requires_equipment) {
                     $equipment = Equipment::query()->where('vertical_id', $task->vertical_id)->pluck('id')->toArray();
 
                     $task->equipment()->attach($equipment);

@@ -23,7 +23,7 @@ class EquipmentFactory extends Factory
             'registration' => fake()->name(),
             'vertical_id' => fake()->randomElement(Vertical::all()->pluck('id')),
             'type' => fake()->randomElement(EquipmentType::values()),
-            'brand_id' => fake()->randomElement(Brand::all()->pluck('id'))
+            'brand_id' => fake()->randomElement(Brand::all()->pluck('id')),
         ];
     }
 }

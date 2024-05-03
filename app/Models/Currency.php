@@ -14,20 +14,23 @@ class Currency extends Model
 
     protected $guarded = [];
 
-    public function quotes(): HasMany {
+    public function quotes(): HasMany
+    {
         return $this->hasMany(Quote::class);
     }
 
-    public function invoices(): HasMany {
+    public function invoices(): HasMany
+    {
         return $this->hasMany(Invoice::class);
     }
 
     public function accounts(): HasMany
     {
-         return $this->hasMany(Account::class);
+        return $this->hasMany(Account::class);
     }
 
-    public static function getForm(): array {
+    public static function getForm(): array
+    {
         return [
             TextInput::make('name')
                 ->required()

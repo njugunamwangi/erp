@@ -5,7 +5,6 @@ namespace App\Filament\Resources\QuoteResource\Widgets;
 use App\Models\Quote;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
-use Illuminate\Support\Number;
 
 class QuoteOverviewStats extends BaseWidget
 {

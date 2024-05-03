@@ -2,12 +2,8 @@
 
 namespace App\Filament\Resources;
 
-use App\Enums\EquipmentType;
 use App\Filament\Resources\EquipmentResource\Pages;
-use App\Filament\Resources\EquipmentResource\RelationManagers;
 use App\Models\Equipment;
-use Filament\Actions\Action;
-use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Infolists\Components\Actions;
 use Filament\Infolists\Components\Actions\Action as ActionsAction;
@@ -27,6 +23,7 @@ class EquipmentResource extends Resource
     protected static ?string $model = Equipment::class;
 
     protected static ?string $navigationGroup = 'Asset Management';
+
     protected static ?string $navigationIcon = 'heroicon-o-eye-dropper';
 
     public static function form(Form $form): Form
@@ -85,9 +82,9 @@ class EquipmentResource extends Resource
                     ->schema([
                         TextEntry::make('registration'),
                         TextEntry::make('brand.brand')
-                            ->url(fn($record) => BrandResource::getUrl('view', ['record' => $record->brand->id])),
+                            ->url(fn ($record) => BrandResource::getUrl('view', ['record' => $record->brand->id])),
                         TextEntry::make('vertical.vertical')
-                            ->url(fn($record) => VerticalResource::getUrl('view', ['record' => $record->vertical->id])),
+                            ->url(fn ($record) => VerticalResource::getUrl('view', ['record' => $record->vertical->id])),
                         TextEntry::make('type'),
                     ])
                     ->columns(4),
@@ -95,7 +92,7 @@ class EquipmentResource extends Resource
                     ->columnSpanFull()
                     ->tabs([
                         Tabs\Tab::make('Service History')
-                            ->badge(fn($record) => $record->services->count())
+                            ->badge(fn ($record) => $record->services->count())
                             ->schema([
                                 RepeatableEntry::make('services')
                                     ->hiddenLabel()
@@ -107,36 +104,36 @@ class EquipmentResource extends Resource
                                             ->date(),
                                         Actions::make([
                                             ActionsAction::make('view')
-                                                ->url(fn($record) => ServiceResource::getUrl('view', ['record' => $record->id]))
+                                                ->url(fn ($record) => ServiceResource::getUrl('view', ['record' => $record->id]))
                                                 ->link()
                                                 ->color('gray')
-                                                ->icon('heroicon-o-eye')
-                                        ])
+                                                ->icon('heroicon-o-eye'),
+                                        ]),
                                     ])
-                                    ->columns(2)
+                                    ->columns(2),
                             ]),
                         Tabs\Tab::make('Work History')
-                            ->badge(fn($record) => $record->services->count())
+                            ->badge(fn ($record) => $record->services->count())
                             ->schema([
                                 RepeatableEntry::make('tasks')
                                     ->hiddenLabel()
                                     ->schema([
                                         TextEntry::make('task')
-                                            ->getStateUsing(fn($record) => '#' . $record->id),
+                                            ->getStateUsing(fn ($record) => '#'.$record->id),
                                         TextEntry::make('due_date')
                                             ->label('Date')
                                             ->date(),
                                         Actions::make([
                                             ActionsAction::make('view')
-                                                ->url(fn($record) => TaskResource::getUrl('view', ['record' => $record->id]))
+                                                ->url(fn ($record) => TaskResource::getUrl('view', ['record' => $record->id]))
                                                 ->link()
                                                 ->color('gray')
-                                                ->icon('heroicon-o-eye')
-                                        ])
+                                                ->icon('heroicon-o-eye'),
+                                        ]),
                                     ])
-                                    ->columns(2)
+                                    ->columns(2),
                             ]),
-                    ])
+                    ]),
 
             ]);
     }

@@ -99,9 +99,9 @@ class ViewTask extends ViewRecord
                     ->icon('heroicon-o-banknotes')
                     ->color('warning')
                     ->label('Generate Quote')
-                    ->modalDescription(fn($record) => 'Quote for task #'.$record->id)
+                    ->modalDescription(fn ($record) => 'Quote for task #'.$record->id)
                     ->modalSubmitActionLabel('Generate Quote')
-                    ->visible(fn($record) => !$record->quote)
+                    ->visible(fn ($record) => ! $record->quote)
                     ->form([
                         Grid::make(2)
                             ->schema([
@@ -165,7 +165,7 @@ class ViewTask extends ViewRecord
                                         TextInput::make('subtotal')
                                             ->numeric()
                                             ->readOnly()
-                                            ->prefix(fn(Get $get) => Currency::where('id', $get('currency_id'))->first()->abbr ?? 'CUR')
+                                            ->prefix(fn (Get $get) => Currency::where('id', $get('currency_id'))->first()->abbr ?? 'CUR')
                                             ->afterStateHydrated(function (Get $get, Set $set) {
                                                 self::updateTotals($get, $set);
                                             }),
@@ -181,15 +181,15 @@ class ViewTask extends ViewRecord
                                         TextInput::make('total')
                                             ->numeric()
                                             ->readOnly()
-                                            ->prefix(fn(Get $get) => Currency::where('id', $get('currency_id'))->first()->abbr ?? 'CUR'),
+                                            ->prefix(fn (Get $get) => Currency::where('id', $get('currency_id'))->first()->abbr ?? 'CUR'),
                                     ]),
                             ]),
                         RichEditor::make('notes')
                             ->disableToolbarButtons([
                                 'attachFiles',
-                            ])
+                            ]),
                     ])
-                    ->action(function(array $data, $record) {
+                    ->action(function (array $data, $record) {
                         $quote = $record->quote()->create([
                             'task' => true,
                             'user_id' => $record->assigned_for,
@@ -202,7 +202,7 @@ class ViewTask extends ViewRecord
                             'series' => $data['series'],
                             'serial_number' => $serial_number = Quote::max('serial_number') + 1,
                             'serial' => $data['series'].'-'.str_pad($serial_number, 5, '0', STR_PAD_LEFT),
-                            'notes' => $data['notes']
+                            'notes' => $data['notes'],
                         ]);
 
                         $recipients = User::role(Role::ADMIN)->get();
@@ -220,7 +220,7 @@ class ViewTask extends ViewRecord
                                 ])
                                 ->sendToDatabase($recipient);
                         }
-                    })
+                    }),
             ]),
         ];
     }

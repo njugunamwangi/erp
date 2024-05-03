@@ -13,7 +13,6 @@ use App\Models\Invoice;
 use App\Models\Quote;
 use App\Models\Role;
 use App\Models\User;
-use Brick\Money\Money;
 use Filament\Forms;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Grid;
@@ -37,7 +36,6 @@ use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Factories\Relationship;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Facades\Mail;
@@ -84,10 +82,10 @@ class QuoteResource extends Resource
                                     ->label('List Tasks')
                                     ->onIcon('heroicon-o-bolt')
                                     ->offIcon('heroicon-o-bolt-slash')
-                                    ->visible(fn(Get $get) => $get('user_id'))
+                                    ->visible(fn (Get $get) => $get('user_id'))
                                     ->live(),
                                 Select::make('task_id')
-                                    ->visible(fn(Get $get) => $get('task') == true)
+                                    ->visible(fn (Get $get) => $get('task') == true)
                                     ->live()
                                     ->relationship('task', 'id', modifyQueryUsing: function (Builder $query, Get $get) {
                                         return $query->where('assigned_for', $get('user_id'))->whereDoesntHave('quote');
@@ -97,7 +95,7 @@ class QuoteResource extends Resource
                                     ->preload(),
                                 Select::make('vertical_id')
                                     ->live()
-                                    ->visible(fn(Get $get) => $get('task') == false)
+                                    ->visible(fn (Get $get) => $get('task') == false)
                                     ->relationship('vertical', 'vertical')
                                     ->searchable()
                                     ->preload(),
@@ -157,7 +155,7 @@ class QuoteResource extends Resource
                                             ->numeric()
                                             ->readOnly()
                                             ->live()
-                                            ->prefix(fn(Get $get) => Currency::where('id', $get('currency_id'))->first()->abbr ?? 'CUR')
+                                            ->prefix(fn (Get $get) => Currency::where('id', $get('currency_id'))->first()->abbr ?? 'CUR')
                                             ->afterStateHydrated(function (Get $get, Set $set) {
                                                 self::updateTotals($get, $set);
                                             }),
@@ -173,13 +171,13 @@ class QuoteResource extends Resource
                                         Forms\Components\TextInput::make('total')
                                             ->numeric()
                                             ->readOnly()
-                                            ->prefix(fn(Get $get) => Currency::where('id', $get('currency_id'))->first()->abbr ?? 'CUR'),
+                                            ->prefix(fn (Get $get) => Currency::where('id', $get('currency_id'))->first()->abbr ?? 'CUR'),
                                     ])->columnSpan(4),
                             ])->columns(12),
                         RichEditor::make('notes')
                             ->disableToolbarButtons([
                                 'attachFiles',
-                            ])
+                            ]),
                     ]),
             ]);
     }
@@ -230,8 +228,8 @@ class QuoteResource extends Resource
                     ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('currency')
-                    ->getStateUsing(fn($record) => $record->currency->symbol)
-                    ->url(fn($record) => CurrencyResource::getUrl('view', ['record' => $record->currency_id])),
+                    ->getStateUsing(fn ($record) => $record->currency->symbol)
+                    ->url(fn ($record) => CurrencyResource::getUrl('view', ['record' => $record->currency_id])),
                 Tables\Columns\TextColumn::make('subtotal')
                     ->label('Sub-Total')
                     ->sortable(),
@@ -284,7 +282,7 @@ class QuoteResource extends Resource
                                 ->preload()
                                 ->default(InvoiceSeries::IN2INV->name),
                             Toggle::make('send')
-                                ->label('Send Email')
+                                ->label('Send Email'),
                         ])
                         ->action(function (array $data, $record) {
                             $invoice = Invoice::create([
@@ -298,10 +296,10 @@ class QuoteResource extends Resource
                                 'series' => $data['series'],
                                 'serial_number' => $serial_number = Invoice::max('serial_number') + 1,
                                 'serial' => $data['series'].'-'.str_pad($serial_number, 5, '0', STR_PAD_LEFT),
-                                'currency_id' => $record->currency_id
+                                'currency_id' => $record->currency_id,
                             ]);
 
-                            if($data['send'] == true) {
+                            if ($data['send'] == true) {
 
                                 $invoice->savePdf();
 

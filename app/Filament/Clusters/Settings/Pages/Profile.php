@@ -23,8 +23,8 @@ use Ysfkaya\FilamentPhoneInput\PhoneInputNumberType;
 
 class Profile extends Page
 {
-    use InteractsWithForms;
     use InteractsWithFormActions;
+    use InteractsWithForms;
 
     protected static ?string $navigationIcon = 'heroicon-o-user';
 
@@ -39,13 +39,15 @@ class Profile extends Page
     #[Locked]
     public ?ModelsProfile $record = null;
 
-    public function mount(): void {
+    public function mount(): void
+    {
         $this->record = ModelsProfile::findOrNew(1);
 
         $this->fillForm();
     }
 
-    public function fillForm(): void {
+    public function fillForm(): void
+    {
         $data = $this->record->attributesToArray();
 
         $this->form->fill($data);
@@ -57,7 +59,6 @@ class Profile extends Page
             ->schema([
                 $this->getLogoForm(),
                 $this->getIdentityFrom(),
-                $this->getSupportDocuments(),
             ])
             ->model($this->record)
             ->statePath('data')
@@ -92,7 +93,7 @@ class Profile extends Page
         return Section::make('Logo')
             ->schema([
                 CuratorPicker::make('media_id')
-                    ->label('Choose Logo')
+                    ->label('Choose Logo'),
             ])
             ->columns(3);
     }
@@ -116,25 +117,15 @@ class Profile extends Page
                     ->options(EntityType::class)
                     ->searchable()
                     ->preload()
-                    ->default(EntityType::DEFAULT)
+                    ->default(EntityType::DEFAULT),
             ])
             ->columns(2);
-    }
-
-    public function getSupportDocuments(): Component
-    {
-         return Section::make('Documents')
-            ->description('Support Documents e.g. Company Profile')
-            ->schema([
-
-            ])
-            ->collapsed();
     }
 
     /**
      * @return array<Action | ActionGroup>
      */
-    protected function getFormActions(): array
+    public function getFormActions(): array
     {
         return [
             $this->getSaveFormAction(),

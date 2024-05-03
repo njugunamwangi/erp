@@ -3,7 +3,6 @@
 namespace App\Filament\Clusters\Settings\Resources\AccountResource\Pages;
 
 use App\Filament\Clusters\Settings\Resources\AccountResource;
-use Filament\Actions;
 use Filament\Resources\Pages\CreateRecord;
 
 class CreateAccount extends CreateRecord

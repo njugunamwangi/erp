@@ -33,7 +33,7 @@ class Task extends Model
 
     public function feedback(): HasOne
     {
-         return $this->hasOne(Feedback::class);
+        return $this->hasOne(Feedback::class);
     }
 
     public function assignedBy(): BelongsTo
@@ -58,7 +58,7 @@ class Task extends Model
 
     public function equipment(): BelongsToMany
     {
-         return $this->belongsToMany(Equipment::class);
+        return $this->belongsToMany(Equipment::class);
     }
 
     public function completed()

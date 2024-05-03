@@ -21,7 +21,7 @@ class ServiceFactory extends Factory
         return [
             'equipment_id' => fake()->randomElement(Equipment::all()->pluck('id')),
             'user_id' => fake()->randomElement(Role::find(Role::TECHNICIAN)->users()->get()->pluck('id')),
-            'description' => fake()->paragraph()
+            'description' => fake()->paragraph(),
         ];
     }
 }

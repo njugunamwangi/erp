@@ -21,34 +21,34 @@ class Equipment extends Model
 
     protected function casts(): array
     {
-         return [
-             'type' => EquipmentType::class
-         ];
+        return [
+            'type' => EquipmentType::class,
+        ];
     }
 
     public function tasks(): BelongsToMany
     {
-         return $this->belongsToMany(Task::class);
+        return $this->belongsToMany(Task::class);
     }
 
     public function brand(): BelongsTo
     {
-         return $this->belongsTo(Brand::class);
+        return $this->belongsTo(Brand::class);
     }
 
     public function vertical(): BelongsTo
     {
-         return $this->belongsTo(Vertical::class);
+        return $this->belongsTo(Vertical::class);
     }
 
     public function services(): HasMany
     {
-         return $this->hasMany(Service::class);
+        return $this->hasMany(Service::class);
     }
 
     public static function getForm(): array
     {
-         return [
+        return [
             TextInput::make('registration')
                 ->required()
                 ->maxLength(255),
@@ -67,6 +67,6 @@ class Equipment extends Model
                 ->required()
                 ->searchable()
                 ->preload(),
-         ];
+        ];
     }
 }

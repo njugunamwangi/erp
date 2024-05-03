@@ -13,21 +13,23 @@ use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Filament\Pages\Concerns\InteractsWithFormActions;
 use Filament\Pages\SimplePage;
-use Filament\Support\Enums\MaxWidth;
 use IbrahimBougaoua\FilamentRatingStar\Actions\RatingStar;
-use Livewire\Component;
 
 class RequestFeedback extends SimplePage
 {
-    use InteractsWithForms;
     use InteractsWithFormActions;
+    use InteractsWithForms;
 
     protected static string $view = 'livewire.request-feedback';
+
     public int $task;
+
     private Task $taskModel;
+
     public ?array $data = [];
 
-    public function mount() {
+    public function mount()
+    {
         $this->taskModel = Task::findOrFail($this->task);
     }
 
@@ -57,7 +59,7 @@ class RequestFeedback extends SimplePage
                     ->label('Overall Experience'),
                 Textarea::make('comments')
                     ->label('Other comments')
-                    ->rows(4)
+                    ->rows(4),
             ])
             ->statePath('data');
     }

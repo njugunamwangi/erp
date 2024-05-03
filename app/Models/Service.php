@@ -14,11 +14,11 @@ class Service extends Model
 
     public function equipment(): BelongsTo
     {
-         return $this->belongsTo(Equipment::class);
+        return $this->belongsTo(Equipment::class);
     }
 
     public function user(): BelongsTo
     {
-         return $this->belongsTo(User::class);
+        return $this->belongsTo(User::class);
     }
 }

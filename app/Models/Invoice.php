@@ -42,7 +42,8 @@ class Invoice extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function currency(): BelongsTo {
+    public function currency(): BelongsTo
+    {
         return $this->belongsTo(Currency::class);
     }
 
@@ -86,7 +87,7 @@ class Invoice extends Model
             ->currencyDecimals($this->currency->precision)
             ->currencyDecimalPoint($this->currency->decimal_mark)
             ->currencyThousandsSeparator($this->currency->thousands_separator)
-            ->currencyFormat($this->currency->symbol_first == true ? $this->currency->symbol . ' ' . '{VALUE}' : '{VALUE}' . ' ' . $this->currency->symbol)
+            ->currencyFormat($this->currency->symbol_first == true ? $this->currency->symbol.' '.'{VALUE}' : '{VALUE}'.' '.$this->currency->symbol)
             ->currencyFraction($this->currency->subunit_name)
             ->save('invoices');
     }

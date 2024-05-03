@@ -6,7 +6,6 @@ use App\Enums\AccountStatus;
 use App\Enums\AccountType;
 use App\Filament\Clusters\Settings;
 use App\Filament\Clusters\Settings\Resources\AccountResource\Pages;
-use App\Filament\Clusters\Settings\Resources\AccountResource\RelationManagers;
 use App\Models\Account;
 use App\Models\Currency;
 use Filament\Forms;
@@ -68,7 +67,7 @@ class AccountResource extends Resource
                                             ->offLabel('No')
                                             ->onLabel('Yes')
                                             ->required(),
-                                    ])
+                                    ]),
                             ]),
                         Section::make('Currency & Status')
                             ->schema([
@@ -96,8 +95,8 @@ class AccountResource extends Resource
                                             ->searchable()
                                             ->preload()
                                             ->default(AccountStatus::DEFAULT),
-                                    ])
-                                ]),
+                                    ]),
+                            ]),
                         Tabs::make('Account Specifications')
                             ->tabs([
                                 Tabs\Tab::make('Bank Information')
@@ -126,8 +125,8 @@ class AccountResource extends Resource
                                             ->prefix('https://')
                                             ->url()
                                             ->maxLength(255),
-                                    ])
-                            ])
+                                    ]),
+                            ]),
                     ])->columnSpan(8),
                 Group::make()
                     ->schema([
@@ -136,7 +135,7 @@ class AccountResource extends Resource
                                 Forms\Components\TextInput::make('bic_swift_code')
                                     ->maxLength(11),
                                 Forms\Components\TextInput::make('iban')
-                                ->maxLength(34),
+                                    ->maxLength(34),
                             ]),
                         Section::make('Routing Information')
                             ->schema([
@@ -144,8 +143,8 @@ class AccountResource extends Resource
                                     ->maxLength(9),
                                 Forms\Components\TextInput::make('ach_routing_number')
                                     ->maxLength(9),
-                            ])
-                    ])->columnSpan(4)
+                            ]),
+                    ])->columnSpan(4),
             ])->columns(12);
     }
 
@@ -192,17 +191,17 @@ class AccountResource extends Resource
                         ->icon('heroicon-o-banknotes')
                         ->label('Make Default')
                         ->requiresConfirmation()
-                        ->modalDescription(fn($record) => 'Are you sure you want to make '. $record->name . ' default?')
+                        ->modalDescription(fn ($record) => 'Are you sure you want to make '.$record->name.' default?')
                         ->modalSubmitActionLabel('Make Default')
                         ->color('warning')
-                        ->hidden(fn($record) => $record->enabled)
+                        ->hidden(fn ($record) => $record->enabled)
                         ->iconPosition('center')
-                        ->action(function($record) {
+                        ->action(function ($record) {
                             Account::where('enabled', true)->update(['enabled' => false]);
 
                             $record->makeDefault();
-                        })
-                ])
+                        }),
+                ]),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

@@ -18,19 +18,20 @@ class Account extends Model
 
     public function currency(): BelongsTo
     {
-         return $this->belongsTo(Currency::class);
+        return $this->belongsTo(Currency::class);
     }
 
-    public function makeDefault() {
+    public function makeDefault()
+    {
         $this->enabled = true;
         $this->save();
     }
 
     protected function casts(): array
     {
-         return [
-             'type' => AccountType::class,
-             'status' => AccountStatus::class,
-         ];
+        return [
+            'type' => AccountType::class,
+            'status' => AccountStatus::class,
+        ];
     }
 }

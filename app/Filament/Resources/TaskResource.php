@@ -12,7 +12,6 @@ use App\Models\Quote;
 use App\Models\Role;
 use App\Models\Task;
 use App\Models\User;
-use App\Models\Vertical;
 use Filament\Forms;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Grid;
@@ -84,14 +83,14 @@ class TaskResource extends Resource
                     ->live(),
                 Forms\Components\Toggle::make('is_completed'),
                 Select::make('equipment')
-                    ->visible(fn(Get $get) => $get('requires_equipment'))
-                    ->relationship('equipment', 'registration', modifyQueryUsing: fn(Get $get) => Equipment::query()->where('vertical_id', $get('vertical_id')))
+                    ->visible(fn (Get $get) => $get('requires_equipment'))
+                    ->relationship('equipment', 'registration', modifyQueryUsing: fn (Get $get) => Equipment::query()->where('vertical_id', $get('vertical_id')))
                     ->live()
                     ->requiredWith('requires_equipment')
                     ->searchable()
                     ->preload()
                     ->createOptionForm(Equipment::getForm())
-                    ->multiple()
+                    ->multiple(),
             ]);
     }
 
@@ -186,13 +185,13 @@ class TaskResource extends Resource
                         }),
                     TablesActionsAction::make('feedback')
                         ->label('Request Feedback')
-                        ->visible(fn($record) => $record->is_completed && !$record->feedback)
+                        ->visible(fn ($record) => $record->is_completed && ! $record->feedback)
                         ->color('success')
                         ->icon('heroicon-o-chat-bubble-bottom-center-text')
-                        ->action(fn($record) => Mail::to($record->assignedFor->email)->send(new RequestFeedbackMail($record)))
-                        ->after(function($record) {
+                        ->action(fn ($record) => Mail::to($record->assignedFor->email)->send(new RequestFeedbackMail($record)))
+                        ->after(function ($record) {
                             Notification::make()
-                                ->title('Feedback requested for task #'. $record->id)
+                                ->title('Feedback requested for task #'.$record->id)
                                 ->send();
                         }),
                     TablesActionsAction::make('expenses')
@@ -252,8 +251,8 @@ class TaskResource extends Resource
                     TablesActionsAction::make('quote')
                         ->label('Generate Quote')
                         ->color('warning')
-                        ->modalDescription(fn($record) => 'Quote for task #'.$record->id)
-                        ->visible(fn($record) => !$record->quote)
+                        ->modalDescription(fn ($record) => 'Quote for task #'.$record->id)
+                        ->visible(fn ($record) => ! $record->quote)
                         ->icon('heroicon-o-banknotes')
                         ->modalSubmitActionLabel('Generate Quote')
                         ->form([
@@ -319,7 +318,7 @@ class TaskResource extends Resource
                                             TextInput::make('subtotal')
                                                 ->numeric()
                                                 ->readOnly()
-                                                ->prefix(fn(Get $get) => Currency::where('id', $get('currency_id'))->first()->abbr ?? 'CUR')
+                                                ->prefix(fn (Get $get) => Currency::where('id', $get('currency_id'))->first()->abbr ?? 'CUR')
                                                 ->afterStateHydrated(function (Get $get, Set $set) {
                                                     self::updateTotals($get, $set);
                                                 }),
@@ -335,15 +334,15 @@ class TaskResource extends Resource
                                             TextInput::make('total')
                                                 ->numeric()
                                                 ->readOnly()
-                                                ->prefix(fn(Get $get) => Currency::where('id', $get('currency_id'))->first()->abbr ?? 'CUR'),
+                                                ->prefix(fn (Get $get) => Currency::where('id', $get('currency_id'))->first()->abbr ?? 'CUR'),
                                         ]),
                                 ]),
                             RichEditor::make('notes')
                                 ->disableToolbarButtons([
                                     'attachFiles',
-                                ])
+                                ]),
                         ])
-                        ->action(function(array $data, $record) {
+                        ->action(function (array $data, $record) {
                             $quote = $record->quote()->create([
                                 'task' => true,
                                 'user_id' => $record->assigned_for,
@@ -356,7 +355,7 @@ class TaskResource extends Resource
                                 'series' => $data['series'],
                                 'serial_number' => $serial_number = Quote::max('serial_number') + 1,
                                 'serial' => $data['series'].'-'.str_pad($serial_number, 5, '0', STR_PAD_LEFT),
-                                'notes' => $data['notes']
+                                'notes' => $data['notes'],
                             ]);
 
                             $recipients = User::role(Role::ADMIN)->get();
@@ -374,7 +373,7 @@ class TaskResource extends Resource
                                     ])
                                     ->sendToDatabase($recipient);
                             }
-                        })
+                        }),
                 ]),
             ])
             ->bulkActions([
@@ -441,7 +440,7 @@ class TaskResource extends Resource
                             ->icon('heroicon-o-envelope-open')
                             ->modalIcon('heroicon-o-envelope-open')
                             ->modalSubmitActionLabel('Request Feedback')
-                            ->visible(fn ($record) => $record->is_completed === true && !$record->feedback)
+                            ->visible(fn ($record) => $record->is_completed === true && ! $record->feedback)
                             ->action(fn ($record) => Mail::to($record->assignedFor->email)->send(new RequestFeedbackMail($record)))
                             ->after(function ($record) {
                                 Notification::make()
@@ -473,12 +472,12 @@ class TaskResource extends Resource
                             ->html()
                             ->columnSpanFull(),
                         RepeatableEntry::make('equipment')
-                            ->visible(fn($record) => $record->requires_equipment)
+                            ->visible(fn ($record) => $record->requires_equipment)
                             ->columnSpanFull()
                             ->schema([
                                 TextEntry::make('registration')
-                                    ->url(fn($record) => EquipmentResource::getUrl('view', ['record' => $record->id]))
-                            ])
+                                    ->url(fn ($record) => EquipmentResource::getUrl('view', ['record' => $record->id])),
+                            ]),
                     ])->columns(3),
             ]);
     }

@@ -57,7 +57,7 @@ class ViewQuote extends ViewRecord
                         ->preload()
                         ->default(InvoiceSeries::IN2INV->name),
                     Toggle::make('send')
-                        ->label('Send Email')
+                        ->label('Send Email'),
                 ])
                 ->action(function (array $data, $record) {
                     $invoice = Invoice::create([
@@ -71,10 +71,10 @@ class ViewQuote extends ViewRecord
                         'series' => $data['series'],
                         'serial_number' => $serial_number = Invoice::max('serial_number') + 1,
                         'serial' => $data['series'].'-'.str_pad($serial_number, 5, '0', STR_PAD_LEFT),
-                        'currency_id' => $record->currency_id
+                        'currency_id' => $record->currency_id,
                     ]);
 
-                    if($data['send'] == true) {
+                    if ($data['send'] == true) {
 
                         $invoice->savePdf();
 

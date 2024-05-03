@@ -526,13 +526,13 @@ class UserResource extends Resource
                                                                             ->modalIcon('heroicon-o-envelope-open')
                                                                             ->modalSubmitActionLabel('Request Feedback')
                                                                             ->button()
-                                                                            ->visible(fn(Task $record) => !$record->feedback)
-                                                                            ->action(fn(Task $record) => Mail::to($record->assignedFor->email)->send(new RequestFeedbackMail($record)))
-                                                                            ->after(function(Task $record) {
+                                                                            ->visible(fn (Task $record) => ! $record->feedback)
+                                                                            ->action(fn (Task $record) => Mail::to($record->assignedFor->email)->send(new RequestFeedbackMail($record)))
+                                                                            ->after(function (Task $record) {
                                                                                 Notification::make()
                                                                                     ->title('feedback requested')
                                                                                     ->success()
-                                                                                    ->body('Feedback requested for task #' . $record->id)
+                                                                                    ->body('Feedback requested for task #'.$record->id)
                                                                                     ->send();
                                                                             }),
                                                                     ),
@@ -636,13 +636,13 @@ class UserResource extends Resource
                                                                             ->requiresConfirmation()
                                                                             ->modalIcon('heroicon-o-envelope-open')
                                                                             ->modalSubmitActionLabel('Request Feedback')
-                                                                            ->visible(fn(Task $record) => !$record->feedback)
-                                                                            ->action(fn(Task $record) => Mail::to($record->assignedFor->email)->send(new RequestFeedbackMail($record)))
-                                                                            ->after(function(Task $record) {
+                                                                            ->visible(fn (Task $record) => ! $record->feedback)
+                                                                            ->action(fn (Task $record) => Mail::to($record->assignedFor->email)->send(new RequestFeedbackMail($record)))
+                                                                            ->after(function (Task $record) {
                                                                                 Notification::make()
                                                                                     ->title('feedback requested')
                                                                                     ->success()
-                                                                                    ->body('Feedback requested for task #' . $record->id)
+                                                                                    ->body('Feedback requested for task #'.$record->id)
                                                                                     ->send();
                                                                             }),
                                                                     ),
@@ -772,7 +772,7 @@ class UserResource extends Resource
                                                                         ->preload()
                                                                         ->default(InvoiceSeries::IN2INV->name),
                                                                     Toggle::make('mail')
-                                                                        ->label('Mail invoice to customer?')
+                                                                        ->label('Mail invoice to customer?'),
                                                                 ])
                                                                 ->action(function (array $data, $record) {
                                                                     $invoice = Invoice::create([
@@ -789,7 +789,7 @@ class UserResource extends Resource
                                                                         'serial' => $data['series'].'-'.str_pad($serial_number, 5, '0', STR_PAD_LEFT),
                                                                     ]);
 
-                                                                    if($data['mail']) {
+                                                                    if ($data['mail']) {
 
                                                                         $invoice->savePdf();
 

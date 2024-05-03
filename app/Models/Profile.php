@@ -16,13 +16,13 @@ class Profile extends Model
 
     protected function casts(): array
     {
-         return [
-             'entity' => EntityType::class
-         ];
+        return [
+            'entity' => EntityType::class,
+        ];
     }
 
     public function media(): BelongsTo
     {
-         return $this->belongsTo(Media::class);
+        return $this->belongsTo(Media::class);
     }
 }

@@ -3,7 +3,6 @@
 namespace Database\Seeders;
 
 use App\Models\Currency;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class CurrencySeeder extends Seeder
@@ -26,7 +25,7 @@ class CurrencySeeder extends Seeder
                 'decimal_mark' => '.',
                 'thousands_separator' => ',',
                 'subunit_name' => 'Pul',
-                'locale' => 'fa_AF'
+                'locale' => 'fa_AF',
             ],
 
             'EUR' => [
@@ -40,7 +39,7 @@ class CurrencySeeder extends Seeder
                 'decimal_mark' => ',',
                 'thousands_separator' => '.',
                 'subunit_name' => 'Cent',
-                'locale' => 'en_US'
+                'locale' => 'en_US',
 
             ],
 
@@ -55,7 +54,7 @@ class CurrencySeeder extends Seeder
                 'decimal_mark' => '.',
                 'thousands_separator' => ',',
                 'subunit_name' => 'Qindarka',
-                'locale' => 'sq_AL'
+                'locale' => 'sq_AL',
             ],
 
             'DZD' => [
@@ -2243,7 +2242,7 @@ class CurrencySeeder extends Seeder
             ],
         ];
 
-        foreach($currencies as $currency) {
+        foreach ($currencies as $currency) {
             Currency::create($currency);
         }
     }

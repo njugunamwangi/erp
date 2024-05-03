@@ -1,7 +1,6 @@
 <?php
 
 use App\Enums\EquipmentType;
-use App\Enums\Material;
 use App\Models\Vertical;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;

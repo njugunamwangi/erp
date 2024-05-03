@@ -88,7 +88,7 @@ class ViewUser extends ViewRecord
                                     ->onIcon('heroicon-o-bolt')
                                     ->offIcon('heroicon-o-bolt-slash'),
                                 Select::make('task_id')
-                                    ->visible(fn(Get $get) => $get('task') == true)
+                                    ->visible(fn (Get $get) => $get('task') == true)
                                     ->label('Task')
                                     ->options(Task::where('assigned_for', '=', $this->record->id)
                                         ->where(fn (Builder $query) => $query->whereDoesntHave('quote'))
@@ -99,7 +99,7 @@ class ViewUser extends ViewRecord
                                 Select::make('vertical_id')
                                     ->live()
                                     ->label('Vertical')
-                                    ->visible(fn(Get $get) => $get('task') == false)
+                                    ->visible(fn (Get $get) => $get('task') == false)
                                     ->options(Vertical::all()->pluck('vertical', 'id'))
                                     ->searchable()
                                     ->preload(),
@@ -163,7 +163,7 @@ class ViewUser extends ViewRecord
                                         TextInput::make('subtotal')
                                             ->numeric()
                                             ->readOnly()
-                                            ->prefix(fn(Get $get) => Currency::where('id', $get('currency_id'))->first()->abbr ?? 'CUR')
+                                            ->prefix(fn (Get $get) => Currency::where('id', $get('currency_id'))->first()->abbr ?? 'CUR')
                                             ->afterStateHydrated(function (Get $get, Set $set) {
                                                 self::updateTotals($get, $set);
                                             }),
@@ -179,13 +179,13 @@ class ViewUser extends ViewRecord
                                         TextInput::make('total')
                                             ->numeric()
                                             ->readOnly()
-                                            ->prefix(fn(Get $get) => Currency::where('id', $get('currency_id'))->first()->abbr ?? 'CUR'),
+                                            ->prefix(fn (Get $get) => Currency::where('id', $get('currency_id'))->first()->abbr ?? 'CUR'),
                                     ]),
                             ]),
                         RichEditor::make('notes')
                             ->disableToolbarButtons([
                                 'attachFiles',
-                            ])
+                            ]),
                     ])
                     ->action(function (array $data, $record) {
                         $quote = $record->quotes()->create([
@@ -242,19 +242,19 @@ class ViewUser extends ViewRecord
                                     ->preload()
                                     ->default(InvoiceSeries::IN2INV->name),
                             ]),
-                            Select::make('currency_id')
-                                ->label('Currency')
-                                ->optionsLimit(40)
-                                ->searchable()
-                                ->createOptionForm(Currency::getForm())
-                                ->live()
-                                ->preload()
-                                ->getSearchResultsUsing(fn (string $search): array => Currency::whereAny([
-                                    'name', 'abbr', 'symbol', 'code'], 'like', "%{$search}%")->limit(50)->pluck('abbr', 'id')->toArray())
-                                ->getOptionLabelUsing(fn ($value): ?string => Currency::find($value)?->abbr)
-                                ->loadingMessage('Loading currencies...')
-                                ->searchPrompt('Search currencies by their symbol, abbreviation or country')
-                                ->required(),
+                        Select::make('currency_id')
+                            ->label('Currency')
+                            ->optionsLimit(40)
+                            ->searchable()
+                            ->createOptionForm(Currency::getForm())
+                            ->live()
+                            ->preload()
+                            ->getSearchResultsUsing(fn (string $search): array => Currency::whereAny([
+                                'name', 'abbr', 'symbol', 'code'], 'like', "%{$search}%")->limit(50)->pluck('abbr', 'id')->toArray())
+                            ->getOptionLabelUsing(fn ($value): ?string => Currency::find($value)?->abbr)
+                            ->loadingMessage('Loading currencies...')
+                            ->searchPrompt('Search currencies by their symbol, abbreviation or country')
+                            ->required(),
                         Fieldset::make('Invoice Summary')
                             ->schema([
                                 Section::make()
@@ -294,7 +294,7 @@ class ViewUser extends ViewRecord
                                         TextInput::make('subtotal')
                                             ->numeric()
                                             ->readOnly()
-                                            ->prefix(fn(Get $get) => Currency::where('id', $get('currency_id'))->first()->abbr ?? 'CUR')
+                                            ->prefix(fn (Get $get) => Currency::where('id', $get('currency_id'))->first()->abbr ?? 'CUR')
                                             ->afterStateHydrated(function (Get $get, Set $set) {
                                                 self::updateTotals($get, $set);
                                             }),
@@ -310,13 +310,13 @@ class ViewUser extends ViewRecord
                                         TextInput::make('total')
                                             ->numeric()
                                             ->readOnly()
-                                            ->prefix(fn(Get $get) => Currency::where('id', $get('currency_id'))->first()->abbr ?? 'CUR'),
+                                            ->prefix(fn (Get $get) => Currency::where('id', $get('currency_id'))->first()->abbr ?? 'CUR'),
                                     ]),
                             ]),
                         RichEditor::make('notes')
                             ->disableToolbarButtons([
                                 'attachFiles',
-                            ])
+                            ]),
                     ])
                     ->action(function (array $data, $record) {
                         $invoice = $record->invoices()->create([
