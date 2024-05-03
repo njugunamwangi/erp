@@ -29,6 +29,7 @@ class DatabaseSeeder extends Seeder
             EquipmentSeeder::class,
             ServiceSeeder::class,
             TaskSeeder::class,
+            AccountSeeder::class,
         ]);
     }
 }

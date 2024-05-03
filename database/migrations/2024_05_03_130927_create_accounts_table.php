@@ -28,10 +28,10 @@ return new class extends Migration
             $table->text('bank_address')->nullable();
             $table->string('bank_website', 255)->nullable();
             $table->string('bic_swift_code', 11)->nullable();
-            $table->string('iban', 34)->nullable();
+            $table->string('iban')->nullable();
             $table->string('aba_routing_number', 9)->nullable();
             $table->string('ach_routing_number', 9)->nullable();
-            $table->boolean('enabled')->default(true);
+            $table->boolean('enabled')->default(false);
             $table->softDeletes();
             $table->timestamps();
         });
