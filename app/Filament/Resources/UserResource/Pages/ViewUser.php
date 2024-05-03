@@ -182,9 +182,12 @@ class ViewUser extends ViewRecord
                                             ->prefix(fn(Get $get) => Currency::where('id', $get('currency_id'))->first()->abbr ?? 'CUR'),
                                     ]),
                             ]),
+                        RichEditor::make('notes')
+                            ->disableToolbarButtons([
+                                'attachFiles',
+                            ])
                     ])
                     ->action(function (array $data, $record) {
-                        // if()
                         $quote = $record->quotes()->create([
                             'task' => $data['task'],
                             'task_id' => empty($data['task_id']) ? null : $data['task_id'],
@@ -309,6 +312,10 @@ class ViewUser extends ViewRecord
                                             ->prefix(fn(Get $get) => Currency::where('id', $get('currency_id'))->first()->abbr ?? 'CUR'),
                                     ]),
                             ]),
+                        RichEditor::make('notes')
+                            ->disableToolbarButtons([
+                                'attachFiles',
+                            ])
                     ])
                     ->action(function (array $data, $record) {
                         $invoice = $record->invoices()->create([

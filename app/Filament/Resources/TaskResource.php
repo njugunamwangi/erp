@@ -18,6 +18,7 @@ use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Section as ComponentsSection;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -332,6 +333,10 @@ class TaskResource extends Resource
                                                 ->prefix(fn(Get $get) => Currency::where('id', $get('currency_id'))->first()->abbr ?? 'CUR'),
                                         ]),
                                 ]),
+                            RichEditor::make('notes')
+                                ->disableToolbarButtons([
+                                    'attachFiles',
+                                ])
                         ])
                         ->action(function(array $data, $record) {
                             $quote = $record->quote()->create([

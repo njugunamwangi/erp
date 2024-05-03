@@ -29,6 +29,7 @@ return new class extends Migration
             $table->integer('serial_number')->nullable();
             $table->string('serial')->nullable();
             $table->json('items');
+            $table->longText('notes')->nullable();
             $table->softDeletes();
             $table->timestamps();
         });

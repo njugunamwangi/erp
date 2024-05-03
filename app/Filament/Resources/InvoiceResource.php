@@ -17,6 +17,7 @@ use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -156,7 +157,12 @@ class InvoiceResource extends Resource
                                             ->prefix(fn(Get $get) => Currency::where('id', $get('currency_id'))->first()->abbr ?? 'CUR')
                                             ->readOnly(),
                                     ])->columnSpan(4),
-                            ])->columns(12),
+                            ])
+                            ->columns(12),
+                            RichEditor::make('notes')
+                                ->disableToolbarButtons([
+                                    'attachFiles',
+                                ])
                     ]),
             ]);
     }
@@ -200,7 +206,7 @@ class InvoiceResource extends Resource
                     ->sortable(),
                 Tables\Columns\TextColumn::make('user.name')
                     ->url(fn ($record) => UserResource::getUrl('view', ['record' => $record->user_id]))
-                    ->color('success')
+                    ->label('Customer')
                     ->icon('heroicon-o-user')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('currency')
