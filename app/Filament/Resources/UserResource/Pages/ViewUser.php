@@ -199,6 +199,7 @@ class ViewUser extends ViewRecord
                             'items' => $data['items'],
                             'series' => $data['series'],
                             'serial_number' => $serial_number = Quote::max('serial_number') + 1,
+                            'notes' => $data['notes'],
                             'serial' => $data['series'].'-'.str_pad($serial_number, 5, '0', STR_PAD_LEFT),
                         ]);
 
@@ -327,6 +328,7 @@ class ViewUser extends ViewRecord
                             'items' => $data['items'],
                             'series' => $data['series'],
                             'serial_number' => $serial_number = Invoice::max('serial_number') + 1,
+                            'notes' => $data['notes'],
                             'serial' => $data['series'].'-'.str_pad($serial_number, 5, '0', STR_PAD_LEFT),
                         ]);
 
