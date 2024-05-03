@@ -22,6 +22,11 @@ class Currency extends Model
         return $this->hasMany(Invoice::class);
     }
 
+    public function accounts(): HasMany
+    {
+         return $this->hasMany(Account::class);
+    }
+
     public static function getForm(): array {
         return [
             TextInput::make('name')
