@@ -18,7 +18,7 @@ class AccountSeeder extends Seeder
             'number' => 5758560017,
             'bank_name' => 'NCBA BANK KENYA PLC',
             'bic_swift_code' => 'CBAFKENX',
-            'iban' => 07,
+            'iban' => '07',
             'currency_id' => 80,
             'enabled' => true,
         ]);
