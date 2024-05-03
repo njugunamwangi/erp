@@ -87,6 +87,7 @@ class TaskResource extends Resource
                     ->visible(fn(Get $get) => $get('requires_equipment'))
                     ->relationship('equipment', 'registration', modifyQueryUsing: fn(Get $get) => Equipment::query()->where('vertical_id', $get('vertical_id')))
                     ->live()
+                    ->requiredWith('requires_equipment')
                     ->searchable()
                     ->preload()
                     ->createOptionForm(Equipment::getForm())
@@ -126,6 +127,10 @@ class TaskResource extends Resource
                     ->date()
                     ->sortable(),
                 Tables\Columns\IconColumn::make('is_completed')
+                    ->label('Completed?')
+                    ->boolean(),
+                Tables\Columns\IconColumn::make('requires_equipment')
+                    ->label('Equipment?')
                     ->boolean(),
                 Tables\Columns\TextColumn::make('deleted_at')
                     ->dateTime()
@@ -351,6 +356,7 @@ class TaskResource extends Resource
                                 'series' => $data['series'],
                                 'serial_number' => $serial_number = Quote::max('serial_number') + 1,
                                 'serial' => $data['series'].'-'.str_pad($serial_number, 5, '0', STR_PAD_LEFT),
+                                'notes' => $data['notes']
                             ]);
 
                             $recipients = User::role(Role::ADMIN)->get();
@@ -467,6 +473,7 @@ class TaskResource extends Resource
                             ->html()
                             ->columnSpanFull(),
                         RepeatableEntry::make('equipment')
+                            ->visible(fn($record) => $record->requires_equipment)
                             ->columnSpanFull()
                             ->schema([
                                 TextEntry::make('registration')
