@@ -4,7 +4,6 @@ namespace App\Enums;
 
 use Filament\Support\Contracts\HasColor;
 use Filament\Support\Contracts\HasIcon;
-use Filament\Support\Contracts\HasLabel;
 
 enum AccountStatus: string implements HasColor, HasIcon
 {
@@ -15,6 +14,11 @@ enum AccountStatus: string implements HasColor, HasIcon
     case Closed = 'closed';
 
     public const DEFAULT = self::Open->value;
+
+    public static function values(): array
+    {
+        return array_column(self::cases(), 'value');
+    }
 
     public function getColor(): string | array | null
     {

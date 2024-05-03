@@ -14,6 +14,11 @@ enum AccountType: string implements HasLabel
 
     public const DEFAULT = self::Checking->value;
 
+    public static function values(): array
+    {
+        return array_column(self::cases(), 'value');
+    }
+
     public function getLabel(): ?string
     {
         $label = ucwords(str_replace('_', ' ', $this->value));

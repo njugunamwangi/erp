@@ -16,13 +16,13 @@ return new class extends Migration
     {
         Schema::create('accounts', function (Blueprint $table) {
             $table->id();
-            $table->string('type')->default(AccountType::DEFAULT);
+            $table->enum('type', AccountType::values())->default(AccountType::DEFAULT);
             $table->string('name', 100)->index();
             $table->string('number', 20);
             $table->foreignIdFor(Currency::class)->constrained()->cascadeOnDelete();
             $table->string('description')->nullable();
             $table->text('notes')->nullable();
-            $table->string('status')->default(AccountStatus::DEFAULT);
+            $table->enum('status', AccountStatus::values())->default(AccountStatus::DEFAULT);
             $table->string('bank_name', 100)->nullable();
             $table->string('bank_phone', 20)->nullable();
             $table->text('bank_address')->nullable();
