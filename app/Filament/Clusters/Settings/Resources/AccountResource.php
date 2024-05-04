@@ -32,6 +32,8 @@ class AccountResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-building-office-2';
 
+    protected static ?int $navigationSort = 1;
+
     protected static ?string $cluster = Settings::class;
 
     public static function form(Form $form): Form

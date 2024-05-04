@@ -2,16 +2,13 @@
 
 namespace App\Filament\Clusters\Settings\Pages;
 
-use App\Enums\EntityType;
 use App\Filament\Clusters\Settings;
-use App\Models\Profile as ModelsProfile;
-use Awcodes\Curator\Components\Forms\CuratorPicker;
+use App\Models\Note;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Forms\Components\Component;
+use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Section;
-use Filament\Forms\Components\Select;
-use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Form;
 use Filament\Notifications\Notification;
@@ -19,32 +16,30 @@ use Filament\Pages\Concerns\InteractsWithFormActions;
 use Filament\Pages\Page;
 use Filament\Support\Exceptions\Halt;
 use Livewire\Attributes\Locked;
-use Ysfkaya\FilamentPhoneInput\Forms\PhoneInput;
-use Ysfkaya\FilamentPhoneInput\PhoneInputNumberType;
 
-class Profile extends Page
+class Notes extends Page
 {
     use InteractsWithFormActions;
     use InteractsWithForms;
 
-    protected static ?string $navigationIcon = 'heroicon-o-user';
+    protected static ?string $navigationIcon = 'heroicon-o-document-text';
 
-    protected static ?string $title = 'Company Profile';
-
-    protected static string $view = 'filament.clusters.settings.pages.profile';
-
-    protected static ?int $navigationSort = 2;
+    protected static string $view = 'filament.clusters.settings.pages.notes';
 
     protected static ?string $cluster = Settings::class;
+
+    protected static ?int $navigationSort = 3;
+
+    protected static ?string $title = 'Quotes & Invoices Notes';
 
     public ?array $data = [];
 
     #[Locked]
-    public ?ModelsProfile $record = null;
+    public ?Note $record = null;
 
     public function mount(): void
     {
-        $this->record = ModelsProfile::findOrNew(1);
+        $this->record = Note::findOrNew(1);
 
         $this->fillForm();
     }
@@ -60,8 +55,8 @@ class Profile extends Page
     {
         return $form
             ->schema([
-                $this->getLogoForm(),
-                $this->getIdentityFrom(),
+                $this->getQuotesForm(),
+                $this->getInvoicesForm(),
             ])
             ->model($this->record)
             ->statePath('data')
@@ -91,38 +86,20 @@ class Profile extends Page
             ->title(__('filament-panels::resources/pages/edit-record.notifications.saved.title'));
     }
 
-    public function getLogoForm(): Component
+    public function getQuotesForm(): Component
     {
-        return Section::make('Logo')
+        return Section::make('Quotes Notes')
             ->schema([
-                CuratorPicker::make('media_id')
-                    ->label('Choose Logo'),
-            ])
-            ->columns(3);
+                RichEditor::make('quotes')
+            ]);
     }
 
-    public function getIdentityFrom(): Component
+    public function getInvoicesForm(): Component
     {
-        return Section::make('Identity')
+        return Section::make('Invoices Notes')
             ->schema([
-                TextInput::make('name'),
-                TextInput::make('email')
-                    ->email(),
-                PhoneInput::make('phone')
-                    ->defaultCountry('KE')
-                    ->displayNumberFormat(PhoneInputNumberType::INTERNATIONAL)
-                    ->focusNumberFormat(PhoneInputNumberType::INTERNATIONAL),
-                TextInput::make('registration'),
-                TextInput::make('kra_pin')
-                    ->label('KRA Pin'),
-                Select::make('entity')
-                    ->enum(EntityType::class)
-                    ->options(EntityType::class)
-                    ->searchable()
-                    ->preload()
-                    ->default(EntityType::DEFAULT),
-            ])
-            ->columns(2);
+                RichEditor::make('invoices')
+            ]);
     }
 
     /**
