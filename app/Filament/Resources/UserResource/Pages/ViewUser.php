@@ -11,6 +11,7 @@ use App\Filament\Resources\UserResource;
 use App\Filament\Resources\UserResource\Widgets\TasksWidget;
 use App\Models\Currency;
 use App\Models\Invoice;
+use App\Models\Note;
 use App\Models\Quote;
 use App\Models\Role;
 use App\Models\Task;
@@ -183,6 +184,7 @@ class ViewUser extends ViewRecord
                                     ]),
                             ]),
                         RichEditor::make('notes')
+                            ->default(Note::find(1)->quotes)
                             ->disableToolbarButtons([
                                 'attachFiles',
                             ]),
@@ -191,7 +193,7 @@ class ViewUser extends ViewRecord
                         $quote = $record->quotes()->create([
                             'task' => $data['task'],
                             'task_id' => empty($data['task_id']) ? null : $data['task_id'],
-                            'vertical_id' => empty($data['task_id']) ? $data['vertical_id'] : Task::query()->where('id', $data['task_id'])->first()->vertical_id,
+                            'vertical_id' => empty($data['task_id']) ? $data['vertical_id'] : Task::find($data['task_id'])->vertical_id,
                             'subtotal' => $data['subtotal'],
                             'currency_id' => $data['currency_id'],
                             'taxes' => $data['taxes'],
@@ -314,6 +316,7 @@ class ViewUser extends ViewRecord
                                     ]),
                             ]),
                         RichEditor::make('notes')
+                            ->default(Note::find(1)->quotes)
                             ->disableToolbarButtons([
                                 'attachFiles',
                             ]),

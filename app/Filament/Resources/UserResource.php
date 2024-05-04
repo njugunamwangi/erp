@@ -11,6 +11,7 @@ use App\Mail\SendInvoice;
 use App\Models\CustomField;
 use App\Models\Invoice;
 use App\Models\Lead;
+use App\Models\Note;
 use App\Models\Role;
 use App\Models\Stage;
 use App\Models\Tag;
@@ -762,6 +763,7 @@ class UserResource extends Resource
                                                                 ->icon('heroicon-o-document-check')
                                                                 ->modalSubmitActionLabel('Generate Invoice')
                                                                 ->modalAlignment(Alignment::Center)
+                                                                ->modalDescription(fn($record) => 'Generate invoice for quote '. $record->serial)
                                                                 ->modalIcon('heroicon-o-document-check')
                                                                 ->form([
                                                                     Select::make('series')
@@ -787,6 +789,7 @@ class UserResource extends Resource
                                                                         'series' => $data['series'],
                                                                         'serial_number' => $serial_number = Invoice::max('serial_number') + 1,
                                                                         'serial' => $data['series'].'-'.str_pad($serial_number, 5, '0', STR_PAD_LEFT),
+                                                                        'notes' => Note::find(1)->invoices
                                                                     ]);
 
                                                                     if ($data['mail']) {

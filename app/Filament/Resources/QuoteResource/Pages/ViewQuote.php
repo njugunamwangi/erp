@@ -8,6 +8,7 @@ use App\Filament\Resources\InvoiceResource;
 use App\Filament\Resources\QuoteResource;
 use App\Mail\SendInvoice;
 use App\Models\Invoice;
+use App\Models\Note;
 use App\Models\Role;
 use App\Models\User;
 use Filament\Actions;
@@ -72,6 +73,7 @@ class ViewQuote extends ViewRecord
                         'serial_number' => $serial_number = Invoice::max('serial_number') + 1,
                         'serial' => $data['series'].'-'.str_pad($serial_number, 5, '0', STR_PAD_LEFT),
                         'currency_id' => $record->currency_id,
+                        'notes' => Note::find(1)->invoices
                     ]);
 
                     if ($data['send'] == true) {

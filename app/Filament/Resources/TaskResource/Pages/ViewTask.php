@@ -7,6 +7,7 @@ use App\Filament\Resources\QuoteResource;
 use App\Filament\Resources\TaskResource;
 use App\Models\Currency;
 use App\Models\Expense;
+use App\Models\Note;
 use App\Models\Quote;
 use App\Models\Role;
 use App\Models\Task;
@@ -185,6 +186,7 @@ class ViewTask extends ViewRecord
                                     ]),
                             ]),
                         RichEditor::make('notes')
+                            ->default(Note::find(1)->quotes)
                             ->disableToolbarButtons([
                                 'attachFiles',
                             ]),

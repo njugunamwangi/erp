@@ -8,6 +8,7 @@ use App\Mail\RequestFeedbackMail;
 use App\Models\Currency;
 use App\Models\Equipment;
 use App\Models\Expense;
+use App\Models\Note;
 use App\Models\Quote;
 use App\Models\Role;
 use App\Models\Task;
@@ -338,6 +339,7 @@ class TaskResource extends Resource
                                         ]),
                                 ]),
                             RichEditor::make('notes')
+                                ->default(Note::find(1)->quotes)
                                 ->disableToolbarButtons([
                                     'attachFiles',
                                 ]),
