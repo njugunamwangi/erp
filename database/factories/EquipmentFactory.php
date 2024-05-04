@@ -20,7 +20,7 @@ class EquipmentFactory extends Factory
     public function definition(): array
     {
         return [
-            'registration' => fake()->name(),
+            'registration' => '5Y-' . rand(1000, 9999),
             'vertical_id' => fake()->randomElement(Vertical::all()->pluck('id')),
             'type' => fake()->randomElement(EquipmentType::values()),
             'brand_id' => fake()->randomElement(Brand::all()->pluck('id')),
