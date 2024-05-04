@@ -27,7 +27,7 @@ return new class extends Migration
             $table->string('serial')->nullable();
             $table->enum('series', InvoiceSeries::values())->default(InvoiceSeries::IN2INV->name);
             $table->enum('status', InvoiceStatus::values())->default(InvoiceStatus::Unpaid);
-            $table->longText('notes')->nullable();
+            $table->longText('notes');
             $table->softDeletes();
             $table->timestamps();
         });

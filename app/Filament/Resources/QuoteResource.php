@@ -176,7 +176,8 @@ class QuoteResource extends Resource
                                     ])->columnSpan(4),
                             ])->columns(12),
                         RichEditor::make('notes')
-                            ->default(Note::find(1)->quotes)
+                            ->default(Note::find(1)?->quotes)
+                            ->required()
                             ->disableToolbarButtons([
                                 'attachFiles',
                             ]),

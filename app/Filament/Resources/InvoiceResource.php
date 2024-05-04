@@ -161,7 +161,8 @@ class InvoiceResource extends Resource
                             ])
                             ->columns(12),
                         RichEditor::make('notes')
-                            ->default(Note::find(1)->invoices)
+                            ->default(Note::find(1)?->invoices)
+                            ->required()
                             ->disableToolbarButtons([
                                 'attachFiles',
                             ]),
