@@ -26,6 +26,7 @@ class CurrencyResource extends Resource
     public static function table(Table $table): Table
     {
         return $table
+            ->defaultSort('abbr')
             ->columns([
                 Tables\Columns\TextColumn::make('name')
                     ->searchable(),

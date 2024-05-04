@@ -113,7 +113,7 @@ class EquipmentResource extends Resource
                                     ->columns(2),
                             ]),
                         Tabs\Tab::make('Work History')
-                            ->badge(fn ($record) => $record->services->count())
+                            ->badge(fn ($record) => $record->tasks->count())
                             ->schema([
                                 RepeatableEntry::make('tasks')
                                     ->hiddenLabel()
