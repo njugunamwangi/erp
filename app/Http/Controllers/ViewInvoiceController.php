@@ -49,6 +49,7 @@ class ViewInvoiceController extends Controller
             ->currencyThousandsSeparator($record->currency->thousands_separator)
             ->currencyFormat($record->currency->symbol_first == true ? $record->currency->symbol.' '.'{VALUE}' : '{VALUE}'.' '.$record->currency->symbol)
             ->currencyFraction($record->currency->subunit_name)
+            ->notes($record->notes)
             ->addItems($items);
 
         return $invoice->stream();

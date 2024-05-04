@@ -9,6 +9,7 @@ use App\Filament\Resources\InvoiceResource\Widgets\InvoiceStatsOverview;
 use App\Models\Currency;
 use App\Models\Invoice;
 use App\Models\MpesaSTK;
+use App\Models\Note;
 use App\Models\Role;
 use App\Models\User;
 use App\Mpesa\STKPush;
@@ -160,6 +161,7 @@ class InvoiceResource extends Resource
                             ])
                             ->columns(12),
                         RichEditor::make('notes')
+                            ->default(Note::find(1)->invoices)
                             ->disableToolbarButtons([
                                 'attachFiles',
                             ]),

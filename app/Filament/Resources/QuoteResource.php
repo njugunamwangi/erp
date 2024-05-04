@@ -10,6 +10,7 @@ use App\Filament\Resources\QuoteResource\Widgets\QuoteOverviewStats;
 use App\Mail\SendInvoice;
 use App\Models\Currency;
 use App\Models\Invoice;
+use App\Models\Note;
 use App\Models\Quote;
 use App\Models\Role;
 use App\Models\User;
@@ -175,6 +176,7 @@ class QuoteResource extends Resource
                                     ])->columnSpan(4),
                             ])->columns(12),
                         RichEditor::make('notes')
+                            ->default(Note::find(1)->quotes)
                             ->disableToolbarButtons([
                                 'attachFiles',
                             ]),
