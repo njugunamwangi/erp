@@ -14,6 +14,12 @@ use App\Models\Note;
 use App\Models\Quote;
 use App\Models\Role;
 use App\Models\User;
+use Brick\Math\RoundingMode;
+use Brick\Money\CurrencyConverter;
+use Brick\Money\ExchangeRateProvider\ConfigurableProvider;
+use Brick\Money\Money;
+use Dcblogdev\FindAndReplaceJson\FindAndReplaceJson;
+use Filament\Actions\Action as FilamentActionsAction;
 use Filament\Forms;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Grid;
@@ -32,6 +38,7 @@ use Filament\Infolists\Infolist;
 use Filament\Notifications\Actions\Action as ActionsAction;
 use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
+use Filament\Support\Enums\Alignment;
 use Filament\Tables;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\ActionGroup;
@@ -39,6 +46,8 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Mail;
 
 class QuoteResource extends Resource
@@ -332,6 +341,77 @@ class QuoteResource extends Resource
                         ->color('success')
                         ->url(fn (Quote $record) => route('quote.download', $record))
                         ->openUrlInNewTab(),
+                    Action::make('convert')
+                        ->modalSubmitActionLabel('Convert')
+                        ->icon('heroicon-o-banknotes')
+                        ->color('danger')
+                        ->modalAlignment(Alignment::Center)
+                        ->modalIcon('heroicon-o-banknotes')
+                        ->form([
+                            Select::make('currency_id')
+                                ->options(Currency::all()->pluck('abbr', 'id'))
+                                ->label('Currency')
+                                ->optionsLimit(40)
+                                ->searchable()
+                                ->createOptionForm(Currency::getForm())
+                                ->live()
+                                ->preload()
+                                ->getSearchResultsUsing(fn (string $search): array => Currency::whereAny([
+                                    'name', 'abbr', 'symbol', 'code'], 'like', "%{$search}%")->limit(50)->pluck('abbr', 'id')->toArray())
+                                ->getOptionLabelUsing(fn ($value): ?string => Currency::find($value)?->abbr)
+                                ->loadingMessage('Loading currencies...')
+                                ->searchPrompt('Search currencies by their symbol, abbreviation or country')
+                                ->required(),
+                        ])
+                        ->action(function($record, array $data) {
+                            $rates = Http::get('https://v6.exchangerate-api.com/v6/6bced76069ddc421257d0fb6/latest/'.$record->currency->abbr)->json()['conversion_rates'];
+
+                            $convertTo = Currency::find($data['currency_id'])->abbr;
+
+                            // dd('Converting from '. $record->currency->abbr . ' to ' . $convertTo . ' at a rate of ' . $rates[$convertTo]);
+                            $items = [];
+                            foreach($record->items as $item) {
+                                $payload = json_encode($item, true);
+
+                                $replaces = ['unit_price' => $item['unit_price'] * $rates[$convertTo]];
+
+                                $runner = new FindAndReplaceJson();
+
+                                $updatedItem = json_decode($runner->replace($payload, $replaces));
+
+                                $items[] = $updatedItem;
+                            }
+
+                            // dd($record->items);
+
+                            $exchangeRateProvider = new ConfigurableProvider();
+                            $exchangeRateProvider->setExchangeRate($record->currency->abbr, $convertTo, $rates[$convertTo]);
+                            $converter = new CurrencyConverter($exchangeRateProvider);
+
+                            $record->update([
+                                'currency_id' => $data['currency_id'],
+                                'subtotal' => $converter->convert( moneyContainer: $record->subtotal, currency: $convertTo, roundingMode: RoundingMode::UP),
+                                'total' => $converter->convert( moneyContainer: $record->total, currency: $convertTo, roundingMode: RoundingMode::UP),
+                                'items' => $items,
+                            ]);
+
+                            // Notification
+                            $recipients = User::role(Role::ADMIN)->get();
+
+                            foreach ($recipients as $recipient) {
+                                Notification::make()
+                                    ->title('Currency converted')
+                                    ->body(auth()->user()->name.' converted currency for '.$record->serial)
+                                    ->icon('heroicon-o-check-badge')
+                                    ->success()
+                                    ->actions([
+                                        ActionsAction::make('View')
+                                            ->url(QuoteResource::getUrl('view', ['record' => $record->id]))
+                                            ->markAsRead(),
+                                    ])
+                                    ->sendToDatabase($recipient);
+                            }
+                        })
                 ]),
             ])
             ->bulkActions([

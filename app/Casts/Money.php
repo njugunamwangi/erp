@@ -2,6 +2,7 @@
 
 namespace App\Casts;
 
+use Brick\Math\RoundingMode;
 use Brick\Money\Money as MoneyMoney;
 use Illuminate\Contracts\Database\Eloquent\CastsAttributes;
 use Illuminate\Database\Eloquent\Model;
@@ -29,6 +30,6 @@ class Money implements CastsAttributes
             return $value;
         }
 
-        return $value->getAmount()->toInt();
+        return $value->getAmount()->toScale(0, RoundingMode::UP)->toInt();
     }
 }
