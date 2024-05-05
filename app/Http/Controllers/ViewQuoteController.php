@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Profile;
 use App\Models\Quote;
 use Illuminate\Http\Request;
 use LaravelDaily\Invoices\Classes\Buyer;
@@ -37,6 +38,7 @@ class ViewQuoteController extends Controller
             ->buyer($customer)
             ->taxRate($record->taxes)
             ->filename($record->serial)
+            ->logo(empty(Profile::find(1)->media_id) ? '' : storage_path('/app/public/'.Profile::find(1)->media->path))
             ->template('quote')
             ->name('Quote')
             ->series($record->series->name)

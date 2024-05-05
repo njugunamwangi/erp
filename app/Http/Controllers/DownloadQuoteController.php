@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Profile;
 use App\Models\Quote;
 use Illuminate\Http\Request;
 use LaravelDaily\Invoices\Classes\Buyer;
@@ -41,6 +42,7 @@ class DownloadQuoteController extends Controller
             ->name('Quote')
             ->series($record->series->name)
             ->sequence($record->serial_number)
+            ->logo(empty(Profile::find(1)->media_id) ? '' : storage_path('/app/public/'.Profile::find(1)->media->path))
             ->delimiter('-')
             ->currencyCode($record->currency->abbr)
             ->currencySymbol($record->currency->symbol)
