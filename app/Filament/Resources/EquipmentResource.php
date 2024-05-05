@@ -39,11 +39,9 @@ class EquipmentResource extends Resource
                 Tables\Columns\TextColumn::make('registration')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('vertical.vertical')
-                    ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('type'),
                 Tables\Columns\TextColumn::make('brand.brand')
-                    ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('deleted_at')
                     ->dateTime()

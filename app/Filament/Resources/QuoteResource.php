@@ -228,7 +228,7 @@ class QuoteResource extends Resource
                     ->icon('heroicon-o-user')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('vertical.vertical')
-                    ->numeric()
+                    ->url(fn($record) => VerticalResource::getUrl('view', ['record' => $record->vertical_id]))
                     ->sortable(),
                 Tables\Columns\TextColumn::make('currency')
                     ->getStateUsing(fn ($record) => $record->currency->symbol)

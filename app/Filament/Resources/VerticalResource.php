@@ -5,6 +5,11 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\VerticalResource\Pages;
 use App\Models\Vertical;
 use Filament\Forms\Form;
+use Filament\Infolists\Components\IconEntry;
+use Filament\Infolists\Components\RepeatableEntry;
+use Filament\Infolists\Components\Tabs;
+use Filament\Infolists\Components\TextEntry;
+use Filament\Infolists\Infolist;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -55,6 +60,63 @@ class VerticalResource extends Resource
                     Tables\Actions\ForceDeleteBulkAction::make(),
                     Tables\Actions\RestoreBulkAction::make(),
                 ]),
+            ]);
+    }
+
+    public static function infolist(Infolist $infolist): Infolist
+    {
+        return $infolist
+            ->schema([
+                TextEntry::make('vertical'),
+                Tabs::make()
+                    ->columnSpanFull()
+                    ->tabs([
+                        Tabs\Tab::make('Equipment')
+                            ->badge(fn($record) => $record->equipment->count())
+                            ->schema([
+                                RepeatableEntry::make('equipment')
+                                    ->schema([
+                                        TextEntry::make('registration'),
+                                        TextEntry::make('brand.brand'),
+                                        TextEntry::make('type'),
+                                    ])
+                                    ->columns(3)
+                            ]),
+                        Tabs\Tab::make('Tasks')
+                            ->badge(fn($record) => $record->tasks->count())
+                            ->schema([
+                                RepeatableEntry::make('tasks')
+                                    ->schema([
+                                        TextEntry::make('id')
+                                            ->label('Task')
+                                            ->getStateUsing(fn($record) => '#'.$record->id),
+                                        TextEntry::make('assignedTo.name')
+                                            ->label('Staff'),
+                                        TextEntry::make('assignedFor.name')
+                                            ->label('Customer'),
+                                        IconEntry::make('is_completed'),
+                                    ])
+                                    ->columns(4)
+                            ]),
+                        Tabs\Tab::make('Quotes')
+                            ->badge(fn($record) => $record->quotes->count())
+                            ->schema([
+                                RepeatableEntry::make('quotes')
+                                    ->schema([
+                                        TextEntry::make('serial'),
+                                        TextEntry::make('user.name')
+                                            ->label('Customer'),
+                                        TextEntry::make('currency')
+                                            ->getStateUsing(fn($record) => $record->currency->symbol),
+                                        TextEntry::make('subtotal')
+                                            ->label('Sub-Total'),
+                                        TextEntry::make('taxes')
+                                            ->suffix('%'),
+                                        TextEntry::make('total')
+                                    ])
+                                    ->columns(6)
+                            ]),
+                    ])
             ]);
     }
 
