@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "8ce60393f3f06a1114630239e151fdff",
+    "content-hash": "2dceac06598e246b593a4f7c0debca9b",
     "packages": [
         {
             "name": "althinect/filament-spatie-roles-permissions",
@@ -980,6 +980,59 @@
                 "source": "https://github.com/DASPRiD/Enum/tree/1.0.5"
             },
             "time": "2023-08-25T16:18:39+00:00"
+        },
+        {
+            "name": "dcblogdev/php-find-and-replace-json",
+            "version": "v1.1.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/dcblogdev/php-find-and-replace-json.git",
+                "reference": "7483581eaa4269ae52496d9add13108743ccac70"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/dcblogdev/php-find-and-replace-json/zipball/7483581eaa4269ae52496d9add13108743ccac70",
+                "reference": "7483581eaa4269ae52496d9add13108743ccac70",
+                "shasum": ""
+            },
+            "require": {
+                "ext-json": "*"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Dcblogdev\\FindAndReplaceJson\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "David Carr",
+                    "email": "dave@dcblog.dev",
+                    "homepage": "https://dcblog.dev"
+                }
+            ],
+            "description": "Find and replace keys or values in json or arrays",
+            "homepage": "https://github.com/dcblogdev/php-find-and-replace-json",
+            "keywords": [
+                "array",
+                "json",
+                "php"
+            ],
+            "support": {
+                "issues": "https://github.com/dcblogdev/php-find-and-replace-json/issues",
+                "source": "https://github.com/dcblogdev/php-find-and-replace-json/tree/v1.1.2"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/dcblogdev",
+                    "type": "github"
+                }
+            ],
+            "time": "2022-07-20T08:05:29+00:00"
         },
         {
             "name": "dflydev/dot-access-data",
