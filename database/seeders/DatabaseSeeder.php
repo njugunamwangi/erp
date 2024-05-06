@@ -31,6 +31,7 @@ class DatabaseSeeder extends Seeder
             TaskSeeder::class,
             AccountSeeder::class,
             NotesSeeder::class,
+            ProfileSeeder::class,
         ]);
     }
 }
