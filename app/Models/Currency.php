@@ -7,6 +7,7 @@ use Filament\Forms\Components\Toggle;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Wallo\FilamentSelectify\Components\ToggleButton;
 
 class Currency extends Model
 {
@@ -62,7 +63,11 @@ class Currency extends Model
             TextInput::make('thousands_separator')
                 ->required()
                 ->maxLength(255),
-            Toggle::make('symbol_first')
+            ToggleButton::make('symbol_first')
+                ->onLabel('Yes')
+                ->offLabel('No')
+                ->onColor('info')
+                ->offColor('danger')
                 ->required(),
         ];
     }

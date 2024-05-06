@@ -11,6 +11,7 @@ use App\Mail\SendInvoice;
 use App\Models\Currency;
 use App\Models\Invoice;
 use App\Models\Note;
+use App\Models\Profile;
 use App\Models\Quote;
 use App\Models\Role;
 use App\Models\User;
@@ -112,6 +113,7 @@ class QuoteResource extends Resource
                                 Select::make('currency_id')
                                     ->relationship('currency', 'abbr')
                                     ->label('Currency')
+                                    ->default(Profile::find(1)->currency_id)
                                     ->optionsLimit(40)
                                     ->searchable()
                                     ->createOptionForm(Currency::getForm())
@@ -347,6 +349,7 @@ class QuoteResource extends Resource
                         ->label('Convert Currency')
                         ->color('danger')
                         ->modalAlignment(Alignment::Center)
+                        ->modalDescription(fn($record) => 'Converting currency for ' . $record->serial . ' from '. $record->currency->abbr)
                         ->modalIcon('heroicon-o-banknotes')
                         ->form([
                             Select::make('currency_id')

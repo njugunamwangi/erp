@@ -10,6 +10,7 @@ use App\Models\Currency;
 use App\Models\Invoice;
 use App\Models\MpesaSTK;
 use App\Models\Note;
+use App\Models\Profile;
 use App\Models\Role;
 use App\Models\User;
 use App\Mpesa\STKPush;
@@ -71,6 +72,7 @@ class InvoiceResource extends Resource
                                 Select::make('currency_id')
                                     ->relationship('currency', 'abbr')
                                     ->label('Currency')
+                                    ->default(Profile::find(1)->currency_id)
                                     ->optionsLimit(40)
                                     ->searchable()
                                     ->createOptionForm(Currency::getForm())
@@ -351,6 +353,7 @@ class InvoiceResource extends Resource
                         ->color('danger')
                         ->modalAlignment(Alignment::Center)
                         ->modalIcon('heroicon-o-banknotes')
+                        ->modalDescription(fn($record) => 'Converting currency for ' . $record->serial . ' from '. $record->currency->abbr)
                         ->form([
                             Select::make('currency_id')
                                 ->options(Currency::all()->pluck('abbr', 'id'))
