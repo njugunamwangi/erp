@@ -25,4 +25,9 @@ class Profile extends Model
     {
         return $this->belongsTo(Media::class);
     }
+
+    public function currency(): BelongsTo
+    {
+         return $this->belongsTo(Currency::class);
+    }
 }
