@@ -344,6 +344,7 @@ class QuoteResource extends Resource
                     Action::make('convert')
                         ->modalSubmitActionLabel('Convert')
                         ->icon('heroicon-o-banknotes')
+                        ->label('Convert Currency')
                         ->color('danger')
                         ->modalAlignment(Alignment::Center)
                         ->modalIcon('heroicon-o-banknotes')
@@ -364,36 +365,7 @@ class QuoteResource extends Resource
                                 ->required(),
                         ])
                         ->action(function($record, array $data) {
-                            $rates = Http::get('https://v6.exchangerate-api.com/v6/6bced76069ddc421257d0fb6/latest/'.$record->currency->abbr)->json()['conversion_rates'];
-
-                            $convertTo = Currency::find($data['currency_id'])->abbr;
-
-                            // dd('Converting from '. $record->currency->abbr . ' to ' . $convertTo . ' at a rate of ' . $rates[$convertTo]);
-                            $items = [];
-                            foreach($record->items as $item) {
-                                $payload = json_encode($item, true);
-
-                                $replaces = ['unit_price' => $item['unit_price'] * $rates[$convertTo]];
-
-                                $runner = new FindAndReplaceJson();
-
-                                $updatedItem = json_decode($runner->replace($payload, $replaces));
-
-                                $items[] = $updatedItem;
-                            }
-
-                            // dd($record->items);
-
-                            $exchangeRateProvider = new ConfigurableProvider();
-                            $exchangeRateProvider->setExchangeRate($record->currency->abbr, $convertTo, $rates[$convertTo]);
-                            $converter = new CurrencyConverter($exchangeRateProvider);
-
-                            $record->update([
-                                'currency_id' => $data['currency_id'],
-                                'subtotal' => $converter->convert( moneyContainer: $record->subtotal, currency: $convertTo, roundingMode: RoundingMode::UP),
-                                'total' => $converter->convert( moneyContainer: $record->total, currency: $convertTo, roundingMode: RoundingMode::UP),
-                                'items' => $items,
-                            ]);
+                            $record->convertCurrency($data);
 
                             // Notification
                             $recipients = User::role(Role::ADMIN)->get();
@@ -402,8 +374,8 @@ class QuoteResource extends Resource
                                 Notification::make()
                                     ->title('Currency converted')
                                     ->body(auth()->user()->name.' converted currency for '.$record->serial)
-                                    ->icon('heroicon-o-check-badge')
-                                    ->success()
+                                    ->icon('heroicon-o-banknotes')
+                                    ->danger()
                                     ->actions([
                                         ActionsAction::make('View')
                                             ->url(QuoteResource::getUrl('view', ['record' => $record->id]))

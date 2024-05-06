@@ -30,6 +30,7 @@ use Filament\Infolists\Infolist;
 use Filament\Notifications\Actions\Action as ActionsAction;
 use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
+use Filament\Support\Enums\Alignment;
 use Filament\Tables;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\ActionGroup;
@@ -343,6 +344,49 @@ class InvoiceResource extends Resource
                                     ->sendToDatabase($recipient);
                             }
                         }),
+                    Action::make('convert')
+                        ->modalSubmitActionLabel('Convert')
+                        ->icon('heroicon-o-banknotes')
+                        ->label('Convert Currency')
+                        ->color('danger')
+                        ->modalAlignment(Alignment::Center)
+                        ->modalIcon('heroicon-o-banknotes')
+                        ->form([
+                            Select::make('currency_id')
+                                ->options(Currency::all()->pluck('abbr', 'id'))
+                                ->label('Currency')
+                                ->optionsLimit(40)
+                                ->searchable()
+                                ->createOptionForm(Currency::getForm())
+                                ->live()
+                                ->preload()
+                                ->getSearchResultsUsing(fn (string $search): array => Currency::whereAny([
+                                    'name', 'abbr', 'symbol', 'code'], 'like', "%{$search}%")->limit(50)->pluck('abbr', 'id')->toArray())
+                                ->getOptionLabelUsing(fn ($value): ?string => Currency::find($value)?->abbr)
+                                ->loadingMessage('Loading currencies...')
+                                ->searchPrompt('Search currencies by their symbol, abbreviation or country')
+                                ->required(),
+                        ])
+                        ->action(function($record, array $data) {
+                            $record->convertCurrency($data);
+
+                            // Notification
+                            $recipients = User::role(Role::ADMIN)->get();
+
+                            foreach ($recipients as $recipient) {
+                                Notification::make()
+                                    ->title('Currency converted')
+                                    ->body(auth()->user()->name.' converted currency for '.$record->serial)
+                                    ->icon('heroicon-o-banknotes')
+                                    ->danger()
+                                    ->actions([
+                                        ActionsAction::make('View')
+                                            ->url(QuoteResource::getUrl('view', ['record' => $record->id]))
+                                            ->markAsRead(),
+                                    ])
+                                    ->sendToDatabase($recipient);
+                            }
+                        })
                 ]),
             ])
             ->bulkActions([
