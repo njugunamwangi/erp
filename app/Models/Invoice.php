@@ -99,7 +99,9 @@ class Invoice extends Model
 
     public function convertCurrency($data)
     {
-        $rates = Http::get('https://v6.exchangerate-api.com/v6/6bced76069ddc421257d0fb6/latest/'.$this->currency->abbr)->json()['conversion_rates'];
+        $api = Profile::find(1)->exchange_rate_api;
+
+        $rates = Http::get('https://v6.exchangerate-api.com/v6/'. $api .'/latest/'.$this->currency->abbr)->json()['conversion_rates'];
 
         $convertTo = Currency::find($data['currency_id'])->abbr;
 

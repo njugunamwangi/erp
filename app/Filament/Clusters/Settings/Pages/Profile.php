@@ -4,11 +4,14 @@ namespace App\Filament\Clusters\Settings\Pages;
 
 use App\Enums\EntityType;
 use App\Filament\Clusters\Settings;
+use App\Models\Currency;
 use App\Models\Profile as ModelsProfile;
 use Awcodes\Curator\Components\Forms\CuratorPicker;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Forms\Components\Component;
+use Filament\Forms\Components\Grid;
+use Filament\Forms\Components\Group;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -93,12 +96,40 @@ class Profile extends Page
 
     public function getLogoForm(): Component
     {
-        return Section::make('Logo')
+        return Group::make()
             ->schema([
-                CuratorPicker::make('media_id')
-                    ->label('Choose Logo'),
+                Section::make('Logo')
+                    ->schema([
+                        CuratorPicker::make('media_id')
+                            ->label('Choose Logo'),
+                    ])
+                    ->columnSpan(4),
+                Section::make('Currency')
+                    ->schema([
+                        Grid::make(2)
+                            ->schema([
+                                Select::make('currency_id')
+                                    ->options(Currency::all()->pluck('abbr', 'id'))
+                                    ->label('Currency')
+                                    ->optionsLimit(40)
+                                    ->searchable()
+                                    ->createOptionForm(Currency::getForm())
+                                    ->live()
+                                    ->preload()
+                                    ->getSearchResultsUsing(fn (string $search): array => Currency::whereAny([
+                                        'name', 'abbr', 'symbol', 'code'], 'like', "%{$search}%")->limit(50)->pluck('abbr', 'id')->toArray())
+                                    ->getOptionLabelUsing(fn ($value): ?string => Currency::find($value)?->abbr)
+                                    ->loadingMessage('Loading currencies...')
+                                    ->searchPrompt('Search currencies by their symbol, abbreviation or country')
+                                    ->required(),
+                                TextInput::make('exchange_rate_api')
+                                    ->label('Exchange rate API Key')
+                                    ->required()
+                            ])
+                    ])
+                    ->columnSpan(8)
             ])
-            ->columns(3);
+            ->columns(12);
     }
 
     public function getIdentityFrom(): Component

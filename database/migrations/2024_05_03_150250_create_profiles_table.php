@@ -1,6 +1,7 @@
 <?php
 
 use App\Enums\EntityType;
+use App\Models\Currency;
 use Awcodes\Curator\Models\Media;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -16,6 +17,8 @@ return new class extends Migration
         Schema::create('profiles', function (Blueprint $table) {
             $table->id();
             $table->foreignIdFor(Media::class)->nullable()->constrained()->cascadeOnDelete();
+            $table->foreignIdFor(Currency::class)->nullable()->constrained()->cascadeOnDelete();
+            $table->string('exchange_rate_api');
             $table->string('name')->nullable();
             $table->string('email')->nullable();
             $table->string('phone')->nullable();
