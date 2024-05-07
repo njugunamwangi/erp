@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Http;
 use LaravelDaily\Invoices\Classes\Buyer;
@@ -55,6 +56,11 @@ class Invoice extends Model
     public function stks(): HasMany
     {
         return $this->hasMany(MpesaSTK::class);
+    }
+
+    public function payment(): HasOne
+    {
+         return $this->hasOne(Payment::class);
     }
 
     public function savePdf()
