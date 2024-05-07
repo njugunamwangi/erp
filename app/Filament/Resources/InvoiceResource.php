@@ -6,10 +6,12 @@ use App\Enums\InvoiceSeries;
 use App\Enums\InvoiceStatus;
 use App\Filament\Resources\InvoiceResource\Pages;
 use App\Filament\Resources\InvoiceResource\Widgets\InvoiceStatsOverview;
+use App\Mail\SendInvoice;
 use App\Models\Currency;
 use App\Models\Invoice;
 use App\Models\MpesaSTK;
 use App\Models\Note;
+use App\Models\Payment;
 use App\Models\Profile;
 use App\Models\Role;
 use App\Models\User;
@@ -22,6 +24,7 @@ use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
@@ -31,15 +34,24 @@ use Filament\Infolists\Infolist;
 use Filament\Notifications\Actions\Action as ActionsAction;
 use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
+use Filament\Support\Colors\Color;
 use Filament\Support\Enums\Alignment;
 use Filament\Tables;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\ActionGroup;
+use Filament\Tables\Columns\IconColumn;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Table;
 use Iankumu\Mpesa\Facades\Mpesa;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Storage;
+use Unicodeveloper\Paystack\Facades\Paystack;
+use Wallo\FilamentSelectify\Components\ToggleButton;
 use Ysfkaya\FilamentPhoneInput\Forms\PhoneInput;
 use Ysfkaya\FilamentPhoneInput\PhoneInputNumberType;
 
@@ -104,6 +116,13 @@ class InvoiceResource extends Resource
                                     ->preload()
                                     ->default(InvoiceSeries::IN2INV->name),
                             ]),
+                        Grid::make(1)
+                            ->schema([
+                                ToggleButton::make('mail')
+                                    ->label('Send Email to Customer?')
+                                    ->default(true)
+                            ])
+                        ,
                         Fieldset::make('Invoice Summary')
                             ->schema([
                                 Section::make()
@@ -117,7 +136,7 @@ class InvoiceResource extends Resource
                                                     ->required()
                                                     ->live()
                                                     ->default(1),
-                                                TextInput::make('description')
+                                                Textarea::make('description')
                                                     ->required()
                                                     ->placeholder('Aerial Spraying'),
                                                 TextInput::make('unit_price')
@@ -233,6 +252,9 @@ class InvoiceResource extends Resource
                     }),
                 Tables\Columns\TextColumn::make('total')
                     ->sortable(),
+                IconColumn::make('mail')
+                    ->boolean()
+                    ->label('Mailed?'),
                 Tables\Columns\TextColumn::make('deleted_at')
                     ->dateTime()
                     ->sortable()
@@ -388,6 +410,24 @@ class InvoiceResource extends Resource
                                             ->markAsRead(),
                                     ])
                                     ->sendToDatabase($recipient);
+                            }
+                        }),
+                    Action::make('mail')
+                        ->icon('heroicon-o-envelope')
+                        ->color(Color::Purple)
+                        ->label('Mail Invoice')
+                        ->requiresConfirmation()
+                        ->action(function($record) {
+                            if(Storage::disk('invoices')->exists('invoice_'.$record->serial)) {
+
+                                Mail::to($record->user->email)->send(new SendInvoice($record));
+
+                            } else {
+
+                                $record->savePdf();
+
+                                Mail::to($record->user->email)->send(new SendInvoice($record));
+
                             }
                         })
                 ]),
