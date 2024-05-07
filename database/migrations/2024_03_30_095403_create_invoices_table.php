@@ -28,6 +28,7 @@ return new class extends Migration
             $table->enum('series', InvoiceSeries::values())->default(InvoiceSeries::IN2INV->name);
             $table->enum('status', InvoiceStatus::values())->default(InvoiceStatus::Unpaid);
             $table->longText('notes');
+            $table->boolean('mail');
             $table->softDeletes();
             $table->timestamps();
         });

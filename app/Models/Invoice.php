@@ -89,6 +89,7 @@ class Invoice extends Model
             ->taxRate($this->taxes)
             ->filename($this->serial)
             ->template('invoice')
+            ->logo(empty(Profile::find(1)->media_id) ? '' : storage_path('/app/public/'.Profile::find(1)->media->path))
             ->series($this->series->name)
             ->sequence($this->serial_number)
             ->delimiter('-')
@@ -100,6 +101,7 @@ class Invoice extends Model
             ->currencyThousandsSeparator($this->currency->thousands_separator)
             ->currencyFormat($this->currency->symbol_first == true ? $this->currency->symbol.' '.'{VALUE}' : '{VALUE}'.' '.$this->currency->symbol)
             ->currencyFraction($this->currency->subunit_name)
+            ->notes($this->notes)
             ->save('invoices');
     }
 

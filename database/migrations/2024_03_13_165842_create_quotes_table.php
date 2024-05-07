@@ -29,6 +29,7 @@ return new class extends Migration
             $table->string('serial')->nullable();
             $table->json('items');
             $table->longText('notes');
+            $table->boolean('mail');
             $table->softDeletes();
             $table->timestamps();
         });
