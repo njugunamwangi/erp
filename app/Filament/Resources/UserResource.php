@@ -8,6 +8,7 @@ use App\Filament\Resources\UserResource\Pages;
 use App\Filament\Resources\UserResource\RelationManagers\PipelinesRelationManager;
 use App\Mail\RequestFeedbackMail;
 use App\Mail\SendInvoice;
+use App\Models\Currency;
 use App\Models\CustomField;
 use App\Models\Invoice;
 use App\Models\Lead;
@@ -728,6 +729,9 @@ class UserResource extends Resource
                                                         TextEntry::make('invoice.serial')
                                                             ->label('Invoice Serial No.')
                                                             ->getStateUsing(fn ($record) => $record->invoice ? $record->invoice->serial : '-'),
+                                                        TextEntry::make('currency_id')
+                                                            ->label('Currency')
+                                                            ->getStateUsing(fn($record) => $record->currency->abbr),
                                                         TextEntry::make('subtotal'),
                                                         TextEntry::make('taxes')
                                                             ->suffix('%'),
@@ -815,10 +819,55 @@ class UserResource extends Resource
                                                                             ->sendToDatabase($recipient);
                                                                     }
                                                                 }),
+                                                            Action::make('convert')
+                                                                ->modalSubmitActionLabel('Convert')
+                                                                ->icon('heroicon-o-banknotes')
+                                                                ->label('Convert Currency')
+                                                                ->color('danger')
+                                                                ->link()
+                                                                ->modalAlignment(Alignment::Center)
+                                                                ->modalDescription(fn($record) => 'Converting currency for ' . $record->serial . ' from '. $record->currency->abbr)
+                                                                ->modalIcon('heroicon-o-banknotes')
+                                                                ->form([
+                                                                    Select::make('currency_id')
+                                                                        ->options(Currency::all()->pluck('abbr', 'id'))
+                                                                        ->label('Currency')
+                                                                        ->optionsLimit(40)
+                                                                        ->searchable()
+                                                                        ->createOptionForm(Currency::getForm())
+                                                                        ->live()
+                                                                        ->preload()
+                                                                        ->getSearchResultsUsing(fn (string $search): array => Currency::whereAny([
+                                                                            'name', 'abbr', 'symbol', 'code'], 'like', "%{$search}%")->limit(50)->pluck('abbr', 'id')->toArray())
+                                                                        ->getOptionLabelUsing(fn ($value): ?string => Currency::find($value)?->abbr)
+                                                                        ->loadingMessage('Loading currencies...')
+                                                                        ->searchPrompt('Search currencies by their symbol, abbreviation or country')
+                                                                        ->required(),
+                                                                ])
+                                                                ->action(function($record, array $data) {
+                                                                    $record->convertCurrency($data);
+
+                                                                    // Notification
+                                                                    $recipients = User::role(Role::ADMIN)->get();
+
+                                                                    foreach ($recipients as $recipient) {
+                                                                        Notification::make()
+                                                                            ->title('Currency converted')
+                                                                            ->body(auth()->user()->name.' converted currency for '.$record->serial)
+                                                                            ->icon('heroicon-o-banknotes')
+                                                                            ->danger()
+                                                                            ->actions([
+                                                                                ActionsAction::make('View')
+                                                                                    ->url(QuoteResource::getUrl('view', ['record' => $record->id]))
+                                                                                    ->markAsRead(),
+                                                                            ])
+                                                                            ->sendToDatabase($recipient);
+                                                                    }
+                                                                })
                                                         ])
                                                             ->columnSpanFull(),
                                                     ])
-                                                    ->columns(5),
+                                                    ->columns(6),
                                             ]),
                                         Tabs\Tab::make('Invoices')
                                             ->badge(fn ($record) => $record->invoices->count())
@@ -831,6 +880,9 @@ class UserResource extends Resource
                                                         TextEntry::make('quote.serial')
                                                             ->label('Quote Serial No.')
                                                             ->getStateUsing(fn ($record) => $record->quote ? $record->quote->serial : '-'),
+                                                        TextEntry::make('currency_id')
+                                                            ->label('Currency')
+                                                            ->getStateUsing(fn($record) => $record->currency->abbr),
                                                         TextEntry::make('subtotal'),
                                                         TextEntry::make('taxes')
                                                             ->suffix('%'),
@@ -900,9 +952,54 @@ class UserResource extends Resource
                                                                             ->sendToDatabase($recipient);
                                                                     }
                                                                 }),
+                                                            Action::make('convert')
+                                                                ->modalSubmitActionLabel('Convert')
+                                                                ->icon('heroicon-o-banknotes')
+                                                                ->label('Convert Currency')
+                                                                ->color('danger')
+                                                                ->link()
+                                                                ->modalAlignment(Alignment::Center)
+                                                                ->modalDescription(fn($record) => 'Converting currency for ' . $record->serial . ' from '. $record->currency->abbr)
+                                                                ->modalIcon('heroicon-o-banknotes')
+                                                                ->form([
+                                                                    Select::make('currency_id')
+                                                                        ->options(Currency::all()->pluck('abbr', 'id'))
+                                                                        ->label('Currency')
+                                                                        ->optionsLimit(40)
+                                                                        ->searchable()
+                                                                        ->createOptionForm(Currency::getForm())
+                                                                        ->live()
+                                                                        ->preload()
+                                                                        ->getSearchResultsUsing(fn (string $search): array => Currency::whereAny([
+                                                                            'name', 'abbr', 'symbol', 'code'], 'like', "%{$search}%")->limit(50)->pluck('abbr', 'id')->toArray())
+                                                                        ->getOptionLabelUsing(fn ($value): ?string => Currency::find($value)?->abbr)
+                                                                        ->loadingMessage('Loading currencies...')
+                                                                        ->searchPrompt('Search currencies by their symbol, abbreviation or country')
+                                                                        ->required(),
+                                                                ])
+                                                                ->action(function($record, array $data) {
+                                                                    $record->convertCurrency($data);
+
+                                                                    // Notification
+                                                                    $recipients = User::role(Role::ADMIN)->get();
+
+                                                                    foreach ($recipients as $recipient) {
+                                                                        Notification::make()
+                                                                            ->title('Currency converted')
+                                                                            ->body(auth()->user()->name.' converted currency for '.$record->serial)
+                                                                            ->icon('heroicon-o-banknotes')
+                                                                            ->danger()
+                                                                            ->actions([
+                                                                                ActionsAction::make('View')
+                                                                                    ->url(QuoteResource::getUrl('view', ['record' => $record->id]))
+                                                                                    ->markAsRead(),
+                                                                            ])
+                                                                            ->sendToDatabase($recipient);
+                                                                    }
+                                                                }),
                                                         ])->columnSpanFull(),
                                                     ])
-                                                    ->columns(6),
+                                                    ->columns(7),
                                             ]),
                                     ]),
                             ]),

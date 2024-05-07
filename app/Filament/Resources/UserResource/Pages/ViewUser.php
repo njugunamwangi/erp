@@ -12,6 +12,7 @@ use App\Filament\Resources\UserResource\Widgets\TasksWidget;
 use App\Models\Currency;
 use App\Models\Invoice;
 use App\Models\Note;
+use App\Models\Profile;
 use App\Models\Quote;
 use App\Models\Role;
 use App\Models\Task;
@@ -114,7 +115,7 @@ class ViewUser extends ViewRecord
                             ]),
                         Select::make('currency_id')
                             ->label('Currency')
-                            ->optionsLimit(40)
+                            ->default(Profile::find(1)->currency_id)
                             ->searchable()
                             ->createOptionForm(Currency::getForm())
                             ->live()
@@ -246,7 +247,7 @@ class ViewUser extends ViewRecord
                             ]),
                         Select::make('currency_id')
                             ->label('Currency')
-                            ->optionsLimit(40)
+                            ->default(Profile::find(1)->currency_id)
                             ->searchable()
                             ->createOptionForm(Currency::getForm())
                             ->live()

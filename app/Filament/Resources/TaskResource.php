@@ -9,6 +9,7 @@ use App\Models\Currency;
 use App\Models\Equipment;
 use App\Models\Expense;
 use App\Models\Note;
+use App\Models\Profile;
 use App\Models\Quote;
 use App\Models\Role;
 use App\Models\Task;
@@ -269,6 +270,7 @@ class TaskResource extends Resource
                                     Select::make('currency_id')
                                         ->label('Currency')
                                         ->optionsLimit(40)
+                                        ->default(Profile::find(1)->currency_id)
                                         ->searchable()
                                         ->createOptionForm(Currency::getForm())
                                         ->live()
