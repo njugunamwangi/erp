@@ -30,6 +30,7 @@ use Illuminate\Support\Facades\Blade;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 use Jeffgreco13\FilamentBreezy\BreezyCore;
 use Saade\FilamentFullCalendar\FilamentFullCalendarPlugin;
+use Tapp\FilamentMailLog\FilamentMailLogPlugin;
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -70,6 +71,7 @@ class AdminPanelProvider extends PanelProvider
                     ->navigationIcon('heroicon-o-photo')
                     ->navigationGroup('Content')
                     ->navigationSort(3),
+                FilamentMailLogPlugin::make(),
             ])
             ->sidebarCollapsibleOnDesktop()
             ->middleware([
@@ -116,6 +118,9 @@ class AdminPanelProvider extends PanelProvider
                     ->collapsed(),
                 NavigationGroup::make()
                     ->label('Customer Relations')
+                    ->collapsed(),
+                NavigationGroup::make()
+                    ->label('Logs')
                     ->collapsed(),
                 NavigationGroup::make()
                     ->label('Settings')

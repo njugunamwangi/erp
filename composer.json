@@ -31,6 +31,7 @@
         "saade/filament-fullcalendar": "^3.2",
         "samuelmwangiw/africastalking-laravel": "^1.5",
         "spatie/laravel-sluggable": "^3.6",
+        "tapp/filament-maillog": "^1.0",
         "unicodeveloper/laravel-paystack": "^1.2",
         "ysfkaya/filament-phone-input": "^2.3",
         "z3d0x/filament-logger": "^0.7.0"
