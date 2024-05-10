@@ -50,6 +50,7 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Mail;
+use Wallo\FilamentSelectify\Components\ToggleButton;
 
 class QuoteResource extends Resource
 {
@@ -126,6 +127,12 @@ class QuoteResource extends Resource
                                     ->loadingMessage('Loading currencies...')
                                     ->searchPrompt('Search currencies by their symbol, abbreviation or country')
                                     ->required(),
+                            ]),
+                        Grid::make(1)
+                            ->schema([
+                                ToggleButton::make('mail')
+                                    ->label('Send Email to Customer?')
+                                    ->default(true)
                             ]),
                         Fieldset::make('Quote Summary')
                             ->schema([
@@ -311,7 +318,8 @@ class QuoteResource extends Resource
                                 'serial_number' => $serial_number = Invoice::max('serial_number') + 1,
                                 'serial' => $data['series'].'-'.str_pad($serial_number, 5, '0', STR_PAD_LEFT),
                                 'currency_id' => $record->currency_id,
-                                'notes' => Note::find(1)->invoices
+                                'notes' => Note::find(1)->invoices,
+                                'mail' => $data['send']
                             ]);
 
                             if ($data['send'] == true) {

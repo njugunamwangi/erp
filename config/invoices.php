@@ -87,7 +87,7 @@ return [
          * Default attributes for Seller::class
          */
         'attributes' => [
-            'name' => 'in2 Drones Technology Solutions Limited',
+            'name' => 'Drones Company Limited',
             'address' => 'D&D Building, Along West Rd',
             'phone' => '+254 759 235 385',
             'custom_fields' => [

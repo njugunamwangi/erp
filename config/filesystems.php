@@ -52,6 +52,14 @@ return [
             'throw' => false,
         ],
 
+        'quotes' => [
+            'driver' => 'local',
+            'root' => storage_path('app/public/quotes'),
+            'url' => env('APP_URL').'/storage',
+            'visibility' => 'public',
+            'throw' => false,
+        ],
+
         'profile-photos' => [
             'driver' => 'local',
             'root' => storage_path('app/public/profile-photos'),

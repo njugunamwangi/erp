@@ -3,9 +3,15 @@
 namespace App\Filament\Resources\QuoteResource\Pages;
 
 use App\Filament\Resources\QuoteResource;
+use App\Mail\SendQuote;
 use App\Models\Quote;
+use App\Models\Role;
 use App\Models\Task;
+use App\Models\User;
+use Filament\Notifications\Actions\Action;
+use Filament\Notifications\Notification;
 use Filament\Resources\Pages\CreateRecord;
+use Illuminate\Support\Facades\Mail;
 
 class CreateQuote extends CreateRecord
 {
@@ -25,5 +31,34 @@ class CreateQuote extends CreateRecord
         }
 
         return $data;
+    }
+
+    protected function afterCreate(): void
+    {
+        $quote = $this->getRecord();
+
+        if ($quote->mail) {
+
+            $quote->savePdf();
+
+            Mail::to($quote->user->email)->send(new SendQuote($quote));
+
+            $recipients = User::role(Role::ADMIN)->get();
+
+            foreach($recipients as $recipient) {
+                Notification::make()
+                    ->warning()
+                    ->icon('heroicon-o-bolt')
+                    ->title('Quote mailed')
+                    ->body('Quote mailed to ' . $quote->user->name)
+                    ->actions([
+                        Action::make('view')
+                            ->markAsRead()
+                            ->url(QuoteResource::getUrl('view', ['record' => $quote->id]))
+                            ->color('warning'),
+                    ])
+                    ->sendToDatabase($recipient);
+            }
+        }
     }
 }

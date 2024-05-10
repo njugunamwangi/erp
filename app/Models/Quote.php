@@ -14,6 +14,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Http;
+use LaravelDaily\Invoices\Classes\Buyer;
+use LaravelDaily\Invoices\Classes\InvoiceItem;
+use LaravelDaily\Invoices\Facades\Invoice as FacadesInvoice;
 
 class Quote extends Model
 {
@@ -89,5 +92,46 @@ class Quote extends Model
             'total' => $converter->convert( moneyContainer: $this->total, currency: $convertTo, roundingMode: RoundingMode::UP),
             'items' => $items,
         ]);
+    }
+
+    public function savePdf()
+    {
+        $customer = new Buyer([
+            'name' => $this->user->name,
+            'custom_fields' => [
+                'email' => $this->user->email,
+                'phone' => $this->user->phone,
+            ],
+        ]);
+
+        $items = [];
+
+        foreach ($this->items as $item) {
+            $items[] = (new InvoiceItem())
+                ->title($item['description'])
+                ->pricePerUnit($item['unit_price'])
+                ->subTotalPrice($item['unit_price'] * $item['quantity'])
+                ->quantity($item['quantity']);
+        }
+
+        FacadesInvoice::make()
+            ->buyer($customer)
+            ->taxRate($this->taxes)
+            ->filename($this->serial)
+            ->template('quote')
+            ->logo(empty(Profile::find(1)->media_id) ? '' : storage_path('/app/public/'.Profile::find(1)->media->path))
+            ->series($this->series->name)
+            ->sequence($this->serial_number)
+            ->delimiter('-')
+            ->addItems($items)
+            ->currencyCode($this->currency->abbr)
+            ->currencySymbol($this->currency->symbol)
+            ->currencyDecimals($this->currency->precision)
+            ->currencyDecimalPoint($this->currency->decimal_mark)
+            ->currencyThousandsSeparator($this->currency->thousands_separator)
+            ->currencyFormat($this->currency->symbol_first == true ? $this->currency->symbol.' '.'{VALUE}' : '{VALUE}'.' '.$this->currency->symbol)
+            ->currencyFraction($this->currency->subunit_name)
+            ->notes($this->notes)
+            ->save('quotes');
     }
 }
