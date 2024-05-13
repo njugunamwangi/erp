@@ -10,6 +10,7 @@ use App\Mail\RequestFeedbackMail;
 use App\Mail\SendInvoice;
 use App\Models\Currency;
 use App\Models\CustomField;
+use App\Models\Equipment;
 use App\Models\Invoice;
 use App\Models\Lead;
 use App\Models\Note;
@@ -18,6 +19,7 @@ use App\Models\Stage;
 use App\Models\Tag;
 use App\Models\Task;
 use App\Models\User;
+use App\Models\Vertical;
 use Filament\Forms;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\RichEditor;
@@ -51,6 +53,7 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
+use Wallo\FilamentSelectify\Components\ToggleButton;
 use Ysfkaya\FilamentPhoneInput\Forms\PhoneInput;
 use Ysfkaya\FilamentPhoneInput\Infolists\PhoneEntry;
 use Ysfkaya\FilamentPhoneInput\PhoneInputNumberType;
@@ -276,24 +279,52 @@ class UserResource extends Resource
                             Forms\Components\RichEditor::make('description')
                                 ->required(),
                             Forms\Components\Select::make('assigned_to')
+                                ->label('Staff')
+                                ->required()
                                 ->options(Role::find(Role::STAFF)->users()->get()->pluck('name', 'id'))
                                 ->preload()
                                 ->searchable(),
                             Forms\Components\DatePicker::make('due_date')
                                 ->native(false),
-
+                            Select::make('vertical_id')
+                                ->options(Vertical::all()->pluck('vertical', 'id'))
+                                ->searchable()
+                                ->preload()
+                                ->live()
+                                ->required(),
+                            Grid::make(2)
+                                ->schema([
+                                    ToggleButton::make('requires_equipment')
+                                        ->visible(fn (Get $get) => $get('vertical_id'))
+                                        ->live(),
+                                    ToggleButton::make('is_completed'),
+                                ]),
+                            Select::make('equipment')
+                                ->visible(fn (Get $get) => $get('requires_equipment'))
+                                ->options(fn(Get $get) => Equipment::query()->where('vertical_id', $get('vertical_id'))->get()->pluck('registration', 'id'))
+                                ->live()
+                                ->requiredWith('requires_equipment')
+                                ->searchable()
+                                ->preload()
+                                ->multiple(),
                         ])
                         ->action(function (array $data, $record) {
                             $data['assigned_by'] = auth()->id();
                             $data['assigned_for'] = $record->id;
 
-                            Task::create([
+                            $task = Task::create([
                                 'assigned_by' => auth()->id(),
                                 'assigned_to' => $data['assigned_to'],
                                 'assigned_for' => $record->id,
                                 'description' => $data['description'],
                                 'due_date' => $data['due_date'],
+                                'vertical_id' => $data['vertical_id'],
+                                'requires_equipment' => $data['requires_equipment'],
                             ]);
+
+                            if($data['requires_equipment'] && !empty($data['equipment'])) {
+                                $task->equipment()->attach($data['equipment']);
+                            }
 
                             $recipients = User::role(Role::ADMIN)->get();
 
