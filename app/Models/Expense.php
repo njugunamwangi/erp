@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Casts\Money;
 use App\Enums\Material;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\DatePicker;
@@ -10,8 +11,10 @@ use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Tabs;
+use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Get;
+use Filament\Forms\Set;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -30,9 +33,11 @@ class Expense extends Model
             'accommodation' => 'json',
             'subsistence' => 'json',
             'fuel' => 'json',
+            'equipment' => 'json',
             'labor' => 'json',
             'material' => 'json',
             'misc' => 'json',
+            'total' => Money::class
         ];
     }
 
@@ -44,302 +49,285 @@ class Expense extends Model
     public static function getForm(): array
     {
         return [
-            Tabs::make('items')
+            Select::make('currency_id')
+                ->options(Currency::all()->pluck('abbr', 'id'))
+                ->searchable()
+                ->preload()
+                ->optionsLimit(80)
+                ->label('Currency')
+                ->required(),
+            Tabs::make()
                 ->tabs([
                     Tabs\Tab::make('Accommodation')
                         ->icon('heroicon-o-home-modern')
                         ->schema([
                             Repeater::make('accommodation')
-                                ->columnSpanFull()
                                 ->hiddenLabel()
+                                ->columnSpanFull()
                                 ->schema([
-                                    DatePicker::make('date')
+                                    DatePicker::make('Date')
                                         ->required(),
                                     TextInput::make('amount')
                                         ->numeric()
                                         ->live()
-                                        ->required()
-                                        ->prefix('Kes'),
+                                        ->default(100)
                                 ])
-                                ->deleteAction(
-                                    fn (Action $action) => $action->requiresConfirmation(),
-                                )
-                                ->itemLabel(fn (array $state): ?string => $state['date'] ?? null)
-                                ->columns(2)
-                                ->cloneable()
-                                ->addActionLabel('Add Accommodation'),
-                            Placeholder::make('accommodation_subtotal')
-                                ->label('Sub Total')
+                                ->columns()
+                                ->addActionLabel('Add Accommodation')
                                 ->live()
-                                ->content(function (Get $get) {
-                                    $items = $get('accommodation');
-
-                                    $subtotal = 0;
-
-                                    foreach ($items as $item) {
-                                        $subtotal += $item['amount'];
-                                    }
-
-                                    return 'Kes '.number_format($subtotal, 2, '.', ',');
+                                ->afterStateUpdated(function(Get $get, Set $set) {
+                                    self::updatedTotals($get, $set);
                                 }),
+                            Placeholder::make('accommodation_totals')
+                                ->label('Sub Totals')
+                                ->live()
+                                ->content(fn(Get $get) => $get('accommodation_totals')),
                         ]),
                     Tabs\Tab::make('Food & Beverage')
-                        ->icon('heroicon-o-adjustments-vertical')
+                        ->icon('heroicon-o-face-smile')
                         ->schema([
                             Repeater::make('subsistence')
-                                ->columnSpanFull()
                                 ->hiddenLabel()
+                                ->columnSpanFull()
                                 ->schema([
-                                    DateTimePicker::make('date')
-                                        ->seconds(false)
+                                    DateTimePicker::make('Date')
                                         ->required(),
                                     TextInput::make('amount')
                                         ->numeric()
                                         ->live()
-                                        ->required()
-                                        ->prefix('Kes'),
+                                        ->default(100)
                                 ])
-                                ->deleteAction(
-                                    fn (Action $action) => $action->requiresConfirmation(),
-                                )
-                                ->itemLabel(fn (array $state): ?string => $state['date'] ?? null)
-                                ->columns(2)
-                                ->cloneable()
-                                ->addActionLabel('Add Subsistence'),
-                            Placeholder::make('subsistence_subtotal')
-                                ->label('Sub Total')
+                                ->columns()
+                                ->addActionLabel('Add Subsistence')
                                 ->live()
-                                ->content(function (Get $get) {
-                                    $items = $get('subsistence');
-
-                                    $subtotal = 0;
-
-                                    foreach ($items as $item) {
-                                        $subtotal += $item['amount'];
-                                    }
-
-                                    return 'Kes '.number_format($subtotal, 2, '.', ',');
+                                ->afterStateUpdated(function(Get $get, Set $set) {
+                                    self::updatedTotals($get, $set);
                                 }),
+                            Placeholder::make('subsistence_totals')
+                                ->label('Sub Totals')
+                                ->live()
+                                ->content(fn(Get $get) => $get('subsistence_totals')),
+                            ]),
+                    Tabs\Tab::make('Equipment')
+                        ->icon('heroicon-o-beaker')
+                        ->schema([
+                            Repeater::make('equipment')
+                                ->hiddenLabel()
+                                ->columnSpanFull()
+                                ->schema([
+                                    DatePicker::make('Date')
+                                        ->required(),
+                                    TextInput::make('amount')
+                                        ->numeric()
+                                        ->live()
+                                        ->default(100)
+                                ])
+                                ->columns()
+                                ->addActionLabel('Add Equipment')
+                                ->live()
+                                ->afterStateUpdated(function(Get $get, Set $set) {
+                                    self::updatedTotals($get, $set);
+                                }),
+                            Placeholder::make('equipment_totals')
+                                ->label('Sub Totals')
+                                ->live()
+                                ->content(fn(Get $get) => $get('equipment_totals')),
                         ]),
                     Tabs\Tab::make('Fuel & Logistics')
                         ->icon('heroicon-o-truck')
                         ->schema([
                             Repeater::make('fuel')
-                                ->columnSpanFull()
                                 ->hiddenLabel()
+                                ->columnSpanFull()
                                 ->schema([
-                                    DateTimePicker::make('date')
-                                        ->seconds(false)
+                                    DatePicker::make('Date')
                                         ->required(),
                                     TextInput::make('amount')
                                         ->numeric()
                                         ->live()
-                                        ->required()
-                                        ->prefix('Kes'),
+                                        ->default(100)
                                 ])
-                                ->deleteAction(
-                                    fn (Action $action) => $action->requiresConfirmation(),
-                                )
-                                ->itemLabel(fn (array $state): ?string => $state['date'] ?? null)
-                                ->columns(2)
-                                ->cloneable()
-                                ->addActionLabel('Add'),
-                            Placeholder::make('fuel_subtotal')
-                                ->label('Sub Total')
+                                ->columns()
+                                ->addActionLabel('Add Item')
                                 ->live()
-                                ->content(function (Get $get) {
-                                    $items = $get('fuel');
-
-                                    $subtotal = 0;
-
-                                    foreach ($items as $item) {
-                                        $subtotal += $item['amount'];
-                                    }
-
-                                    return 'Kes '.number_format($subtotal, 2, '.', ',');
+                                ->afterStateUpdated(function(Get $get, Set $set) {
+                                    self::updatedTotals($get, $set);
                                 }),
+                            Placeholder::make('fuel_totals')
+                                ->label('Sub Totals')
+                                ->live()
+                                ->content(fn(Get $get) => $get('fuel_totals')),
                         ]),
                     Tabs\Tab::make('Labor')
-                        ->icon('heroicon-o-briefcase')
+                        ->icon('heroicon-o-adjustments-horizontal')
                         ->schema([
                             Repeater::make('labor')
-                                ->columnSpanFull()
                                 ->hiddenLabel()
+                                ->columnSpanFull()
                                 ->schema([
-                                    DatePicker::make('date')
+                                    DatePicker::make('Date')
                                         ->required(),
                                     TextInput::make('amount')
                                         ->numeric()
                                         ->live()
-                                        ->required()
-                                        ->prefix('Kes'),
+                                        ->default(100)
                                 ])
-                                ->deleteAction(
-                                    fn (Action $action) => $action->requiresConfirmation(),
-                                )
-                                ->itemLabel(fn (array $state): ?string => $state['date'] ?? null)
-                                ->columns(2)
-                                ->cloneable()
-                                ->addActionLabel('Add'),
-                            Placeholder::make('labor_subtotal')
-                                ->label('Sub Total')
+                                ->columns()
+                                ->addActionLabel('Add Labor')
                                 ->live()
-                                ->content(function (Get $get) {
-                                    $items = $get('labor');
-
-                                    $subtotal = 0;
-
-                                    foreach ($items as $item) {
-                                        $subtotal += $item['amount'];
-                                    }
-
-                                    return 'Kes '.number_format($subtotal, 2, '.', ',');
+                                ->afterStateUpdated(function(Get $get, Set $set) {
+                                    self::updatedTotals($get, $set);
                                 }),
+                            Placeholder::make('labor_totals')
+                                ->label('Sub Totals')
+                                ->live()
+                                ->content(fn(Get $get) => $get('labor_totals')),
                         ]),
                     Tabs\Tab::make('Material')
-                        ->icon('heroicon-o-beaker')
+                        ->icon('heroicon-o-adjustments-vertical')
                         ->schema([
                             Repeater::make('material')
                                 ->hiddenLabel()
+                                ->columnSpanFull()
                                 ->schema([
-                                    Select::make('type')
-                                        ->enum(Material::class)
-                                        ->options(Material::class)
-                                        ->searchable()
+                                    DatePicker::make('Date')
                                         ->required(),
+                                    Textarea::make('description'),
                                     TextInput::make('amount')
                                         ->numeric()
-                                        ->live()
                                         ->required()
-                                        ->prefix('Kes'),
+                                        ->default(100)
                                 ])
-                                ->deleteAction(
-                                    fn (Action $action) => $action->requiresConfirmation(),
-                                )
-                                ->columns(2)
-                                ->cloneable()
-                                ->addActionLabel('Add Material'),
-                            Placeholder::make('material_subtotal')
-                                ->label('Sub Total')
+                                ->columns(3)
+                                ->addActionLabel('Add Material')
                                 ->live()
-                                ->content(function (Get $get) {
-                                    $items = $get('material');
-
-                                    $subtotal = 0;
-
-                                    foreach ($items as $item) {
-                                        $subtotal += $item['amount'];
-                                    }
-
-                                    return 'Kes '.number_format($subtotal, 2, '.', ',');
+                                ->afterStateUpdated(function(Get $get, Set $set) {
+                                    self::updatedTotals($get, $set);
                                 }),
+                            Placeholder::make('material_totals')
+                                ->label('Sub Totals')
+                                ->live()
+                                ->content(fn(Get $get) => $get('material_totals')),
                         ]),
                     Tabs\Tab::make('Miscellaneous')
-                        ->icon('heroicon-o-bookmark-square')
+                        ->icon('heroicon-o-archive-box-arrow-down')
                         ->schema([
                             Repeater::make('misc')
                                 ->hiddenLabel()
+                                ->columnSpanFull()
                                 ->schema([
                                     TextInput::make('quantity')
                                         ->numeric()
-                                        ->live()
-                                        ->required()
-                                        ->default(1),
-                                    TextInput::make('description')
-                                        ->required()
-                                        ->placeholder('Airtime'),
+                                        ->default(1)
+                                        ->required(),
+                                    Textarea::make('Description')
+                                        ->required(),
                                     TextInput::make('unit_price')
-                                        ->required()
-                                        ->live()
+                                        ->label('Unit Price')
                                         ->numeric()
-                                        ->default(0),
-                                    Placeholder::make('sum')
-                                        ->label('Sub Total')
-                                        ->live()
-                                        ->content(function (Get $get) {
-                                            return 'Kes '.number_format($get('quantity') * $get('unit_price'), 2, '.', ',');
-                                        }),
+                                        ->default(100)
+                                        ->required(),
                                 ])
-                                ->deleteAction(
-                                    fn (Action $action) => $action->requiresConfirmation(),
-                                )
-                                ->cloneable()
-                                ->columns(4)
-                                ->addActionLabel('Add Misc.'),
-                            Placeholder::make('misc_subtotal')
-                                ->label('Sub Total')
                                 ->live()
-                                ->content(function (Get $get) {
-                                    $items = $get('misc');
-
-                                    $subtotal = 0;
-
-                                    foreach ($items as $item) {
-                                        $subtotal += $item['quantity'] * $item['unit_price'];
-                                    }
-
-                                    return 'Kes '.number_format($subtotal, 2, '.', ',');
-                                }),
+                                ->afterStateUpdated(function(Get $get, Set $set) {
+                                    self::updatedTotals($get, $set);
+                                })
+                                ->columns(3)
+                                ->addActionLabel('Add Misc.'),
+                            Placeholder::make('misc_totals')
+                                ->label('Sub Totals')
+                                ->live()
+                                ->content(fn(Get $get) => $get('misc_totals')),
                         ]),
                 ]),
-            Placeholder::make('total')
+            TextInput::make('total')
+                ->readOnly()
                 ->label('Total Expenses')
+                // ->hidden()
                 ->live()
-                ->content(function (Get $get) {
-                    // Accommodation
-                    $accom_items = collect($get('accommodation'));
-                    $accom_sub = 0;
+                ->afterStateHydrated(function(Get $get, Set $set) {
+                    self::updatedTotals($get, $set);
+                })
+            ];
+    }
 
-                    foreach ($accom_items as $item) {
-                        $accom_sub += $item['amount'];
-                    }
+    public static function updatedTotals(Get $get, Set $set): void
+    {
+        // accommodation
+        $accommodation = collect($get('accommodation'));
 
-                    // Subsistence
-                    $subsistence = collect($get('subsistence'));
-                    $subsistence_sub = 0;
+        $accommodationTotals = 0;
 
-                    foreach ($subsistence as $item) {
-                        $subsistence_sub += $item['amount'];
-                    }
+        foreach($accommodation as $item) {
+            $accommodationTotals += $item['amount'];
+        }
 
-                    // Fuel & Logistics
-                    $fuel = collect($get('fuel'));
-                    $fuel_sub = 0;
+        // equipment
+        $subsistence = collect($get('subsistence'));
 
-                    foreach ($fuel as $item) {
-                        $fuel_sub += $item['amount'];
-                    }
+        $subsistenceTotals = 0;
 
-                    // Labor
-                    $labor = collect($get('labor'));
-                    $labor_sub = 0;
+        foreach($subsistence as $item) {
+            $subsistenceTotals += $item['amount'];
+        }
 
-                    foreach ($labor as $item) {
-                        $labor_sub += $item['amount'];
-                    }
+        // equipment
+        $equipment = collect($get('equipment'));
 
-                    // Material
-                    $material = collect($get('material'));
-                    $material_sub = 0;
+        $equipmentTotals = 0;
 
-                    foreach ($material as $item) {
-                        $material_sub += $item['amount'];
-                    }
+        foreach($equipment as $item) {
+            $equipmentTotals += $item['amount'];
+        }
 
-                    // Miscellaneous
-                    $misc = collect($get('misc'));
-                    $misc_sub = 0;
+        // fuel
+        $fuel = collect($get('fuel'));
 
-                    foreach ($misc as $item) {
-                        $aggregate = $item['quantity'] * $item['unit_price'];
+        $fuelTotals = 0;
 
-                        $misc_sub += $aggregate;
-                    }
+        foreach($fuel as $item) {
+            $fuelTotals += $item['amount'];
+        }
 
-                    $total = $accom_sub + $subsistence_sub + $fuel_sub + $labor_sub + $material_sub + $misc_sub;
+        // labor
+        $labor = collect($get('labor'));
 
-                    return 'Kes '.number_format($total, 2, '.', ',');
-                }),
-        ];
+        $laborTotals = 0;
+
+        foreach($labor as $item) {
+            $laborTotals += $item['amount'];
+        }
+
+        // material
+        $material = collect($get('material'));
+
+        $materialTotals = 0;
+
+        foreach($material as $item) {
+            $materialTotals += $item['amount'];
+        }
+
+        // miscellaneous
+        $miscellaneous = collect($get('misc'));
+
+        $miscTotals = 0;
+
+        foreach($miscellaneous as $misc) {
+            $aggregate = $misc['quantity'] * $misc['unit_price'];
+
+            $miscTotals += $aggregate;
+        }
+
+        $set('accommodation_totals', number_format($accommodationTotals));
+        $set('subsistence_totals', number_format($subsistenceTotals));
+        $set('equipment_totals', number_format($equipmentTotals));
+        $set('fuel_totals', number_format($fuelTotals));
+        $set('labor_totals', number_format($laborTotals));
+        $set('material_totals', number_format($materialTotals));
+        $set('misc_totals', number_format($miscTotals));
+
+        $totals = $accommodationTotals + $subsistenceTotals + $equipmentTotals + $fuelTotals + $laborTotals + $materialTotals + $miscTotals;
+        $set('total', $totals);
+
     }
 }

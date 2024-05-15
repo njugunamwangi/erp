@@ -43,13 +43,15 @@ class ViewTask extends ViewRecord
                 Action::make('expenses')
                     ->icon('heroicon-o-arrow-trending-up')
                     ->color('danger')
-                    ->modalWidth(MaxWidth::FiveExtraLarge)
+                    ->modalWidth(MaxWidth::SevenExtraLarge)
                     ->stickyModalFooter()
                     ->stickyModalHeader()
                     ->modalSubmitActionLabel('Save')
                     ->fillForm(fn (Task $record): array => [
                         'accommodation' => $record->expense?->accommodation,
                         'subsistence' => $record->expense?->subsistence,
+                        'equipment' => $record->expense?->equipment,
+                        'currency_id' => $record->expense?->currency_id,
                         'fuel' => $record->expense?->fuel,
                         'labor' => $record->expense?->labor,
                         'material' => $record->expense?->material,
@@ -62,11 +64,14 @@ class ViewTask extends ViewRecord
                         if ($task->expense) {
                             $task->expense()->update([
                                 'accommodation' => $data['accommodation'],
+                                'equipment' => $data['equipment'],
+                                'total' => $data['total'],
                                 'subsistence' => $data['subsistence'],
                                 'fuel' => $data['fuel'],
                                 'labor' => $data['labor'],
                                 'material' => $data['material'],
                                 'misc' => $data['misc'],
+                                'currency_id' => $data['currency_id'],
                             ]);
                         } else {
                             $task->expense()->create([
@@ -76,6 +81,9 @@ class ViewTask extends ViewRecord
                                 'labor' => $data['labor'],
                                 'material' => $data['material'],
                                 'misc' => $data['misc'],
+                                'equipment' => $data['equipment'],
+                                'total' => $data['total'],
+                                'currency_id' => $data['currency_id'],
                             ]);
                         }
                     })

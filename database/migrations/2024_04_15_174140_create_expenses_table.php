@@ -17,10 +17,12 @@ return new class extends Migration
             $table->foreignIdFor(Task::class)->constrained()->cascadeOnDelete();
             $table->json('accommodation')->nullable();
             $table->json('subsistence')->nullable();
+            $table->json('equipment')->nullable();
             $table->json('fuel')->nullable();
             $table->json('labor')->nullable();
             $table->json('material')->nullable();
             $table->json('misc')->nullable();
+            $table->integer('total');
             $table->softDeletes();
             $table->timestamps();
         });

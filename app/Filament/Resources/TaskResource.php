@@ -199,11 +199,13 @@ class TaskResource extends Resource
                     TablesActionsAction::make('expenses')
                         ->icon('heroicon-o-arrow-trending-up')
                         ->color('danger')
-                        ->modalWidth(MaxWidth::FiveExtraLarge)
+                        ->modalWidth(MaxWidth::SevenExtraLarge)
                         ->stickyModalFooter()
                         ->stickyModalHeader()
                         ->modalSubmitActionLabel('Save')
                         ->fillForm(fn (Task $record): array => [
+                            'currency_id' => $record->expense?->currency_id,
+                            'equipment' => $record->expense?->equipment,
                             'accommodation' => $record->expense?->accommodation,
                             'subsistence' => $record->expense?->subsistence,
                             'fuel' => $record->expense?->fuel,
@@ -221,6 +223,9 @@ class TaskResource extends Resource
                                     'labor' => $data['labor'],
                                     'material' => $data['material'],
                                     'misc' => $data['misc'],
+                                    'currency_id' => $data['currency_id'],
+                                    'equipment' => $data['equipment'],
+                                    'total' => $data['total'],
                                 ]);
                             } else {
                                 $task->expense()->create([
@@ -230,6 +235,9 @@ class TaskResource extends Resource
                                     'labor' => $data['labor'],
                                     'material' => $data['material'],
                                     'misc' => $data['misc'],
+                                    'currency_id' => $data['currency_id'],
+                                    'equipment' => $data['equipment'],
+                                    'total' => $data['total'],
                                 ]);
                             }
                         })
