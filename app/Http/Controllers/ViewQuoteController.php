@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Account;
 use App\Models\Profile;
 use App\Models\Quote;
 use Illuminate\Http\Request;
 use LaravelDaily\Invoices\Classes\Buyer;
 use LaravelDaily\Invoices\Classes\InvoiceItem;
+use LaravelDaily\Invoices\Classes\Party;
 use LaravelDaily\Invoices\Invoice;
 
 class ViewQuoteController extends Controller
@@ -24,6 +26,21 @@ class ViewQuoteController extends Controller
             ],
         ]);
 
+        $profile = Profile::find(1);
+
+        $bank = Account::where('enabled', true)->first();
+
+        $seller = new Party([
+            'name' => $profile->name,
+            'phone' => $profile->phone,
+            'email' => $profile->email,
+            'custom_fields' => [
+                'SWIFT' => $bank?->bic_swift_code,
+                'Bank' => $bank?->bank_name,
+                'Bank A/c No.' => $bank?->number,
+            ],
+        ]);
+
         $items = [];
 
         foreach ($record->items as $item) {
@@ -36,9 +53,10 @@ class ViewQuoteController extends Controller
 
         $invoice = Invoice::make()
             ->buyer($customer)
+            ->seller($seller)
             ->taxRate($record->taxes)
             ->filename($record->serial)
-            ->logo(empty(Profile::find(1)->media_id) ? '' : storage_path('/app/public/'.Profile::find(1)->media->path))
+            ->logo(empty($profile->media_id) ? '' : storage_path('/app/public/'.$profile->media->path))
             ->template('quote')
             ->name('Quote')
             ->series($record->series->name)

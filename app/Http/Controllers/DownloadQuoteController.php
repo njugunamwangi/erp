@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Account;
 use App\Models\Profile;
 use App\Models\Quote;
 use Illuminate\Http\Request;
 use LaravelDaily\Invoices\Classes\Buyer;
 use LaravelDaily\Invoices\Classes\InvoiceItem;
+use LaravelDaily\Invoices\Classes\Party;
 use LaravelDaily\Invoices\Invoice;
 
 class DownloadQuoteController extends Controller
@@ -21,6 +23,21 @@ class DownloadQuoteController extends Controller
             'custom_fields' => [
                 'email' => $record->user->email,
                 'phone' => $record->user->phone,
+            ],
+        ]);
+
+        $profile = Profile::find(1);
+
+        $bank = Account::where('enabled', true)->first();
+
+        $seller = new Party([
+            'name' => $profile->name,
+            'phone' => $profile->phone,
+            'email' => $profile->email,
+            'custom_fields' => [
+                'SWIFT' => $bank?->bic_swift_code,
+                'Bank' => $bank?->bank_name,
+                'Bank A/c No.' => $bank?->number,
             ],
         ]);
 
@@ -42,7 +59,7 @@ class DownloadQuoteController extends Controller
             ->name('Quote')
             ->series($record->series->name)
             ->sequence($record->serial_number)
-            ->logo(empty(Profile::find(1)->media_id) ? '' : storage_path('/app/public/'.Profile::find(1)->media->path))
+            ->logo(empty($profile->media_id) ? '' : storage_path('/app/public/'.$profile->media->path))
             ->delimiter('-')
             ->currencyCode($record->currency->abbr)
             ->currencySymbol($record->currency->symbol)

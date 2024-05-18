@@ -18,6 +18,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Http;
 use LaravelDaily\Invoices\Classes\Buyer;
 use LaravelDaily\Invoices\Classes\InvoiceItem;
+use LaravelDaily\Invoices\Classes\Party;
 use LaravelDaily\Invoices\Facades\Invoice as FacadesInvoice;
 
 class Invoice extends Model
@@ -73,6 +74,21 @@ class Invoice extends Model
             ],
         ]);
 
+        $profile = Profile::find(1);
+
+        $bank = Account::where('enabled', true)->first();
+
+        $seller = new Party([
+            'name' => $profile->name,
+            'phone' => $profile->phone,
+            'email' => $profile->email,
+            'custom_fields' => [
+                'SWIFT' => $bank?->bic_swift_code,
+                'Bank' => $bank?->bank_name,
+                'Bank A/c No.' => $bank?->number,
+            ],
+        ]);
+
         $items = [];
 
         foreach ($this->items as $item) {
@@ -85,11 +101,12 @@ class Invoice extends Model
 
         FacadesInvoice::make()
             ->buyer($customer)
+            ->seller($seller)
             ->status($this->status->name)
             ->taxRate($this->taxes)
             ->filename($this->serial)
             ->template('invoice')
-            ->logo(empty(Profile::find(1)->media_id) ? '' : storage_path('/app/public/'.Profile::find(1)->media->path))
+            ->logo(empty($profile->media_id) ? '' : storage_path('/app/public/'.$profile->media->path))
             ->series($this->series->name)
             ->sequence($this->serial_number)
             ->delimiter('-')

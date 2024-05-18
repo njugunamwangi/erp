@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Account;
 use App\Models\Invoice as ModelsInvoice;
 use App\Models\Profile;
 use Illuminate\Http\Request;
 use LaravelDaily\Invoices\Classes\Buyer;
 use LaravelDaily\Invoices\Classes\InvoiceItem;
+use LaravelDaily\Invoices\Classes\Party;
 use LaravelDaily\Invoices\Invoice;
 
 class ViewInvoiceController extends Controller
@@ -24,6 +26,21 @@ class ViewInvoiceController extends Controller
             ],
         ]);
 
+        $profile = Profile::find(1);
+
+        $bank = Account::where('enabled', true)->first();
+
+        $seller = new Party([
+            'name' => $profile->name,
+            'phone' => $profile->phone,
+            'email' => $profile->email,
+            'custom_fields' => [
+                'SWIFT' => $bank?->bic_swift_code,
+                'Bank' => $bank?->bank_name,
+                'Bank A/c No.' => $bank?->number,
+            ],
+        ]);
+
         $items = [];
 
         foreach ($record->items as $item) {
@@ -36,13 +53,14 @@ class ViewInvoiceController extends Controller
 
         $invoice = Invoice::make()
             ->buyer($customer)
+            ->seller($seller)
             ->status($record->status->name)
             ->taxRate($record->taxes)
             ->filename($record->serial)
             ->template('invoice')
             ->series($record->series->name)
             ->sequence($record->serial_number)
-            ->logo(empty(Profile::find(1)->media_id) ? '' : storage_path('/app/public/'.Profile::find(1)->media->path))
+            ->logo(empty($profile->media_id) ? '' : storage_path('/app/public/'.$profile->media->path))
             ->delimiter('-')
             ->currencyCode($record->currency->abbr)
             ->currencySymbol($record->currency->symbol)
