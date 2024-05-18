@@ -40,6 +40,7 @@ use Filament\Notifications\Actions\Action as ActionsAction;
 use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Support\Enums\Alignment;
+use Filament\Support\Enums\MaxWidth;
 use Filament\Tables;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\ActionGroup;
@@ -294,26 +295,90 @@ class QuoteResource extends Resource
                         ->visible(fn ($record) => ! $record->invoice)
                         ->modalSubmitActionLabel('Generate Invoice')
                         ->icon('heroicon-o-document')
-                        ->form([
+                        ->modalWidth(MaxWidth::SevenExtraLarge)
+                        ->fillForm(fn($record): array => [
+                            'items' => $record?->items,
+                            'taxes' => $record?->taxes,
+                        ])
+                        ->form(fn($record) => [
+                            Fieldset::make('Invoice Summary')
+                                ->schema([
+                                    Section::make()
+                                        ->schema([
+                                            Repeater::make('items')
+                                                ->columns(4)
+                                                ->live()
+                                                ->schema([
+                                                    TextInput::make('quantity')
+                                                        ->numeric()
+                                                        ->required()
+                                                        ->live()
+                                                        ->default(1),
+                                                    TextInput::make('description')
+                                                        ->required()
+                                                        ->placeholder('Aerial Spraying'),
+                                                    TextInput::make('unit_price')
+                                                        ->required()
+                                                        ->live()
+                                                        ->numeric()
+                                                        ->default(1000),
+                                                    Placeholder::make('sum')
+                                                        ->label('Sub Total')
+                                                        ->live()
+                                                        ->content(function (Get $get) {
+                                                            return number_format($get('quantity') * $get('unit_price'));
+                                                        }),
+                                                ])
+                                                ->afterStateUpdated(function (Get $get, Set $set) {
+                                                    self::updateTotals($get, $set);
+                                                })
+                                                ->addActionLabel('Add Item')
+                                                ->columnSpanFull(),
+                                        ])->columnSpan(8),
+                                    Section::make()
+                                        ->schema([
+                                            Forms\Components\TextInput::make('subtotal')
+                                                ->numeric()
+                                                ->readOnly()
+                                                ->live()
+                                                ->prefix($record->currency->abbr)
+                                                ->afterStateHydrated(function (Get $get, Set $set) {
+                                                    self::updateTotals($get, $set);
+                                                }),
+                                            Forms\Components\TextInput::make('taxes')
+                                                ->suffix('%')
+                                                ->required()
+                                                ->numeric()
+                                                ->default(16)
+                                                ->live(true)
+                                                ->afterStateUpdated(function (Get $get, Set $set) {
+                                                    self::updateTotals($get, $set);
+                                                }),
+                                            Forms\Components\TextInput::make('total')
+                                                ->numeric()
+                                                ->readOnly()
+                                                ->prefix($record->currency->abbr),
+                                        ])->columnSpan(4),
+                                ])->columns(12),
                             Select::make('series')
+                                ->default(InvoiceSeries::DEFAULT)
                                 ->required()
                                 ->enum(InvoiceSeries::class)
                                 ->options(InvoiceSeries::class)
                                 ->searchable()
-                                ->preload()
-                                ->default(InvoiceSeries::IN2INV->name),
+                                ->preload(),
                             Toggle::make('send')
                                 ->label('Send Email'),
                         ])
                         ->action(function (array $data, $record) {
-                            $invoice = Invoice::create([
+                            $invoice = $record->invoice()->create([
                                 'user_id' => $record->user_id,
                                 'quote_id' => $record->id,
                                 'status' => InvoiceStatus::Unpaid,
                                 'items' => $record->items,
-                                'subtotal' => $record->subtotal,
-                                'taxes' => $record->taxes,
-                                'total' => $record->total,
+                                'subtotal' => $data['subtotal'],
+                                'taxes' => $data['taxes'],
+                                'total' => $data['total'],
                                 'series' => $data['series'],
                                 'serial_number' => $serial_number = Invoice::max('serial_number') + 1,
                                 'serial' => $data['series'].'-'.str_pad($serial_number, 5, '0', STR_PAD_LEFT),
