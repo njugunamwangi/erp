@@ -33,7 +33,8 @@ class InvoiceStatsOverview extends BaseWidget
         ];
     }
 
-    public function totals() {
+    public function totals()
+    {
         $api = Profile::find(1)->exchange_rate_api;
 
         $baseCurrency = Profile::find(1)->currency->abbr;
@@ -44,14 +45,14 @@ class InvoiceStatsOverview extends BaseWidget
 
         $exchangeRateProvider = new ConfigurableProvider();
 
-        foreach($invoices as $invoice) {
-            $rates = Http::get('https://v6.exchangerate-api.com/v6/'. $api .'/latest/'.$invoice->currency->abbr)->json()['conversion_rates'];
+        foreach ($invoices as $invoice) {
+            $rates = Http::get('https://v6.exchangerate-api.com/v6/'.$api.'/latest/'.$invoice->currency->abbr)->json()['conversion_rates'];
 
             $exchangeRateProvider->setExchangeRate($invoice->currency->abbr, $baseCurrency, $rates[$baseCurrency]);
 
             $converter = new CurrencyConverter($exchangeRateProvider);
 
-            $amount = $converter->convert( moneyContainer: $invoice->subtotal, currency: $baseCurrency, roundingMode: RoundingMode::UP);
+            $amount = $converter->convert(moneyContainer: $invoice->subtotal, currency: $baseCurrency, roundingMode: RoundingMode::UP);
 
             $sum = $sum->plus($amount);
         }

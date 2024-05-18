@@ -4,7 +4,6 @@ use App\Http\Controllers\DownloadInvoiceController;
 use App\Http\Controllers\DownloadQuoteController;
 use App\Http\Controllers\InvoicePaymentController;
 use App\Http\Controllers\MPesaSTKPushController;
-use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ViewInvoiceController;
 use App\Http\Controllers\ViewQuoteController;
 use App\Livewire\AcceptInvitation;
@@ -55,5 +54,3 @@ Route::view('invoice/{invoice}/pay', 'payment.invoice')->name('pay.invoice');
 
 Route::post('/pay', [InvoicePaymentController::class, 'redirectToGateway']);
 Route::get('/payment/callback', [InvoicePaymentController::class, 'handleGatewayCallback']);
-
-

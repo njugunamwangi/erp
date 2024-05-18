@@ -3,7 +3,6 @@
 namespace App\Models;
 
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\Toggle;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;

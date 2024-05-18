@@ -15,12 +15,6 @@ use App\Models\Profile;
 use App\Models\Quote;
 use App\Models\Role;
 use App\Models\User;
-use Brick\Math\RoundingMode;
-use Brick\Money\CurrencyConverter;
-use Brick\Money\ExchangeRateProvider\ConfigurableProvider;
-use Brick\Money\Money;
-use Dcblogdev\FindAndReplaceJson\FindAndReplaceJson;
-use Filament\Actions\Action as FilamentActionsAction;
 use Filament\Forms;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Grid;
@@ -48,8 +42,6 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Mail;
 use Wallo\FilamentSelectify\Components\ToggleButton;
 
@@ -133,7 +125,7 @@ class QuoteResource extends Resource
                             ->schema([
                                 ToggleButton::make('mail')
                                     ->label('Send Email to Customer?')
-                                    ->default(true)
+                                    ->default(true),
                             ]),
                         Fieldset::make('Quote Summary')
                             ->schema([
@@ -247,7 +239,7 @@ class QuoteResource extends Resource
                     ->icon('heroicon-o-user')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('vertical.vertical')
-                    ->url(fn($record) => VerticalResource::getUrl('view', ['record' => $record->vertical_id]))
+                    ->url(fn ($record) => VerticalResource::getUrl('view', ['record' => $record->vertical_id]))
                     ->sortable(),
                 Tables\Columns\TextColumn::make('currency')
                     ->getStateUsing(fn ($record) => $record->currency->symbol)
@@ -296,11 +288,11 @@ class QuoteResource extends Resource
                         ->modalSubmitActionLabel('Generate Invoice')
                         ->icon('heroicon-o-document')
                         ->modalWidth(MaxWidth::SevenExtraLarge)
-                        ->fillForm(fn($record): array => [
+                        ->fillForm(fn ($record): array => [
                             'items' => $record?->items,
                             'taxes' => $record?->taxes,
                         ])
-                        ->form(fn($record) => [
+                        ->form(fn ($record) => [
                             Fieldset::make('Invoice Summary')
                                 ->schema([
                                     Section::make()
@@ -384,7 +376,7 @@ class QuoteResource extends Resource
                                 'serial' => $data['series'].'-'.str_pad($serial_number, 5, '0', STR_PAD_LEFT),
                                 'currency_id' => $record->currency_id,
                                 'notes' => Note::find(1)->invoices,
-                                'mail' => $data['send']
+                                'mail' => $data['send'],
                             ]);
 
                             if ($data['send'] == true) {
@@ -422,7 +414,7 @@ class QuoteResource extends Resource
                         ->label('Convert Currency')
                         ->color('danger')
                         ->modalAlignment(Alignment::Center)
-                        ->modalDescription(fn($record) => 'Converting currency for ' . $record->serial . ' from '. $record->currency->abbr)
+                        ->modalDescription(fn ($record) => 'Converting currency for '.$record->serial.' from '.$record->currency->abbr)
                         ->modalIcon('heroicon-o-banknotes')
                         ->form([
                             Select::make('currency_id')
@@ -440,7 +432,7 @@ class QuoteResource extends Resource
                                 ->searchPrompt('Search currencies by their symbol, abbreviation or country')
                                 ->required(),
                         ])
-                        ->action(function($record, array $data) {
+                        ->action(function ($record, array $data) {
                             $record->convertCurrency($data);
 
                             // Notification
@@ -459,7 +451,7 @@ class QuoteResource extends Resource
                                     ])
                                     ->sendToDatabase($recipient);
                             }
-                        })
+                        }),
                 ]),
             ])
             ->bulkActions([

@@ -45,12 +45,12 @@ class CreateQuote extends CreateRecord
 
             $recipients = User::role(Role::ADMIN)->get();
 
-            foreach($recipients as $recipient) {
+            foreach ($recipients as $recipient) {
                 Notification::make()
                     ->warning()
                     ->icon('heroicon-o-bolt')
                     ->title('Quote mailed')
-                    ->body('Quote mailed to ' . $quote->user->name)
+                    ->body('Quote mailed to '.$quote->user->name)
                     ->actions([
                         Action::make('view')
                             ->markAsRead()

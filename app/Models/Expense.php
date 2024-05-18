@@ -4,7 +4,6 @@ namespace App\Models;
 
 use App\Casts\Money;
 use App\Enums\Material;
-use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Placeholder;
@@ -37,7 +36,7 @@ class Expense extends Model
             'labor' => 'json',
             'material' => 'json',
             'misc' => 'json',
-            'total' => Money::class
+            'total' => Money::class,
         ];
     }
 
@@ -70,18 +69,18 @@ class Expense extends Model
                                     TextInput::make('amount')
                                         ->numeric()
                                         ->live()
-                                        ->default(100)
+                                        ->default(100),
                                 ])
                                 ->columns()
                                 ->addActionLabel('Add Accommodation')
                                 ->live()
-                                ->afterStateUpdated(function(Get $get, Set $set) {
+                                ->afterStateUpdated(function (Get $get, Set $set) {
                                     self::updatedTotals($get, $set);
                                 }),
                             Placeholder::make('accommodation_totals')
                                 ->label('Sub Totals')
                                 ->live()
-                                ->content(fn(Get $get) => $get('accommodation_totals')),
+                                ->content(fn (Get $get) => $get('accommodation_totals')),
                         ]),
                     Tabs\Tab::make('Food & Beverage')
                         ->icon('heroicon-o-face-smile')
@@ -95,19 +94,19 @@ class Expense extends Model
                                     TextInput::make('amount')
                                         ->numeric()
                                         ->live()
-                                        ->default(100)
+                                        ->default(100),
                                 ])
                                 ->columns()
                                 ->addActionLabel('Add Subsistence')
                                 ->live()
-                                ->afterStateUpdated(function(Get $get, Set $set) {
+                                ->afterStateUpdated(function (Get $get, Set $set) {
                                     self::updatedTotals($get, $set);
                                 }),
                             Placeholder::make('subsistence_totals')
                                 ->label('Sub Totals')
                                 ->live()
-                                ->content(fn(Get $get) => $get('subsistence_totals')),
-                            ]),
+                                ->content(fn (Get $get) => $get('subsistence_totals')),
+                        ]),
                     Tabs\Tab::make('Equipment')
                         ->icon('heroicon-o-beaker')
                         ->schema([
@@ -120,18 +119,18 @@ class Expense extends Model
                                     TextInput::make('amount')
                                         ->numeric()
                                         ->live()
-                                        ->default(100)
+                                        ->default(100),
                                 ])
                                 ->columns()
                                 ->addActionLabel('Add Equipment')
                                 ->live()
-                                ->afterStateUpdated(function(Get $get, Set $set) {
+                                ->afterStateUpdated(function (Get $get, Set $set) {
                                     self::updatedTotals($get, $set);
                                 }),
                             Placeholder::make('equipment_totals')
                                 ->label('Sub Totals')
                                 ->live()
-                                ->content(fn(Get $get) => $get('equipment_totals')),
+                                ->content(fn (Get $get) => $get('equipment_totals')),
                         ]),
                     Tabs\Tab::make('Fuel & Logistics')
                         ->icon('heroicon-o-truck')
@@ -145,18 +144,18 @@ class Expense extends Model
                                     TextInput::make('amount')
                                         ->numeric()
                                         ->live()
-                                        ->default(100)
+                                        ->default(100),
                                 ])
                                 ->columns()
                                 ->addActionLabel('Add Item')
                                 ->live()
-                                ->afterStateUpdated(function(Get $get, Set $set) {
+                                ->afterStateUpdated(function (Get $get, Set $set) {
                                     self::updatedTotals($get, $set);
                                 }),
                             Placeholder::make('fuel_totals')
                                 ->label('Sub Totals')
                                 ->live()
-                                ->content(fn(Get $get) => $get('fuel_totals')),
+                                ->content(fn (Get $get) => $get('fuel_totals')),
                         ]),
                     Tabs\Tab::make('Labor')
                         ->icon('heroicon-o-adjustments-horizontal')
@@ -170,18 +169,18 @@ class Expense extends Model
                                     TextInput::make('amount')
                                         ->numeric()
                                         ->live()
-                                        ->default(100)
+                                        ->default(100),
                                 ])
                                 ->columns()
                                 ->addActionLabel('Add Labor')
                                 ->live()
-                                ->afterStateUpdated(function(Get $get, Set $set) {
+                                ->afterStateUpdated(function (Get $get, Set $set) {
                                     self::updatedTotals($get, $set);
                                 }),
                             Placeholder::make('labor_totals')
                                 ->label('Sub Totals')
                                 ->live()
-                                ->content(fn(Get $get) => $get('labor_totals')),
+                                ->content(fn (Get $get) => $get('labor_totals')),
                         ]),
                     Tabs\Tab::make('Material')
                         ->icon('heroicon-o-adjustments-vertical')
@@ -196,18 +195,18 @@ class Expense extends Model
                                     TextInput::make('amount')
                                         ->numeric()
                                         ->required()
-                                        ->default(100)
+                                        ->default(100),
                                 ])
                                 ->columns(3)
                                 ->addActionLabel('Add Material')
                                 ->live()
-                                ->afterStateUpdated(function(Get $get, Set $set) {
+                                ->afterStateUpdated(function (Get $get, Set $set) {
                                     self::updatedTotals($get, $set);
                                 }),
                             Placeholder::make('material_totals')
                                 ->label('Sub Totals')
                                 ->live()
-                                ->content(fn(Get $get) => $get('material_totals')),
+                                ->content(fn (Get $get) => $get('material_totals')),
                         ]),
                     Tabs\Tab::make('Miscellaneous')
                         ->icon('heroicon-o-archive-box-arrow-down')
@@ -229,7 +228,7 @@ class Expense extends Model
                                         ->required(),
                                 ])
                                 ->live()
-                                ->afterStateUpdated(function(Get $get, Set $set) {
+                                ->afterStateUpdated(function (Get $get, Set $set) {
                                     self::updatedTotals($get, $set);
                                 })
                                 ->columns(3)
@@ -237,7 +236,7 @@ class Expense extends Model
                             Placeholder::make('misc_totals')
                                 ->label('Sub Totals')
                                 ->live()
-                                ->content(fn(Get $get) => $get('misc_totals')),
+                                ->content(fn (Get $get) => $get('misc_totals')),
                         ]),
                 ]),
             TextInput::make('total')
@@ -245,10 +244,10 @@ class Expense extends Model
                 ->label('Total Expenses')
                 // ->hidden()
                 ->live()
-                ->afterStateHydrated(function(Get $get, Set $set) {
+                ->afterStateHydrated(function (Get $get, Set $set) {
                     self::updatedTotals($get, $set);
-                })
-            ];
+                }),
+        ];
     }
 
     public static function updatedTotals(Get $get, Set $set): void
@@ -258,7 +257,7 @@ class Expense extends Model
 
         $accommodationTotals = 0;
 
-        foreach($accommodation as $item) {
+        foreach ($accommodation as $item) {
             $accommodationTotals += $item['amount'];
         }
 
@@ -267,7 +266,7 @@ class Expense extends Model
 
         $subsistenceTotals = 0;
 
-        foreach($subsistence as $item) {
+        foreach ($subsistence as $item) {
             $subsistenceTotals += $item['amount'];
         }
 
@@ -276,7 +275,7 @@ class Expense extends Model
 
         $equipmentTotals = 0;
 
-        foreach($equipment as $item) {
+        foreach ($equipment as $item) {
             $equipmentTotals += $item['amount'];
         }
 
@@ -285,7 +284,7 @@ class Expense extends Model
 
         $fuelTotals = 0;
 
-        foreach($fuel as $item) {
+        foreach ($fuel as $item) {
             $fuelTotals += $item['amount'];
         }
 
@@ -294,7 +293,7 @@ class Expense extends Model
 
         $laborTotals = 0;
 
-        foreach($labor as $item) {
+        foreach ($labor as $item) {
             $laborTotals += $item['amount'];
         }
 
@@ -303,7 +302,7 @@ class Expense extends Model
 
         $materialTotals = 0;
 
-        foreach($material as $item) {
+        foreach ($material as $item) {
             $materialTotals += $item['amount'];
         }
 
@@ -312,7 +311,7 @@ class Expense extends Model
 
         $miscTotals = 0;
 
-        foreach($miscellaneous as $misc) {
+        foreach ($miscellaneous as $misc) {
             $aggregate = $misc['quantity'] * $misc['unit_price'];
 
             $miscTotals += $aggregate;

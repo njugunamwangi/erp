@@ -28,6 +28,6 @@ class Profile extends Model
 
     public function currency(): BelongsTo
     {
-         return $this->belongsTo(Currency::class);
+        return $this->belongsTo(Currency::class);
     }
 }

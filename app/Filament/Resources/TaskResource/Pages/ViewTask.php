@@ -45,7 +45,7 @@ class ViewTask extends ViewRecord
                     ->color('danger')
                     ->modalWidth(MaxWidth::SevenExtraLarge)
                     ->label('Track Expenses')
-                    ->modalDescription(fn($record) => 'Expenses for task #'.$record->id)
+                    ->modalDescription(fn ($record) => 'Expenses for task #'.$record->id)
                     ->stickyModalFooter()
                     ->stickyModalHeader()
                     ->modalSubmitActionLabel('Save')

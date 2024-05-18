@@ -90,7 +90,7 @@ class Notes extends Page
     {
         return Section::make('Quotes Notes')
             ->schema([
-                RichEditor::make('quotes')
+                RichEditor::make('quotes'),
             ]);
     }
 
@@ -98,7 +98,7 @@ class Notes extends Page
     {
         return Section::make('Invoices Notes')
             ->schema([
-                RichEditor::make('invoices')
+                RichEditor::make('invoices'),
             ]);
     }
 

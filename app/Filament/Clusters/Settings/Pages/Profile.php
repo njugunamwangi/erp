@@ -124,10 +124,10 @@ class Profile extends Page
                                     ->required(),
                                 TextInput::make('exchange_rate_api')
                                     ->label('Exchange rate API Key')
-                                    ->required()
-                            ])
+                                    ->required(),
+                            ]),
                     ])
-                    ->columnSpan(8)
+                    ->columnSpan(8),
             ])
             ->columns(12);
     }

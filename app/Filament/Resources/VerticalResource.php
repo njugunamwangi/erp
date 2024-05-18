@@ -72,7 +72,7 @@ class VerticalResource extends Resource
                     ->columnSpanFull()
                     ->tabs([
                         Tabs\Tab::make('Equipment')
-                            ->badge(fn($record) => $record->equipment->count())
+                            ->badge(fn ($record) => $record->equipment->count())
                             ->schema([
                                 RepeatableEntry::make('equipment')
                                     ->schema([
@@ -80,26 +80,26 @@ class VerticalResource extends Resource
                                         TextEntry::make('brand.brand'),
                                         TextEntry::make('type'),
                                     ])
-                                    ->columns(3)
+                                    ->columns(3),
                             ]),
                         Tabs\Tab::make('Tasks')
-                            ->badge(fn($record) => $record->tasks->count())
+                            ->badge(fn ($record) => $record->tasks->count())
                             ->schema([
                                 RepeatableEntry::make('tasks')
                                     ->schema([
                                         TextEntry::make('id')
                                             ->label('Task')
-                                            ->getStateUsing(fn($record) => '#'.$record->id),
+                                            ->getStateUsing(fn ($record) => '#'.$record->id),
                                         TextEntry::make('assignedTo.name')
                                             ->label('Staff'),
                                         TextEntry::make('assignedFor.name')
                                             ->label('Customer'),
                                         IconEntry::make('is_completed'),
                                     ])
-                                    ->columns(4)
+                                    ->columns(4),
                             ]),
                         Tabs\Tab::make('Quotes')
-                            ->badge(fn($record) => $record->quotes->count())
+                            ->badge(fn ($record) => $record->quotes->count())
                             ->schema([
                                 RepeatableEntry::make('quotes')
                                     ->schema([
@@ -107,16 +107,16 @@ class VerticalResource extends Resource
                                         TextEntry::make('user.name')
                                             ->label('Customer'),
                                         TextEntry::make('currency')
-                                            ->getStateUsing(fn($record) => $record->currency->symbol),
+                                            ->getStateUsing(fn ($record) => $record->currency->symbol),
                                         TextEntry::make('subtotal')
                                             ->label('Sub-Total'),
                                         TextEntry::make('taxes')
                                             ->suffix('%'),
-                                        TextEntry::make('total')
+                                        TextEntry::make('total'),
                                     ])
-                                    ->columns(6)
+                                    ->columns(6),
                             ]),
-                    ])
+                    ]),
             ]);
     }
 

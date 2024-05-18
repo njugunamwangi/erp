@@ -11,7 +11,6 @@ use App\Models\Currency;
 use App\Models\Invoice;
 use App\Models\MpesaSTK;
 use App\Models\Note;
-use App\Models\Payment;
 use App\Models\Profile;
 use App\Models\Role;
 use App\Models\User;
@@ -40,17 +39,13 @@ use Filament\Tables;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Columns\IconColumn;
-use Filament\Tables\Columns\TextColumn;
-use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Table;
 use Iankumu\Mpesa\Facades\Mpesa;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Storage;
-use Unicodeveloper\Paystack\Facades\Paystack;
 use Wallo\FilamentSelectify\Components\ToggleButton;
 use Ysfkaya\FilamentPhoneInput\Forms\PhoneInput;
 use Ysfkaya\FilamentPhoneInput\PhoneInputNumberType;
@@ -120,7 +115,7 @@ class InvoiceResource extends Resource
                             ->schema([
                                 ToggleButton::make('mail')
                                     ->label('Send Email to Customer?')
-                                    ->default(true)
+                                    ->default(true),
                             ]),
                         Fieldset::make('Invoice Summary')
                             ->schema([
@@ -374,7 +369,7 @@ class InvoiceResource extends Resource
                         ->color('danger')
                         ->modalAlignment(Alignment::Center)
                         ->modalIcon('heroicon-o-banknotes')
-                        ->modalDescription(fn($record) => 'Converting currency for ' . $record->serial . ' from '. $record->currency->abbr)
+                        ->modalDescription(fn ($record) => 'Converting currency for '.$record->serial.' from '.$record->currency->abbr)
                         ->form([
                             Select::make('currency_id')
                                 ->options(Currency::all()->pluck('abbr', 'id'))
@@ -391,7 +386,7 @@ class InvoiceResource extends Resource
                                 ->searchPrompt('Search currencies by their symbol, abbreviation or country')
                                 ->required(),
                         ])
-                        ->action(function($record, array $data) {
+                        ->action(function ($record, array $data) {
                             $record->convertCurrency($data);
 
                             // Notification
@@ -416,8 +411,8 @@ class InvoiceResource extends Resource
                         ->color(Color::Purple)
                         ->label('Mail Invoice')
                         ->requiresConfirmation()
-                        ->action(function($record) {
-                            if(Storage::disk('invoices')->exists('invoice_'.$record->serial)) {
+                        ->action(function ($record) {
+                            if (Storage::disk('invoices')->exists('invoice_'.$record->serial)) {
 
                                 Mail::to($record->user->email)->send(new SendInvoice($record));
 
@@ -428,7 +423,7 @@ class InvoiceResource extends Resource
                                 Mail::to($record->user->email)->send(new SendInvoice($record));
 
                             }
-                        })
+                        }),
                 ]),
             ])
             ->bulkActions([

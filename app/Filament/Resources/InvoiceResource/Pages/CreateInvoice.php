@@ -41,12 +41,12 @@ class CreateInvoice extends CreateRecord
 
             $recipients = User::role(Role::ADMIN)->get();
 
-            foreach($recipients as $recipient) {
+            foreach ($recipients as $recipient) {
                 Notification::make()
                     ->warning()
                     ->icon('heroicon-o-bolt')
                     ->title('Invoice mailed')
-                    ->body('Invoice mailed to ' . $invoice->user->name)
+                    ->body('Invoice mailed to '.$invoice->user->name)
                     ->actions([
                         Action::make('view')
                             ->markAsRead()

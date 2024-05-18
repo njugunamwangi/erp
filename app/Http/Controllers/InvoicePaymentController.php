@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Enums\InvoiceStatus;
 use App\Models\Invoice;
 use App\Models\Payment;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Redirect;
 use Unicodeveloper\Paystack\Facades\Paystack;
 
@@ -15,8 +14,9 @@ class InvoicePaymentController extends Controller
 
     public function __construct(Invoice $invoice)
     {
-         $this->invoice = $invoice;
+        $this->invoice = $invoice;
     }
+
     /**
      * Redirect the User to Paystack Payment Page
      *
@@ -30,7 +30,7 @@ class InvoicePaymentController extends Controller
             'metadata' => json_encode($array = ['invoice_id' => $invoice->id]),
             'currency' => $invoice->currency->abbr,
             'reference' => Paystack::genTranxRef(),
-            '_token' => csrf_token()
+            '_token' => csrf_token(),
         ];
 
         try {

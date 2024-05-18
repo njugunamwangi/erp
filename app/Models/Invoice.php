@@ -61,7 +61,7 @@ class Invoice extends Model
 
     public function payment(): HasOne
     {
-         return $this->hasOne(Payment::class);
+        return $this->hasOne(Payment::class);
     }
 
     public function savePdf()
@@ -126,13 +126,13 @@ class Invoice extends Model
     {
         $api = Profile::find(1)->exchange_rate_api;
 
-        $rates = Http::get('https://v6.exchangerate-api.com/v6/'. $api .'/latest/'.$this->currency->abbr)->json()['conversion_rates'];
+        $rates = Http::get('https://v6.exchangerate-api.com/v6/'.$api.'/latest/'.$this->currency->abbr)->json()['conversion_rates'];
 
         $convertTo = Currency::find($data['currency_id'])->abbr;
 
         $items = [];
 
-        foreach($this->items as $item) {
+        foreach ($this->items as $item) {
             $payload = json_encode($item, true);
 
             $replaces = ['unit_price' => $item['unit_price'] * $rates[$convertTo]];
@@ -150,8 +150,8 @@ class Invoice extends Model
 
         $this->update([
             'currency_id' => $data['currency_id'],
-            'subtotal' => $converter->convert( moneyContainer: $this->subtotal, currency: $convertTo, roundingMode: RoundingMode::UP),
-            'total' => $converter->convert( moneyContainer: $this->total, currency: $convertTo, roundingMode: RoundingMode::UP),
+            'subtotal' => $converter->convert(moneyContainer: $this->subtotal, currency: $convertTo, roundingMode: RoundingMode::UP),
+            'total' => $converter->convert(moneyContainer: $this->total, currency: $convertTo, roundingMode: RoundingMode::UP),
             'items' => $items,
         ]);
     }

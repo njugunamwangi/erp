@@ -15,13 +15,13 @@ class Payment extends Model
 
     protected function casts(): array
     {
-         return [
-             'amount' => Money::class
-         ];
+        return [
+            'amount' => Money::class,
+        ];
     }
 
     public function invoice(): BelongsTo
     {
-         return $this->belongsTo(Invoice::class);
+        return $this->belongsTo(Invoice::class);
     }
 }

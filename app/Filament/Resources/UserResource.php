@@ -301,7 +301,7 @@ class UserResource extends Resource
                                 ]),
                             Select::make('equipment')
                                 ->visible(fn (Get $get) => $get('requires_equipment'))
-                                ->options(fn(Get $get) => Equipment::query()->where('vertical_id', $get('vertical_id'))->get()->pluck('registration', 'id'))
+                                ->options(fn (Get $get) => Equipment::query()->where('vertical_id', $get('vertical_id'))->get()->pluck('registration', 'id'))
                                 ->live()
                                 ->requiredWith('requires_equipment')
                                 ->searchable()
@@ -322,7 +322,7 @@ class UserResource extends Resource
                                 'requires_equipment' => $data['requires_equipment'],
                             ]);
 
-                            if($data['requires_equipment'] && !empty($data['equipment'])) {
+                            if ($data['requires_equipment'] && ! empty($data['equipment'])) {
                                 $task->equipment()->attach($data['equipment']);
                             }
 
@@ -762,7 +762,7 @@ class UserResource extends Resource
                                                             ->getStateUsing(fn ($record) => $record->invoice ? $record->invoice->serial : '-'),
                                                         TextEntry::make('currency_id')
                                                             ->label('Currency')
-                                                            ->getStateUsing(fn($record) => $record->currency->abbr),
+                                                            ->getStateUsing(fn ($record) => $record->currency->abbr),
                                                         TextEntry::make('subtotal'),
                                                         TextEntry::make('taxes')
                                                             ->suffix('%'),
@@ -798,7 +798,7 @@ class UserResource extends Resource
                                                                 ->icon('heroicon-o-document-check')
                                                                 ->modalSubmitActionLabel('Generate Invoice')
                                                                 ->modalAlignment(Alignment::Center)
-                                                                ->modalDescription(fn($record) => 'Generate invoice for quote '. $record->serial)
+                                                                ->modalDescription(fn ($record) => 'Generate invoice for quote '.$record->serial)
                                                                 ->modalIcon('heroicon-o-document-check')
                                                                 ->form([
                                                                     Select::make('series')
@@ -824,7 +824,7 @@ class UserResource extends Resource
                                                                         'series' => $data['series'],
                                                                         'serial_number' => $serial_number = Invoice::max('serial_number') + 1,
                                                                         'serial' => $data['series'].'-'.str_pad($serial_number, 5, '0', STR_PAD_LEFT),
-                                                                        'notes' => Note::find(1)->invoices
+                                                                        'notes' => Note::find(1)->invoices,
                                                                     ]);
 
                                                                     if ($data['mail']) {
@@ -857,7 +857,7 @@ class UserResource extends Resource
                                                                 ->color('danger')
                                                                 ->link()
                                                                 ->modalAlignment(Alignment::Center)
-                                                                ->modalDescription(fn($record) => 'Converting currency for ' . $record->serial . ' from '. $record->currency->abbr)
+                                                                ->modalDescription(fn ($record) => 'Converting currency for '.$record->serial.' from '.$record->currency->abbr)
                                                                 ->modalIcon('heroicon-o-banknotes')
                                                                 ->form([
                                                                     Select::make('currency_id')
@@ -875,7 +875,7 @@ class UserResource extends Resource
                                                                         ->searchPrompt('Search currencies by their symbol, abbreviation or country')
                                                                         ->required(),
                                                                 ])
-                                                                ->action(function($record, array $data) {
+                                                                ->action(function ($record, array $data) {
                                                                     $record->convertCurrency($data);
 
                                                                     // Notification
@@ -894,7 +894,7 @@ class UserResource extends Resource
                                                                             ])
                                                                             ->sendToDatabase($recipient);
                                                                     }
-                                                                })
+                                                                }),
                                                         ])
                                                             ->columnSpanFull(),
                                                     ])
@@ -913,7 +913,7 @@ class UserResource extends Resource
                                                             ->getStateUsing(fn ($record) => $record->quote ? $record->quote->serial : '-'),
                                                         TextEntry::make('currency_id')
                                                             ->label('Currency')
-                                                            ->getStateUsing(fn($record) => $record->currency->abbr),
+                                                            ->getStateUsing(fn ($record) => $record->currency->abbr),
                                                         TextEntry::make('subtotal'),
                                                         TextEntry::make('taxes')
                                                             ->suffix('%'),
@@ -990,7 +990,7 @@ class UserResource extends Resource
                                                                 ->color('danger')
                                                                 ->link()
                                                                 ->modalAlignment(Alignment::Center)
-                                                                ->modalDescription(fn($record) => 'Converting currency for ' . $record->serial . ' from '. $record->currency->abbr)
+                                                                ->modalDescription(fn ($record) => 'Converting currency for '.$record->serial.' from '.$record->currency->abbr)
                                                                 ->modalIcon('heroicon-o-banknotes')
                                                                 ->form([
                                                                     Select::make('currency_id')
@@ -1008,7 +1008,7 @@ class UserResource extends Resource
                                                                         ->searchPrompt('Search currencies by their symbol, abbreviation or country')
                                                                         ->required(),
                                                                 ])
-                                                                ->action(function($record, array $data) {
+                                                                ->action(function ($record, array $data) {
                                                                     $record->convertCurrency($data);
 
                                                                     // Notification

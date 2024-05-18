@@ -200,7 +200,7 @@ class TaskResource extends Resource
                         ->icon('heroicon-o-arrow-trending-up')
                         ->color('danger')
                         ->label('Track Expenses')
-                        ->modalDescription(fn($record) => 'Expenses for task #'.$record->id)
+                        ->modalDescription(fn ($record) => 'Expenses for task #'.$record->id)
                         ->modalWidth(MaxWidth::SevenExtraLarge)
                         ->stickyModalFooter()
                         ->stickyModalHeader()
