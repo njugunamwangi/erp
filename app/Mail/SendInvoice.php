@@ -9,6 +9,8 @@ use Illuminate\Mail\Mailables\Attachment;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Routing\UrlGenerator;
+use Illuminate\Support\Facades\URL;
 
 class SendInvoice extends Mailable
 {
@@ -41,6 +43,9 @@ class SendInvoice extends Mailable
     {
         return new Content(
             markdown: 'emails.send-invoice',
+            with: [
+                'pay' => route('pay.invoice', ['invoice' => $this->invoice->id])
+            ]
         );
     }
 

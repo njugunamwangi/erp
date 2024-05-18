@@ -121,8 +121,7 @@ class InvoiceResource extends Resource
                                 ToggleButton::make('mail')
                                     ->label('Send Email to Customer?')
                                     ->default(true)
-                            ])
-                        ,
+                            ]),
                         Fieldset::make('Invoice Summary')
                             ->schema([
                                 Section::make()

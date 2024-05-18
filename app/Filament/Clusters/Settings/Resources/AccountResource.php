@@ -195,9 +195,9 @@ class AccountResource extends Resource
                         ->requiresConfirmation()
                         ->modalDescription(fn ($record) => 'Are you sure you want to make '.$record->name.' default?')
                         ->modalSubmitActionLabel('Make Default')
+                        ->iconPosition('center')
                         ->color('warning')
                         ->hidden(fn ($record) => $record->enabled)
-                        ->iconPosition('center')
                         ->action(function ($record) {
                             Account::where('enabled', true)->update(['enabled' => false]);
 
