@@ -1,12 +1,19 @@
 <?php
 
-namespace App\Filament\Resources;
+namespace App\Filament\Clusters\Assets\Resources;
 
-use App\Filament\Resources\EquipmentResource\Pages;
+use App\Filament\Clusters\Assets;
+use App\Filament\Clusters\Assets\Resources\EquipmentResource\Pages;
+use App\Filament\Clusters\Assets\Resources\EquipmentResource\RelationManagers;
+use App\Filament\Clusters\Commerce\Resources\BrandResource;
+use App\Filament\Resources\ServiceResource;
+use App\Filament\Resources\TaskResource;
+use App\Filament\Resources\VerticalResource;
 use App\Models\Equipment;
+use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Infolists\Components\Actions;
-use Filament\Infolists\Components\Actions\Action as ActionsAction;
+use Filament\Infolists\Components\Actions\Action;
 use Filament\Infolists\Components\RepeatableEntry;
 use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\Tabs;
@@ -22,9 +29,9 @@ class EquipmentResource extends Resource
 {
     protected static ?string $model = Equipment::class;
 
-    protected static ?string $navigationGroup = 'Asset Management';
+    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
-    protected static ?string $navigationIcon = 'heroicon-o-eye-dropper';
+    protected static ?string $cluster = Assets::class;
 
     public static function form(Form $form): Form
     {
@@ -39,6 +46,7 @@ class EquipmentResource extends Resource
                 Tables\Columns\TextColumn::make('registration')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('vertical.vertical')
+                    ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('type'),
                 Tables\Columns\TextColumn::make('brand.brand')
@@ -55,6 +63,9 @@ class EquipmentResource extends Resource
                     ->dateTime()
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
+                Tables\Columns\TextColumn::make('brand.id')
+                    ->numeric()
+                    ->sortable(),
             ])
             ->filters([
                 Tables\Filters\TrashedFilter::make(),
@@ -101,7 +112,7 @@ class EquipmentResource extends Resource
                                             ->label('Date')
                                             ->date(),
                                         Actions::make([
-                                            ActionsAction::make('view')
+                                            Action::make('view')
                                                 ->url(fn ($record) => ServiceResource::getUrl('view', ['record' => $record->id]))
                                                 ->link()
                                                 ->color('gray')
@@ -122,7 +133,7 @@ class EquipmentResource extends Resource
                                             ->label('Date')
                                             ->date(),
                                         Actions::make([
-                                            ActionsAction::make('view')
+                                            Action::make('view')
                                                 ->url(fn ($record) => TaskResource::getUrl('view', ['record' => $record->id]))
                                                 ->link()
                                                 ->color('gray')

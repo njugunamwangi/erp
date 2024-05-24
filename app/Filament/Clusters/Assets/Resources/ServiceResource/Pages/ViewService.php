@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Filament\Resources\ServiceResource\Pages;
+namespace App\Filament\Clusters\Assets\Resources\ServiceResource\Pages;
 
-use App\Filament\Resources\ServiceResource;
+use App\Filament\Clusters\Assets\Resources\ServiceResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ViewRecord;
 

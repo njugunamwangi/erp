@@ -1,8 +1,10 @@
 <?php
 
-namespace App\Filament\Resources;
+namespace App\Filament\Clusters\Assets\Resources;
 
-use App\Filament\Resources\ServiceResource\Pages;
+use App\Filament\Clusters\Assets;
+use App\Filament\Clusters\Assets\Resources\ServiceResource\Pages;
+use App\Filament\Clusters\Assets\Resources\ServiceResource\RelationManagers;
 use App\Models\Role;
 use App\Models\Service;
 use Filament\Forms;
@@ -12,14 +14,16 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use FilamentTiptapEditor\TiptapEditor;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class ServiceResource extends Resource
 {
     protected static ?string $model = Service::class;
 
-    protected static ?string $navigationParentItem = 'Equipment';
+    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
-    protected static ?string $navigationGroup = 'Asset Management';
+    protected static ?string $cluster = Assets::class;
 
     protected static ?string $navigationLabel = 'Service History';
 
@@ -55,10 +59,11 @@ class ServiceResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('equipment.registration')
+                    ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('user.name')
+                    ->numeric()
                     ->label('Technician')
-                    ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
@@ -70,7 +75,7 @@ class ServiceResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                //
+
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),
@@ -98,5 +103,10 @@ class ServiceResource extends Resource
             'view' => Pages\ViewService::route('/{record}'),
             'edit' => Pages\EditService::route('/{record}/edit'),
         ];
+    }
+
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery();
     }
 }
