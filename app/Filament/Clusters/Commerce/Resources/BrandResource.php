@@ -1,8 +1,10 @@
 <?php
 
-namespace App\Filament\Resources;
+namespace App\Filament\Clusters\Commerce\Resources;
 
-use App\Filament\Resources\BrandResource\Pages;
+use App\Filament\Clusters\Commerce;
+use App\Filament\Clusters\Commerce\Resources\BrandResource\Pages;
+use App\Filament\Clusters\Commerce\Resources\BrandResource\RelationManagers;
 use App\Models\Brand;
 use Awcodes\Curator\Components\Forms\CuratorPicker;
 use Awcodes\Curator\Components\Tables\CuratorColumn;
@@ -18,7 +20,9 @@ class BrandResource extends Resource
 {
     protected static ?string $model = Brand::class;
 
-    protected static ?string $navigationGroup = 'Commerce';
+    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+
+    protected static ?string $cluster = Commerce::class;
 
     public static function form(Form $form): Form
     {
@@ -33,7 +37,6 @@ class BrandResource extends Resource
                     ->maxLength(255),
                 Forms\Components\TextInput::make('website')
                     ->required()
-                    ->prefix('https://')
                     ->maxLength(255),
             ]);
     }
