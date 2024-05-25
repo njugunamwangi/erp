@@ -4,7 +4,6 @@ namespace App\Filament\Clusters\CustomerRelations\Resources;
 
 use App\Filament\Clusters\CustomerRelations;
 use App\Filament\Clusters\CustomerRelations\Resources\StageResource\Pages;
-use App\Filament\Clusters\CustomerRelations\Resources\StageResource\RelationManagers;
 use App\Models\Stage;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -20,9 +19,16 @@ class StageResource extends Resource
 {
     protected static ?string $model = Stage::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-server-stack';
+
+    protected static ?int $navigationSort = 2;
 
     protected static ?string $cluster = CustomerRelations::class;
+
+    public static function getNavigationBadge(): ?string
+    {
+        return static::getModel()::count();
+    }
 
     public static function form(Form $form): Form
     {

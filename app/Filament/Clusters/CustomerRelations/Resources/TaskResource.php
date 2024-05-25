@@ -6,7 +6,6 @@ use App\Enums\QuoteSeries;
 use App\Filament\Clusters\Assets\Resources\EquipmentResource;
 use App\Filament\Clusters\CustomerRelations;
 use App\Filament\Clusters\CustomerRelations\Resources\TaskResource\Pages;
-use App\Filament\Clusters\CustomerRelations\Resources\TaskResource\RelationManagers;
 use App\Filament\Resources\UserResource;
 use App\Mail\RequestFeedbackMail;
 use App\Models\Currency;
@@ -53,9 +52,16 @@ class TaskResource extends Resource
 {
     protected static ?string $model = Task::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-circle-stack';
+
+    protected static ?int $navigationSort = 1;
 
     protected static ?string $cluster = CustomerRelations::class;
+
+    public static function getNavigationBadge(): ?string
+    {
+        return static::getModel()::count();
+    }
 
     public static function form(Form $form): Form
     {

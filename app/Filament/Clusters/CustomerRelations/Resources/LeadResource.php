@@ -4,9 +4,7 @@ namespace App\Filament\Clusters\CustomerRelations\Resources;
 
 use App\Filament\Clusters\CustomerRelations;
 use App\Filament\Clusters\CustomerRelations\Resources\LeadResource\Pages;
-use App\Filament\Clusters\CustomerRelations\Resources\LeadResource\RelationManagers;
 use App\Models\Lead;
-use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
@@ -19,9 +17,16 @@ class LeadResource extends Resource
 {
     protected static ?string $model = Lead::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-inbox-stack';
+
+    protected static ?int $navigationSort = 4;
 
     protected static ?string $cluster = CustomerRelations::class;
+
+    public static function getNavigationBadge(): ?string
+    {
+        return static::getModel()::count();
+    }
 
     public static function form(Form $form): Form
     {

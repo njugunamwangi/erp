@@ -5,11 +5,10 @@ namespace App\Filament\Clusters\CustomerRelations\Resources;
 use App\Enums\InvoiceSeries;
 use App\Enums\InvoiceStatus;
 use App\Enums\QuoteSeries;
+use App\Filament\Clusters\Banking\Resources\CurrencyResource;
 use App\Filament\Clusters\CustomerRelations;
 use App\Filament\Clusters\CustomerRelations\Resources\QuoteResource\Pages;
-use App\Filament\Clusters\CustomerRelations\Resources\QuoteResource\RelationManagers;
 use App\Filament\Clusters\CustomerRelations\Resources\QuoteResource\Widgets\QuoteOverviewStats;
-use App\Filament\Resources\CurrencyResource;
 use App\Filament\Resources\UserResource;
 use App\Filament\Resources\VerticalResource;
 use App\Mail\SendInvoice;
@@ -54,11 +53,18 @@ class QuoteResource extends Resource
 {
     protected static ?string $model = Quote::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-document-check';
+
+    protected static ?int $navigationSort = 4;
 
     protected static ?string $cluster = CustomerRelations::class;
 
     protected static ?string $recordTitleAttribute = 'serial';
+
+    public static function getNavigationBadge(): ?string
+    {
+        return static::getModel()::count();
+    }
 
     public static function form(Form $form): Form
     {

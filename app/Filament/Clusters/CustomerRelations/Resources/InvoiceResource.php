@@ -6,7 +6,6 @@ use App\Enums\InvoiceSeries;
 use App\Enums\InvoiceStatus;
 use App\Filament\Clusters\CustomerRelations;
 use App\Filament\Clusters\CustomerRelations\Resources\InvoiceResource\Pages;
-use App\Filament\Clusters\CustomerRelations\Resources\InvoiceResource\RelationManagers;
 use App\Filament\Clusters\CustomerRelations\Resources\InvoiceResource\Widgets\InvoiceStatsOverview;
 use App\Filament\Resources\MpesaSTKResource;
 use App\Filament\Resources\UserResource;
@@ -57,11 +56,18 @@ class InvoiceResource extends Resource
 {
     protected static ?string $model = Invoice::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-clipboard-document-check';
+
+    protected static ?int $navigationSort = 5;
 
     protected static ?string $cluster = CustomerRelations::class;
 
     protected static ?string $recordTitleAttribute = 'serial';
+
+    public static function getNavigationBadge(): ?string
+    {
+        return static::getModel()::count();
+    }
 
     public static function form(Form $form): Form
     {

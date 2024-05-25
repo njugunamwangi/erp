@@ -2,18 +2,9 @@
 
 namespace App\Filament\Clusters\Banking\Resources;
 
-use App\Enums\AccountStatus;
-use App\Enums\AccountType;
 use App\Filament\Clusters\Banking;
 use App\Filament\Clusters\Banking\Resources\AccountResource\Pages;
 use App\Models\Account;
-use App\Models\Currency;
-use Filament\Forms;
-use Filament\Forms\Components\Grid;
-use Filament\Forms\Components\Group;
-use Filament\Forms\Components\RichEditor;
-use Filament\Forms\Components\Section;
-use Filament\Forms\Components\Tabs;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
@@ -22,17 +13,19 @@ use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
-use Wallo\FilamentSelectify\Components\ToggleButton;
-use Ysfkaya\FilamentPhoneInput\Forms\PhoneInput;
-use Ysfkaya\FilamentPhoneInput\PhoneInputNumberType;
 
 class AccountResource extends Resource
 {
     protected static ?string $model = Account::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-building-office-2';
+    protected static ?string $navigationIcon = 'heroicon-o-banknotes';
 
     protected static ?string $cluster = Banking::class;
+
+    public static function getNavigationBadge(): ?string
+    {
+        return static::getModel()::count();
+    }
 
     public static function form(Form $form): Form
     {

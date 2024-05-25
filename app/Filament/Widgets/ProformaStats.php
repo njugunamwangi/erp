@@ -11,6 +11,7 @@ use Filament\Widgets\StatsOverviewWidget\Stat;
 class ProformaStats extends BaseWidget
 {
     protected static ?int $navigationSort = 1;
+
     protected function getStats(): array
     {
         return [

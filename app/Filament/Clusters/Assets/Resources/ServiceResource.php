@@ -4,7 +4,6 @@ namespace App\Filament\Clusters\Assets\Resources;
 
 use App\Filament\Clusters\Assets;
 use App\Filament\Clusters\Assets\Resources\ServiceResource\Pages;
-use App\Filament\Clusters\Assets\Resources\ServiceResource\RelationManagers;
 use App\Models\Role;
 use App\Models\Service;
 use Filament\Forms;
@@ -15,13 +14,12 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use FilamentTiptapEditor\TiptapEditor;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class ServiceResource extends Resource
 {
     protected static ?string $model = Service::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-wrench-screwdriver';
 
     protected static ?string $cluster = Assets::class;
 
@@ -30,6 +28,11 @@ class ServiceResource extends Resource
     protected static ?string $modelLabel = 'Service History';
 
     protected static ?string $slug = 'service-history';
+
+    public static function getNavigationBadge(): ?string
+    {
+        return static::getModel()::count();
+    }
 
     public static function form(Form $form): Form
     {

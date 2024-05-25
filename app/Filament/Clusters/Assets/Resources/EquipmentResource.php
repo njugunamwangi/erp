@@ -4,12 +4,10 @@ namespace App\Filament\Clusters\Assets\Resources;
 
 use App\Filament\Clusters\Assets;
 use App\Filament\Clusters\Assets\Resources\EquipmentResource\Pages;
-use App\Filament\Clusters\Assets\Resources\EquipmentResource\RelationManagers;
 use App\Filament\Clusters\Commerce\Resources\BrandResource;
-use App\Filament\Resources\TaskResource;
+use App\Filament\Clusters\CustomerRelations\Resources\TaskResource as ResourcesTaskResource;
 use App\Filament\Resources\VerticalResource;
 use App\Models\Equipment;
-use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Infolists\Components\Actions;
 use Filament\Infolists\Components\Actions\Action;
@@ -28,9 +26,14 @@ class EquipmentResource extends Resource
 {
     protected static ?string $model = Equipment::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-wrench';
 
     protected static ?string $cluster = Assets::class;
+
+    public static function getNavigationBadge(): ?string
+    {
+        return static::getModel()::count();
+    }
 
     public static function form(Form $form): Form
     {
@@ -133,7 +136,7 @@ class EquipmentResource extends Resource
                                             ->date(),
                                         Actions::make([
                                             Action::make('view')
-                                                ->url(fn ($record) => TaskResource::getUrl('view', ['record' => $record->id]))
+                                                ->url(fn ($record) => ResourcesTaskResource::getUrl('view', ['record' => $record->id]))
                                                 ->link()
                                                 ->color('gray')
                                                 ->icon('heroicon-o-eye'),

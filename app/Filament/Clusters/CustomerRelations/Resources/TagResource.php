@@ -4,9 +4,7 @@ namespace App\Filament\Clusters\CustomerRelations\Resources;
 
 use App\Filament\Clusters\CustomerRelations;
 use App\Filament\Clusters\CustomerRelations\Resources\TagResource\Pages;
-use App\Filament\Clusters\CustomerRelations\Resources\TagResource\RelationManagers;
 use App\Models\Tag;
-use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
@@ -19,9 +17,16 @@ class TagResource extends Resource
 {
     protected static ?string $model = Tag::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-tag';
+
+    protected static ?int $navigationSort = 6;
 
     protected static ?string $cluster = CustomerRelations::class;
+
+    public static function getNavigationBadge(): ?string
+    {
+        return static::getModel()::count();
+    }
 
     public static function form(Form $form): Form
     {

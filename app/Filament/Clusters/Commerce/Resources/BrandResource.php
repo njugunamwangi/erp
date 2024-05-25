@@ -4,7 +4,6 @@ namespace App\Filament\Clusters\Commerce\Resources;
 
 use App\Filament\Clusters\Commerce;
 use App\Filament\Clusters\Commerce\Resources\BrandResource\Pages;
-use App\Filament\Clusters\Commerce\Resources\BrandResource\RelationManagers;
 use App\Models\Brand;
 use Awcodes\Curator\Components\Forms\CuratorPicker;
 use Awcodes\Curator\Components\Tables\CuratorColumn;
@@ -20,9 +19,14 @@ class BrandResource extends Resource
 {
     protected static ?string $model = Brand::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-bookmark-square';
 
     protected static ?string $cluster = Commerce::class;
+
+    public static function getNavigationBadge(): ?string
+    {
+        return static::getModel()::count();
+    }
 
     public static function form(Form $form): Form
     {

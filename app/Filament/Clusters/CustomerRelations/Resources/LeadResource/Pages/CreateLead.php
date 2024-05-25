@@ -3,7 +3,6 @@
 namespace App\Filament\Clusters\CustomerRelations\Resources\LeadResource\Pages;
 
 use App\Filament\Clusters\CustomerRelations\Resources\LeadResource;
-use Filament\Actions;
 use Filament\Resources\Pages\CreateRecord;
 
 class CreateLead extends CreateRecord

@@ -4,23 +4,25 @@ namespace App\Filament\Clusters\Banking\Resources;
 
 use App\Filament\Clusters\Banking;
 use App\Filament\Clusters\Banking\Resources\CurrencyResource\Pages;
-use App\Filament\Clusters\Banking\Resources\CurrencyResource\RelationManagers;
 use App\Models\Currency;
-use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class CurrencyResource extends Resource
 {
     protected static ?string $model = Currency::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationIcon = 'heroicon-o-currency-pound';
 
     protected static ?string $cluster = Banking::class;
+
+    public static function getNavigationBadge(): ?string
+    {
+        return static::getModel()::count();
+    }
 
     public static function form(Form $form): Form
     {

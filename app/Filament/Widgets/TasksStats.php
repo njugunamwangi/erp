@@ -14,6 +14,7 @@ class TasksStats extends BaseWidget
     {
         return 2;
     }
+
     protected function getStats(): array
     {
         return [
