@@ -57,6 +57,6 @@ class InvoiceStatsOverview extends BaseWidget
             $sum = $sum->plus($amount);
         }
 
-        return $sum;
+        return $sum->formatTo(Profile::find(1)->currency->locale);
     }
 }

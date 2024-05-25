@@ -52,11 +52,13 @@ class QuoteOverviewStats extends BaseWidget
 
             $converter = new CurrencyConverter($exchangeRateProvider);
 
+            // $money = Money::of($quote->subtotal, $quote->currency->abbr);
+
             $amount = $converter->convert(moneyContainer: $quote->subtotal, currency: $baseCurrency, roundingMode: RoundingMode::UP);
 
             $sum = $sum->plus($amount);
         }
 
-        return $sum;
+        return $sum->formatTo(Profile::find(1)->currency->locale);
     }
 }

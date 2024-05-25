@@ -238,7 +238,8 @@ class InvoiceResource extends Resource
                     ->icon('heroicon-o-user')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('currency')
-                    ->getStateUsing(fn ($record) => $record->currency->symbol),
+                    ->getStateUsing(fn ($record) => $record->currency->abbr)
+                    ->description(fn ($record) => $record->currency->name),
                 Tables\Columns\TextColumn::make('subtotal')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('taxes')

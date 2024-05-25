@@ -253,7 +253,8 @@ class QuoteResource extends Resource
                     ->url(fn ($record) => VerticalResource::getUrl('view', ['record' => $record->vertical_id]))
                     ->sortable(),
                 Tables\Columns\TextColumn::make('currency')
-                    ->getStateUsing(fn ($record) => $record->currency->symbol)
+                    ->getStateUsing(fn ($record) => $record->currency->abbr)
+                    ->description(fn ($record) => $record->currency->name)
                     ->url(fn ($record) => CurrencyResource::getUrl('view', ['record' => $record->currency_id])),
                 Tables\Columns\TextColumn::make('subtotal')
                     ->label('Sub-Total')
