@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Filament\Resources\TaskResource\Pages;
+namespace App\Filament\Clusters\CustomerRelations\Resources\TaskResource\Pages;
 
-use App\Filament\Resources\TaskResource;
+use App\Filament\Clusters\CustomerRelations\Resources\TaskResource;
 use App\Models\Task;
 use Filament\Actions;
 use Filament\Resources\Components\Tab;
@@ -15,8 +15,7 @@ class ListTasks extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make()
-                ->icon('heroicon-o-squares-plus'),
+            Actions\CreateAction::make(),
         ];
     }
 

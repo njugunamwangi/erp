@@ -1,9 +1,13 @@
 <?php
 
-namespace App\Filament\Resources;
+namespace App\Filament\Clusters\CustomerRelations\Resources;
 
 use App\Enums\QuoteSeries;
-use App\Filament\Resources\TaskResource\Pages;
+use App\Filament\Clusters\Assets\Resources\EquipmentResource;
+use App\Filament\Clusters\CustomerRelations;
+use App\Filament\Clusters\CustomerRelations\Resources\TaskResource\Pages;
+use App\Filament\Clusters\CustomerRelations\Resources\TaskResource\RelationManagers;
+use App\Filament\Resources\UserResource;
 use App\Mail\RequestFeedbackMail;
 use App\Models\Currency;
 use App\Models\Equipment;
@@ -20,7 +24,7 @@ use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\RichEditor;
-use Filament\Forms\Components\Section as ComponentsSection;
+use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
@@ -29,16 +33,15 @@ use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Filament\Infolists\Components\Actions\Action as ComponentsActionsAction;
 use Filament\Infolists\Components\RepeatableEntry;
-use Filament\Infolists\Components\Section;
+use Filament\Infolists\Components\Section as ComponentsSection;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Infolist;
 use Filament\Notifications\Actions\Action;
-use Filament\Notifications\Actions\Action as ActionsAction;
 use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Support\Enums\MaxWidth;
 use Filament\Tables;
-use Filament\Tables\Actions\Action as TablesActionsAction;
+use Filament\Tables\Actions\Action as ActionsAction;
 use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Table;
 use FilamentTiptapEditor\TiptapEditor;
@@ -50,7 +53,9 @@ class TaskResource extends Resource
 {
     protected static ?string $model = Task::class;
 
-    protected static ?string $navigationGroup = 'Customer Relations';
+    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+
+    protected static ?string $cluster = CustomerRelations::class;
 
     public static function form(Form $form): Form
     {
@@ -185,7 +190,7 @@ class TaskResource extends Resource
                                     ->sendToDatabase($recipient);
                             }
                         }),
-                    TablesActionsAction::make('feedback')
+                    ActionsAction::make('feedback')
                         ->label('Request Feedback')
                         ->visible(fn ($record) => $record->is_completed && ! $record->feedback)
                         ->color('success')
@@ -196,7 +201,7 @@ class TaskResource extends Resource
                                 ->title('Feedback requested for task #'.$record->id)
                                 ->send();
                         }),
-                    TablesActionsAction::make('expenses')
+                    ActionsAction::make('expenses')
                         ->icon('heroicon-o-arrow-trending-up')
                         ->color('danger')
                         ->label('Track Expenses')
@@ -260,7 +265,7 @@ class TaskResource extends Resource
                                     ->send();
                             }
                         }),
-                    TablesActionsAction::make('quote')
+                    ActionsAction::make('quote')
                         ->label('Generate Quote')
                         ->color('warning')
                         ->modalDescription(fn ($record) => 'Quote for task #'.$record->id)
@@ -294,7 +299,7 @@ class TaskResource extends Resource
                                 ]),
                             Fieldset::make('Quote Summary')
                                 ->schema([
-                                    ComponentsSection::make()
+                                    Section::make()
                                         ->schema([
                                             Repeater::make('items')
                                                 ->columns(4)
@@ -326,7 +331,7 @@ class TaskResource extends Resource
                                                 ->addActionLabel('Add Item')
                                                 ->columnSpanFull(),
                                         ]),
-                                    ComponentsSection::make()
+                                    Section::make()
                                         ->schema([
                                             TextInput::make('subtotal')
                                                 ->numeric()
@@ -381,7 +386,7 @@ class TaskResource extends Resource
                                     ->icon('heroicon-o-check-badge')
                                     ->info()
                                     ->actions([
-                                        ActionsAction::make('View')
+                                        Action::make('View')
                                             ->url(QuoteResource::getUrl('view', ['record' => $quote->id]))
                                             ->markAsRead(),
                                     ])
@@ -419,7 +424,7 @@ class TaskResource extends Resource
     {
         return $infolist
             ->schema([
-                Section::make('Task Overview')
+                ComponentsSection::make('Task Overview')
                     ->headerActions([
                         ComponentsActionsAction::make('completed')
                             ->label('Mark as completed!')
@@ -440,7 +445,7 @@ class TaskResource extends Resource
                                         ->icon('heroicon-o-check')
                                         ->success()
                                         ->actions([
-                                            ActionsAction::make('View')
+                                            Action::make('View')
                                                 ->url(TaskResource::getUrl('view', ['record' => $record->id]))
                                                 ->markAsRead(),
                                         ])

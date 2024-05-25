@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Filament\Resources\TaskResource\Pages;
+namespace App\Filament\Clusters\CustomerRelations\Resources\TaskResource\Pages;
 
-use App\Filament\Resources\TaskResource;
+use App\Filament\Clusters\CustomerRelations\Resources\TaskResource;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
 
@@ -13,10 +13,8 @@ class EditTask extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            Actions\ViewAction::make()
-                ->icon('heroicon-o-eye'),
-            Actions\DeleteAction::make()
-                ->icon('heroicon-o-trash'),
+            Actions\ViewAction::make(),
+            Actions\DeleteAction::make(),
             Actions\ForceDeleteAction::make(),
             Actions\RestoreAction::make(),
         ];

@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Filament\Resources\LeadResource\Pages;
+namespace App\Filament\Clusters\CustomerRelations\Resources\LeadResource\Pages;
 
-use App\Filament\Resources\LeadResource;
+use App\Filament\Clusters\CustomerRelations\Resources\LeadResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ViewRecord;
 
@@ -13,8 +13,7 @@ class ViewLead extends ViewRecord
     protected function getHeaderActions(): array
     {
         return [
-            Actions\EditAction::make()
-                ->icon('heroicon-o-pencil-square'),
+            Actions\EditAction::make(),
         ];
     }
 }

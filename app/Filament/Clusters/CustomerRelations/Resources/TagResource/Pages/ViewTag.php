@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Filament\Resources\TagResource\Pages;
+namespace App\Filament\Clusters\CustomerRelations\Resources\TagResource\Pages;
 
-use App\Filament\Resources\TagResource;
+use App\Filament\Clusters\CustomerRelations\Resources\TagResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ViewRecord;
 
@@ -13,8 +13,7 @@ class ViewTag extends ViewRecord
     protected function getHeaderActions(): array
     {
         return [
-            Actions\EditAction::make()
-                ->icon('heroicon-o-square-plus'),
+            Actions\EditAction::make(),
         ];
     }
 }

@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Filament\Resources\TaskResource\Pages;
+namespace App\Filament\Clusters\CustomerRelations\Resources\TaskResource\Pages;
 
 use App\Enums\QuoteSeries;
-use App\Filament\Resources\QuoteResource;
-use App\Filament\Resources\TaskResource;
+use App\Filament\Clusters\CustomerRelations\Resources\QuoteResource;
+use App\Filament\Clusters\CustomerRelations\Resources\TaskResource;
 use App\Models\Currency;
 use App\Models\Expense;
 use App\Models\Note;

@@ -4,6 +4,7 @@ namespace App\Filament\Resources;
 
 use App\Enums\InvoiceSeries;
 use App\Enums\InvoiceStatus;
+use App\Filament\Clusters\CustomerRelations\Resources\InvoiceResource;
 use App\Filament\Clusters\CustomerRelations\Resources\QuoteResource;
 use App\Filament\Resources\UserResource\Pages;
 use App\Filament\Resources\UserResource\RelationManagers\PipelinesRelationManager;

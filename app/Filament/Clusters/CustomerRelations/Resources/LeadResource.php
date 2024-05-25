@@ -1,9 +1,12 @@
 <?php
 
-namespace App\Filament\Resources;
+namespace App\Filament\Clusters\CustomerRelations\Resources;
 
-use App\Filament\Resources\LeadResource\Pages;
+use App\Filament\Clusters\CustomerRelations;
+use App\Filament\Clusters\CustomerRelations\Resources\LeadResource\Pages;
+use App\Filament\Clusters\CustomerRelations\Resources\LeadResource\RelationManagers;
 use App\Models\Lead;
+use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
@@ -16,7 +19,9 @@ class LeadResource extends Resource
 {
     protected static ?string $model = Lead::class;
 
-    protected static ?string $navigationGroup = 'Customer Relations';
+    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+
+    protected static ?string $cluster = CustomerRelations::class;
 
     public static function form(Form $form): Form
     {
@@ -47,10 +52,8 @@ class LeadResource extends Resource
                 Tables\Filters\TrashedFilter::make(),
             ])
             ->actions([
-                Tables\Actions\ViewAction::make()
-                    ->icon('heroicon-o-eye'),
-                Tables\Actions\EditAction::make()
-                    ->icon('heroicon-o-pencil-square'),
+                Tables\Actions\ViewAction::make(),
+                Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make()
                     ->action(function ($data, $record) {
                         if ($record->users()->count() > 0) {

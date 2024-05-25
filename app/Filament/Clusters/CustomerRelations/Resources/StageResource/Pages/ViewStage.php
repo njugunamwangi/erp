@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Filament\Resources\StageResource\Pages;
+namespace App\Filament\Clusters\CustomerRelations\Resources\StageResource\Pages;
 
-use App\Filament\Resources\StageResource;
+use App\Filament\Clusters\CustomerRelations\Resources\StageResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ViewRecord;
 
@@ -13,8 +13,7 @@ class ViewStage extends ViewRecord
     protected function getHeaderActions(): array
     {
         return [
-            Actions\EditAction::make()
-                ->icon('heroicon-o-square-plus'),
+            Actions\EditAction::make(),
         ];
     }
 }

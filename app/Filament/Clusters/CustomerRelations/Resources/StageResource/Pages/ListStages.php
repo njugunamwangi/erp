@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Filament\Resources\StageResource\Pages;
+namespace App\Filament\Clusters\CustomerRelations\Resources\StageResource\Pages;
 
-use App\Filament\Resources\StageResource;
+use App\Filament\Clusters\CustomerRelations\Resources\StageResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
 
@@ -13,8 +13,7 @@ class ListStages extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make()
-                ->icon('heroicon-o-squares-plus'),
+            Actions\CreateAction::make(),
         ];
     }
 }

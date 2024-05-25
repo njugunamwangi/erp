@@ -1,9 +1,12 @@
 <?php
 
-namespace App\Filament\Resources;
+namespace App\Filament\Clusters\CustomerRelations\Resources;
 
-use App\Filament\Resources\StageResource\Pages;
+use App\Filament\Clusters\CustomerRelations;
+use App\Filament\Clusters\CustomerRelations\Resources\StageResource\Pages;
+use App\Filament\Clusters\CustomerRelations\Resources\StageResource\RelationManagers;
 use App\Models\Stage;
+use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
@@ -17,12 +20,23 @@ class StageResource extends Resource
 {
     protected static ?string $model = Stage::class;
 
-    protected static ?string $navigationGroup = 'Customer Relations';
+    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+
+    protected static ?string $cluster = CustomerRelations::class;
 
     public static function form(Form $form): Form
     {
         return $form
-            ->schema(Stage::getForm());
+            ->schema([
+                Forms\Components\TextInput::make('stage')
+                    ->required()
+                    ->maxLength(255),
+                Forms\Components\TextInput::make('position')
+                    ->required()
+                    ->numeric(),
+                Forms\Components\Toggle::make('is_default')
+                    ->required(),
+            ]);
     }
 
     public static function table(Table $table): Table
