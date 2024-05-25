@@ -1,12 +1,17 @@
 <?php
 
-namespace App\Filament\Resources;
+namespace App\Filament\Clusters\CustomerRelations\Resources;
 
 use App\Enums\InvoiceSeries;
 use App\Enums\InvoiceStatus;
 use App\Enums\QuoteSeries;
-use App\Filament\Resources\QuoteResource\Pages;
-use App\Filament\Resources\QuoteResource\Widgets\QuoteOverviewStats;
+use App\Filament\Clusters\CustomerRelations;
+use App\Filament\Clusters\CustomerRelations\Resources\QuoteResource\Pages;
+use App\Filament\Clusters\CustomerRelations\Resources\QuoteResource\RelationManagers;
+use App\Filament\Clusters\CustomerRelations\Resources\QuoteResource\Widgets\QuoteOverviewStats;
+use App\Filament\Resources\CurrencyResource;
+use App\Filament\Resources\UserResource;
+use App\Filament\Resources\VerticalResource;
 use App\Mail\SendInvoice;
 use App\Models\Currency;
 use App\Models\Invoice;
@@ -49,11 +54,11 @@ class QuoteResource extends Resource
 {
     protected static ?string $model = Quote::class;
 
-    protected static ?string $navigationGroup = 'Customer Relations';
+    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+
+    protected static ?string $cluster = CustomerRelations::class;
 
     protected static ?string $recordTitleAttribute = 'serial';
-
-    protected static ?int $navigationSort = 1;
 
     public static function form(Form $form): Form
     {

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Resources\QuoteResource\Widgets;
+namespace App\Filament\Clusters\CustomerRelations\Resources\QuoteResource\Widgets;
 
 use App\Models\Profile;
 use App\Models\Quote;

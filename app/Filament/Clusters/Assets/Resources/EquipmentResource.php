@@ -6,7 +6,6 @@ use App\Filament\Clusters\Assets;
 use App\Filament\Clusters\Assets\Resources\EquipmentResource\Pages;
 use App\Filament\Clusters\Assets\Resources\EquipmentResource\RelationManagers;
 use App\Filament\Clusters\Commerce\Resources\BrandResource;
-use App\Filament\Resources\ServiceResource;
 use App\Filament\Resources\TaskResource;
 use App\Filament\Resources\VerticalResource;
 use App\Models\Equipment;

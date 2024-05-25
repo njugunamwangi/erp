@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Filament\Resources\InvoiceResource\Pages;
+namespace App\Filament\Clusters\CustomerRelations\Resources\InvoiceResource\Pages;
 
 use App\Enums\InvoiceStatus;
-use App\Filament\Resources\InvoiceResource;
-use App\Filament\Resources\InvoiceResource\Widgets\InvoiceStatsOverview;
+use App\Filament\Clusters\CustomerRelations\Resources\InvoiceResource;
+use App\Filament\Clusters\CustomerRelations\Resources\InvoiceResource\Widgets\InvoiceStatsOverview;
 use App\Models\Invoice;
 use Filament\Actions;
 use Filament\Resources\Components\Tab;

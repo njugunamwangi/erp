@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Filament\Resources\QuoteResource\Pages;
+namespace App\Filament\Clusters\CustomerRelations\Resources\QuoteResource\Pages;
 
 use App\Enums\InvoiceSeries;
 use App\Enums\InvoiceStatus;
+use App\Filament\Clusters\CustomerRelations\Resources\QuoteResource;
 use App\Filament\Resources\InvoiceResource;
-use App\Filament\Resources\QuoteResource;
 use App\Mail\SendInvoice;
 use App\Models\Invoice;
 use App\Models\Note;

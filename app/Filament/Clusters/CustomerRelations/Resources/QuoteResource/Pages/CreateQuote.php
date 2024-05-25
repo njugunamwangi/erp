@@ -1,20 +1,22 @@
 <?php
 
-namespace App\Filament\Resources\InvoiceResource\Pages;
+namespace App\Filament\Clusters\CustomerRelations\Resources\QuoteResource\Pages;
 
-use App\Filament\Resources\InvoiceResource;
-use App\Mail\SendInvoice;
-use App\Models\Invoice;
+use App\Filament\Clusters\CustomerRelations\Resources\QuoteResource;
+use App\Mail\SendQuote;
+use App\Models\Quote;
 use App\Models\Role;
+use App\Models\Task;
 use App\Models\User;
+use Filament\Actions;
 use Filament\Notifications\Actions\Action;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\CreateRecord;
 use Illuminate\Support\Facades\Mail;
 
-class CreateInvoice extends CreateRecord
+class CreateQuote extends CreateRecord
 {
-    protected static string $resource = InvoiceResource::class;
+    protected static string $resource = QuoteResource::class;
 
     protected function getRedirectUrl(): string
     {
@@ -23,21 +25,24 @@ class CreateInvoice extends CreateRecord
 
     protected function mutateFormDataBeforeCreate(array $data): array
     {
-        $data['serial_number'] = (Invoice::max('serial_number') ?? 0) + 1;
+        $data['serial_number'] = (Quote::max('serial_number') ?? 0) + 1;
         $data['serial'] = $data['series'].'-'.str_pad($data['serial_number'], 5, '0', STR_PAD_LEFT);
+        if (! empty($data['task_id'])) {
+            $data['vertical_id'] = Task::where('id', $data['task_id'])->first()->vertical_id;
+        }
 
         return $data;
     }
 
     protected function afterCreate(): void
     {
-        $invoice = $this->getRecord();
+        $quote = $this->getRecord();
 
-        if ($invoice->mail) {
+        if ($quote->mail) {
 
-            $invoice->savePdf();
+            $quote->savePdf();
 
-            Mail::to($invoice->user->email)->send(new SendInvoice($invoice));
+            Mail::to($quote->user->email)->send(new SendQuote($quote));
 
             $recipients = User::role(Role::ADMIN)->get();
 
@@ -45,12 +50,12 @@ class CreateInvoice extends CreateRecord
                 Notification::make()
                     ->warning()
                     ->icon('heroicon-o-bolt')
-                    ->title('Invoice mailed')
-                    ->body('Invoice mailed to '.$invoice->user->name)
+                    ->title('Quote mailed')
+                    ->body('Quote mailed to '.$quote->user->name)
                     ->actions([
                         Action::make('view')
                             ->markAsRead()
-                            ->url(InvoiceResource::getUrl('view', ['record' => $invoice->id]))
+                            ->url(QuoteResource::getUrl('view', ['record' => $quote->id]))
                             ->color('warning'),
                     ])
                     ->sendToDatabase($recipient);

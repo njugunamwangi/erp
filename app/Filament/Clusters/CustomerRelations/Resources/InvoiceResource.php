@@ -1,11 +1,15 @@
 <?php
 
-namespace App\Filament\Resources;
+namespace App\Filament\Clusters\CustomerRelations\Resources;
 
 use App\Enums\InvoiceSeries;
 use App\Enums\InvoiceStatus;
-use App\Filament\Resources\InvoiceResource\Pages;
-use App\Filament\Resources\InvoiceResource\Widgets\InvoiceStatsOverview;
+use App\Filament\Clusters\CustomerRelations;
+use App\Filament\Clusters\CustomerRelations\Resources\InvoiceResource\Pages;
+use App\Filament\Clusters\CustomerRelations\Resources\InvoiceResource\RelationManagers;
+use App\Filament\Clusters\CustomerRelations\Resources\InvoiceResource\Widgets\InvoiceStatsOverview;
+use App\Filament\Resources\MpesaSTKResource;
+use App\Filament\Resources\UserResource;
 use App\Mail\SendInvoice;
 use App\Models\Currency;
 use App\Models\Invoice;
@@ -14,7 +18,7 @@ use App\Models\Note;
 use App\Models\Profile;
 use App\Models\Role;
 use App\Models\User;
-use App\Mpesa\STKPush;
+use Filament\Actions\Action;
 use Filament\Forms;
 use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Grid;
@@ -30,13 +34,12 @@ use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Filament\Infolists\Components\ViewEntry;
 use Filament\Infolists\Infolist;
-use Filament\Notifications\Actions\Action as ActionsAction;
 use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Support\Colors\Color;
 use Filament\Support\Enums\Alignment;
 use Filament\Tables;
-use Filament\Tables\Actions\Action;
+use Filament\Tables\Actions\Action as ActionsAction;
 use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Table;
@@ -54,9 +57,9 @@ class InvoiceResource extends Resource
 {
     protected static ?string $model = Invoice::class;
 
-    protected static ?string $navigationGroup = 'Customer Relations';
+    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
-    protected static ?int $navigationSort = 2;
+    protected static ?string $cluster = CustomerRelations::class;
 
     protected static ?string $recordTitleAttribute = 'serial';
 

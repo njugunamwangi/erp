@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Filament\Resources\QuoteResource\Pages;
+namespace App\Filament\Clusters\CustomerRelations\Resources\QuoteResource\Pages;
 
-use App\Filament\Resources\QuoteResource;
+use App\Filament\Clusters\CustomerRelations\Resources\QuoteResource;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
 
@@ -13,10 +13,8 @@ class EditQuote extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            Actions\ViewAction::make()
-                ->icon('heroicon-o-eye'),
-            Actions\DeleteAction::make()
-                ->icon('heroicon-o-trash'),
+            Actions\ViewAction::make(),
+            Actions\DeleteAction::make(),
             Actions\ForceDeleteAction::make(),
             Actions\RestoreAction::make(),
         ];
