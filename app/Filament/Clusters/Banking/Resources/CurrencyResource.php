@@ -1,21 +1,26 @@
 <?php
 
-namespace App\Filament\Resources;
+namespace App\Filament\Clusters\Banking\Resources;
 
-use App\Filament\Resources\CurrencyResource\Pages;
+use App\Filament\Clusters\Banking;
+use App\Filament\Clusters\Banking\Resources\CurrencyResource\Pages;
+use App\Filament\Clusters\Banking\Resources\CurrencyResource\RelationManagers;
 use App\Models\Currency;
+use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class CurrencyResource extends Resource
 {
     protected static ?string $model = Currency::class;
 
-    protected static ?string $navigationGroup = 'Settings';
+    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
-    protected static ?string $navigationIcon = 'heroicon-o-currency-pound';
+    protected static ?string $cluster = Banking::class;
 
     public static function form(Form $form): Form
     {
@@ -31,15 +36,16 @@ class CurrencyResource extends Resource
                 Tables\Columns\TextColumn::make('name')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('abbr')
-                    ->searchable()
-                    ->sortable(),
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('code')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('subunit_name')
+                Tables\Columns\TextColumn::make('locale')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('precision')
                     ->numeric()
                     ->sortable(),
+                Tables\Columns\TextColumn::make('subunit_name')
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('subunit')
                     ->numeric()
                     ->sortable(),
@@ -61,7 +67,6 @@ class CurrencyResource extends Resource
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                //
             ])
             ->actions([
                 Tables\Actions\ViewAction::make(),
@@ -70,6 +75,8 @@ class CurrencyResource extends Resource
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make(),
+                    Tables\Actions\ForceDeleteBulkAction::make(),
+                    Tables\Actions\RestoreBulkAction::make(),
                 ]),
             ]);
     }
@@ -89,5 +96,10 @@ class CurrencyResource extends Resource
             'view' => Pages\ViewCurrency::route('/{record}'),
             'edit' => Pages\EditCurrency::route('/{record}/edit'),
         ];
+    }
+
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery();
     }
 }

@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Filament\Clusters\Settings\Resources\AccountResource\Pages;
+namespace App\Filament\Clusters\Banking\Resources\AccountResource\Pages;
 
-use App\Filament\Clusters\Settings\Resources\AccountResource;
+use App\Filament\Clusters\Banking\Resources\AccountResource;
 use Filament\Resources\Pages\CreateRecord;
 
 class CreateAccount extends CreateRecord

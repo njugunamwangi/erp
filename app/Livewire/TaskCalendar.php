@@ -2,7 +2,7 @@
 
 namespace App\Livewire;
 
-use App\Filament\Resources\TaskResource;
+use App\Filament\Clusters\CustomerRelations\Resources\TaskResource;
 use App\Filament\Staff\Resources\TaskResource as ResourcesTaskResource;
 use App\Models\Role;
 use App\Models\Task;
