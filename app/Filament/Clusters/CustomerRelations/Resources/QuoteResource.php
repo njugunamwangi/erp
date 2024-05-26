@@ -27,6 +27,7 @@ use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
@@ -47,6 +48,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Storage;
 use Wallo\FilamentSelectify\Components\ToggleButton;
 
 class QuoteResource extends Resource
@@ -146,14 +148,14 @@ class QuoteResource extends Resource
                                             ->columns(4)
                                             ->live()
                                             ->schema([
+                                                Textarea::make('description')
+                                                    ->required()
+                                                    ->placeholder('Aerial Spraying'),
                                                 TextInput::make('quantity')
                                                     ->numeric()
                                                     ->required()
                                                     ->live()
                                                     ->default(1),
-                                                TextInput::make('description')
-                                                    ->required()
-                                                    ->placeholder('Aerial Spraying'),
                                                 TextInput::make('unit_price')
                                                     ->required()
                                                     ->live()
@@ -257,6 +259,7 @@ class QuoteResource extends Resource
                     ->description(fn ($record) => $record->currency->name)
                     ->url(fn ($record) => CurrencyResource::getUrl('view', ['record' => $record->currency_id])),
                 Tables\Columns\TextColumn::make('subtotal')
+                    ->getStateUsing(fn ($record) => $record->subtotal->formatTo($record->currency->locale))
                     ->label('Sub-Total')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('taxes')
@@ -264,6 +267,7 @@ class QuoteResource extends Resource
                     ->suffix('%')
                     ->sortable(),
                 Tables\Columns\TextColumn::make('total')
+                    ->getStateUsing(fn ($record) => $record->total->formatTo($record->currency->locale))
                     ->sortable(),
                 Tables\Columns\TextColumn::make('deleted_at')
                     ->dateTime()
@@ -371,8 +375,8 @@ class QuoteResource extends Resource
                                 ->options(InvoiceSeries::class)
                                 ->searchable()
                                 ->preload(),
-                            Toggle::make('send')
-                                ->label('Send Email'),
+                            ToggleButton::make('send')
+                                ->label('Send Email to customer?'),
                         ])
                         ->action(function (array $data, $record) {
                             $invoice = $record->invoice()->create([
@@ -396,6 +400,10 @@ class QuoteResource extends Resource
                                 $invoice->savePdf();
 
                                 Mail::to($invoice->user->email)->send(new SendInvoice($invoice));
+
+                                $name = 'invoice_'.$invoice->series->name.'_'.str_pad($invoice->serial_number, 5, '0', STR_PAD_LEFT).'.pdf';
+
+                                Storage::disk('invoices')->delete($name);
                             }
 
                             $recipients = User::role(Role::ADMIN)->get();

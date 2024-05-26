@@ -4,8 +4,8 @@ namespace App\Filament\Clusters\CustomerRelations\Resources\QuoteResource\Pages;
 
 use App\Enums\InvoiceSeries;
 use App\Enums\InvoiceStatus;
+use App\Filament\Clusters\CustomerRelations\Resources\InvoiceResource;
 use App\Filament\Clusters\CustomerRelations\Resources\QuoteResource;
-use App\Filament\Resources\InvoiceResource;
 use App\Mail\SendInvoice;
 use App\Models\Invoice;
 use App\Models\Note;
@@ -19,7 +19,9 @@ use Filament\Notifications\Actions\Action as ActionsAction;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ViewRecord;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\URL;
+use Wallo\FilamentSelectify\Components\ToggleButton;
 
 class ViewQuote extends ViewRecord
 {
@@ -57,8 +59,8 @@ class ViewQuote extends ViewRecord
                         ->searchable()
                         ->preload()
                         ->default(InvoiceSeries::IN2INV->name),
-                    Toggle::make('send')
-                        ->label('Send Email'),
+                    ToggleButton::make('send')
+                        ->label('Send Email to customer'),
                 ])
                 ->action(function (array $data, $record) {
                     $invoice = Invoice::create([
@@ -74,6 +76,7 @@ class ViewQuote extends ViewRecord
                         'serial' => $data['series'].'-'.str_pad($serial_number, 5, '0', STR_PAD_LEFT),
                         'currency_id' => $record->currency_id,
                         'notes' => Note::find(1)->invoices,
+                        'mail' => $data['send']
                     ]);
 
                     if ($data['send'] == true) {
@@ -81,6 +84,10 @@ class ViewQuote extends ViewRecord
                         $invoice->savePdf();
 
                         Mail::to($invoice->user->email)->send(new SendInvoice($invoice));
+
+                        $name = 'invoice_'.$invoice->series->name.'_'.str_pad($invoice->serial_number, 5, '0', STR_PAD_LEFT).'.pdf';
+
+                        Storage::disk('invoices')->delete($name);
                     }
 
                     $recipients = User::role(Role::ADMIN)->get();

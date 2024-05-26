@@ -33,6 +33,7 @@ use Filament\Forms\Get;
 use Filament\Forms\Set;
 use Filament\Infolists\Components\ViewEntry;
 use Filament\Infolists\Infolist;
+use Filament\Notifications\Actions\Action as NotificationsActionsAction;
 use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Support\Colors\Color;
@@ -241,6 +242,7 @@ class InvoiceResource extends Resource
                     ->getStateUsing(fn ($record) => $record->currency->abbr)
                     ->description(fn ($record) => $record->currency->name),
                 Tables\Columns\TextColumn::make('subtotal')
+                    ->getStateUsing(fn ($record) => $record->subtotal->formatTo($record->currency->locale))
                     ->sortable(),
                 Tables\Columns\TextColumn::make('taxes')
                     ->numeric()
@@ -255,6 +257,7 @@ class InvoiceResource extends Resource
                         return $state->getIcon();
                     }),
                 Tables\Columns\TextColumn::make('total')
+                    ->getStateUsing(fn ($record) => $record->total->formatTo($record->currency->locale))
                     ->sortable(),
                 IconColumn::make('mail')
                     ->boolean()
@@ -282,7 +285,7 @@ class InvoiceResource extends Resource
                     Tables\Actions\EditAction::make()
                         ->color('primary')
                         ->label('Edit Invoice'),
-                    Action::make('markPaid')
+                    Tables\Actions\Action::make('markPaid')
                         ->label('Mark as Paid')
                         ->visible(fn ($record) => $record->status != InvoiceStatus::Paid)
                         ->color('warning')
@@ -304,24 +307,24 @@ class InvoiceResource extends Resource
                                     ->icon('heroicon-o-banknotes')
                                     ->warning()
                                     ->actions([
-                                        ActionsAction::make('View')
+                                        NotificationsActionsAction::make('View')
                                             ->url(InvoiceResource::getUrl('view', ['record' => $record->id]))
                                             ->markAsRead(),
                                     ])
                                     ->sendToDatabase($recipient);
                             }
                         }),
-                    Action::make('pdf')
+                    Tables\Actions\Action::make('pdf')
                         ->label('Download Invoice')
                         ->icon('heroicon-o-arrow-down-on-square-stack')
                         ->color('success')
                         ->url(fn ($record) => route('invoice.download', $record))
                         ->openUrlInNewTab(),
-                    Action::make('viewQuote')
+                    Tables\Actions\Action::make('viewQuote')
                         ->icon('heroicon-o-document-text')
                         ->visible(fn ($record) => $record->quote)
                         ->url(fn ($record) => QuoteResource::getUrl('view', ['record' => $record->quote_id])),
-                    Action::make('stkPush')
+                    Tables\Actions\Action::make('stkPush')
                         ->label('Request M-Pesa Payment')
                         ->color('warning')
                         ->visible(fn ($record) => $record->status == InvoiceStatus::Unpaid && strip_tags($record->total) <= 150000)
@@ -365,21 +368,21 @@ class InvoiceResource extends Resource
                                     ->icon('heroicon-o-currency-euro')
                                     ->warning()
                                     ->actions([
-                                        ActionsAction::make('Check Status')
+                                        NotificationsActionsAction::make('Check Status')
                                             ->url(MpesaSTKResource::getUrl('view', ['record' => $mpesa->id]))
                                             ->markAsRead(),
                                     ])
                                     ->sendToDatabase($recipient);
                             }
                         }),
-                    Action::make('convert')
+                    Tables\Actions\Action::make('convert')
                         ->modalSubmitActionLabel('Convert')
                         ->icon('heroicon-o-banknotes')
                         ->label('Convert Currency')
                         ->color('danger')
                         ->modalAlignment(Alignment::Center)
-                        ->modalIcon('heroicon-o-banknotes')
                         ->modalDescription(fn ($record) => 'Converting currency for '.$record->serial.' from '.$record->currency->abbr)
+                        ->modalIcon('heroicon-o-banknotes')
                         ->form([
                             Select::make('currency_id')
                                 ->options(Currency::all()->pluck('abbr', 'id'))
@@ -409,30 +412,28 @@ class InvoiceResource extends Resource
                                     ->icon('heroicon-o-banknotes')
                                     ->danger()
                                     ->actions([
-                                        ActionsAction::make('View')
-                                            ->url(QuoteResource::getUrl('view', ['record' => $record->id]))
+                                        NotificationsActionsAction::make('View')
+                                            ->url(InvoiceResource::getUrl('view', ['record' => $record->id]))
                                             ->markAsRead(),
                                     ])
                                     ->sendToDatabase($recipient);
                             }
                         }),
-                    Action::make('mail')
+                    Tables\Actions\Action::make('mail')
                         ->icon('heroicon-o-envelope')
                         ->color(Color::Purple)
                         ->label('Mail Invoice')
                         ->requiresConfirmation()
                         ->action(function ($record) {
-                            if (Storage::disk('invoices')->exists('invoice_'.$record->serial)) {
 
-                                Mail::to($record->user->email)->send(new SendInvoice($record));
+                            $record->savePdf();
 
-                            } else {
+                            Mail::to($record->user->email)->send(new SendInvoice($record));
 
-                                $record->savePdf();
+                            $name = 'invoice_'.$record->series->name.'_'.str_pad($record->serial_number, 5, '0', STR_PAD_LEFT).'.pdf';
 
-                                Mail::to($record->user->email)->send(new SendInvoice($record));
+                            Storage::disk('invoices')->delete($name);
 
-                            }
                         }),
                 ]),
             ])

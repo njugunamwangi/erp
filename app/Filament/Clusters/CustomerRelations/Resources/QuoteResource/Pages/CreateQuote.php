@@ -12,6 +12,7 @@ use Filament\Notifications\Actions\Action;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\CreateRecord;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Storage;
 
 class CreateQuote extends CreateRecord
 {
@@ -59,6 +60,10 @@ class CreateQuote extends CreateRecord
                     ])
                     ->sendToDatabase($recipient);
             }
+
+            $name = 'invoice_'.$quote->series->name.'_'.str_pad($quote->serial_number, 5, '0', STR_PAD_LEFT).'.pdf';
+
+            Storage::disk('quotes')->delete($name);
         }
     }
 }
