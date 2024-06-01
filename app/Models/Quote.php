@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Casts\Money;
 use App\Enums\QuoteSeries;
+use App\Enums\Template;
 use Brick\Math\RoundingMode;
 use Brick\Money\CurrencyConverter;
 use Brick\Money\ExchangeRateProvider\ConfigurableProvider;
@@ -33,6 +34,7 @@ class Quote extends Model
             'series' => QuoteSeries::class,
             'total' => Money::class,
             'subtotal' => Money::class,
+            'template' => Template::class
         ];
     }
 
