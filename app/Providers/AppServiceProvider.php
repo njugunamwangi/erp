@@ -27,11 +27,5 @@ class AppServiceProvider extends ServiceProvider
         Gate::define('viewPulse', function (User $user) {
             return $user->hasRole(Role::ADMIN);
         });
-
-        FilamentAsset::register([
-            Css::make('custom-stylesheet', public_path('invoices/css/style.css')),
-            Css::make('font-stylesheet', public_path('invoices/fonts/font-awesome/css/font-awesome.min.css')),
-            Css::make('bootstrap-stylesheet', public_path('invoices/css/bootstrap.min.css')),
-        ]);
     }
 }

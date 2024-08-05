@@ -28,6 +28,7 @@ use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+use JaOcero\FilaChat\FilaChatPlugin;
 use Jeffgreco13\FilamentBreezy\BreezyCore;
 use Saade\FilamentFullCalendar\FilamentFullCalendarPlugin;
 use Tapp\FilamentMailLog\FilamentMailLogPlugin;
@@ -72,6 +73,7 @@ class AdminPanelProvider extends PanelProvider
                     ->navigationGroup('Content')
                     ->navigationSort(3),
                 FilamentMailLogPlugin::make(),
+                FilaChatPlugin::make(),
             ])
             ->sidebarCollapsibleOnDesktop()
             ->middleware([

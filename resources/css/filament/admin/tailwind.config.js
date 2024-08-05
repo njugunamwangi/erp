@@ -9,5 +9,6 @@ export default {
         './vendor/awcodes/filament-curator/resources/**/*.blade.php',
         './vendor/awcodes/filament-tiptap-editor/resources/**/*.blade.php',
         './vendor/andrewdwallo/filament-selectify/resources/views/**/*.blade.php',
+        './vendor/jaocero/filachat/resources/views/**/**/*.blade.php',
     ],
 }
