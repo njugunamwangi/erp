@@ -46,6 +46,11 @@ php artisan key:generate
 npm run dev
 ```
 
+- Start reverb for the newly installed FilaChat
+```bash
+php artisan reverb:start
+```
+
 ## Routes
 
 - [Admin Panel](https://admin.filament-multitenancy.test.com).
