@@ -53,8 +53,8 @@ php artisan reverb:start
 
 ## Routes
 
-- [Admin Panel](https://admin.filament-multitenancy.test.com).
-- [App Panel](https://app.filament-multitenancy.test.com).
+- [Admin Panel](https://admin.erp.test.com).
+- [App Panel](https://app.erp.test.com).
 
 ## Prerequisites
 
