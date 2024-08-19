@@ -15,7 +15,6 @@ class ProfileSeeder extends Seeder
     {
         Profile::create([
             'currency_id' => 80,
-            'exchange_rate_api' => '6bced76069ddc421257d0fb6',
             'entity' => EntityType::DEFAULT,
         ]);
     }
