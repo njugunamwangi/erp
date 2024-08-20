@@ -8,6 +8,7 @@ use App\Filament\Clusters\CustomerRelations;
 use App\Filament\Clusters\CustomerRelations\Resources\TaskResource\Pages;
 use App\Filament\Resources\UserResource;
 use App\Mail\RequestFeedbackMail;
+use App\Mail\SendQuote;
 use App\Models\Currency;
 use App\Models\Equipment;
 use App\Models\Expense;
@@ -47,6 +48,8 @@ use FilamentTiptapEditor\TiptapEditor;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Storage;
+use Wallo\FilamentSelectify\Components\ToggleButton;
 
 class TaskResource extends Resource
 {
@@ -361,6 +364,9 @@ class TaskResource extends Resource
                                                 ->prefix(fn (Get $get) => Currency::where('id', $get('currency_id'))->first()->abbr ?? 'CUR'),
                                         ]),
                                 ]),
+                            ToggleButton::make('mail')
+                                ->label('Send Email to Customer?')
+                                ->default(true),
                             RichEditor::make('notes')
                                 ->default(Note::find(1)->quotes)
                                 ->disableToolbarButtons([
@@ -375,6 +381,7 @@ class TaskResource extends Resource
                                 'subtotal' => $data['subtotal'],
                                 'currency_id' => $data['currency_id'],
                                 'taxes' => $data['taxes'],
+                                'mail' => $data['mail'],
                                 'total' => $data['total'],
                                 'items' => $data['items'],
                                 'series' => $data['series'],
@@ -382,6 +389,34 @@ class TaskResource extends Resource
                                 'serial' => $data['series'].'-'.str_pad($serial_number, 5, '0', STR_PAD_LEFT),
                                 'notes' => $data['notes'],
                             ]);
+
+                            if ($quote->mail) {
+
+                                $quote->savePdf();
+
+                                Mail::to($quote->user->email)->send(new SendQuote($quote));
+
+                                $recipients = User::role(Role::ADMIN)->get();
+
+                                foreach ($recipients as $recipient) {
+                                    Notification::make()
+                                        ->warning()
+                                        ->icon('heroicon-o-bolt')
+                                        ->title('Quote mailed')
+                                        ->body('Quote mailed to '.$quote->user->name)
+                                        ->actions([
+                                            Action::make('view')
+                                                ->markAsRead()
+                                                ->url(QuoteResource::getUrl('view', ['record' => $quote->id]))
+                                                ->color('warning'),
+                                        ])
+                                        ->sendToDatabase($recipient);
+                                }
+
+                                $name = 'invoice_'.$quote->series->name.'_'.str_pad($quote->serial_number, 5, '0', STR_PAD_LEFT).'.pdf';
+
+                                Storage::disk('quotes')->delete($name);
+                            }
 
                             $recipients = User::role(Role::ADMIN)->get();
 
