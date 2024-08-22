@@ -426,6 +426,13 @@ class InvoiceResource extends Resource
                         ->requiresConfirmation()
                         ->action(function ($record) {
 
+                            if(!$record->mail) {
+
+                                $record->mail = true;
+
+                                $record->save();
+                            }
+
                             $record->savePdf();
 
                             Mail::to($record->user->email)->send(new SendInvoice($record));
