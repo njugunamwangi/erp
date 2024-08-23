@@ -432,9 +432,33 @@ class InvoiceResource extends Resource
                         ->requiresConfirmation()
                         ->action(function ($record) {
 
+                            if(!$record->mail) {
+
+                                $record->mail = true;
+
+                                $record->save();
+                            }
+
                             $record->savePdf();
 
                             Mail::to($record->user->email)->send(new SendInvoice($record));
+
+                            $recipients = User::role(Role::ADMIN)->get();
+
+                            foreach ($recipients as $recipient) {
+                                Notification::make()
+                                    ->warning()
+                                    ->icon('heroicon-o-bolt')
+                                    ->title('Invoice mailed')
+                                    ->body('Invoice mailed to '.$record->user->name)
+                                    ->actions([
+                                        NotificationsActionsAction::make('view')
+                                            ->markAsRead()
+                                            ->url(InvoiceResource::getUrl('view', ['record' => $record->id]))
+                                            ->color('success'),
+                                    ])
+                                    ->sendToDatabase($recipient);
+                            }
 
                             $name = 'invoice_'.$record->series->name.'_'.str_pad($record->serial_number, 5, '0', STR_PAD_LEFT).'.pdf';
 
