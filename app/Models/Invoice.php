@@ -39,6 +39,16 @@ class Invoice extends Model
         ];
     }
 
+    public function account(): BelongsTo
+    {
+        return $this->belongsTo(Account::class);
+    }
+
+    public function currency(): BelongsTo
+    {
+        return $this->belongsTo(Currency::class);
+    }
+
     public function quote(): BelongsTo
     {
         return $this->belongsTo(Quote::class);
@@ -47,11 +57,6 @@ class Invoice extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
-    }
-
-    public function currency(): BelongsTo
-    {
-        return $this->belongsTo(Currency::class);
     }
 
     public function stks(): HasMany
@@ -76,7 +81,7 @@ class Invoice extends Model
 
         $profile = Profile::find(1);
 
-        $bank = Account::where('enabled', true)->first();
+        $bank = $this->account ?? Account::where('enabled', true)->first();
 
         $seller = new Party([
             'name' => $profile->name,

@@ -121,11 +121,17 @@ class InvoiceResource extends Resource
                                     ->preload()
                                     ->default(InvoiceSeries::IN2INV->name),
                             ]),
-                        Grid::make(1)
+                        Grid::make(2)
                             ->schema([
                                 ToggleButton::make('mail')
                                     ->label('Send Email to Customer?')
                                     ->default(true),
+                                Select::make('account_id')
+                                    ->label('Account')
+                                    ->relationship('account', 'name')
+                                    ->searchable()
+                                    ->getOptionLabelFromRecordUsing(fn (Model $record) => "{$record->name} - {$record->number}")
+                                    ->preload(),
                             ]),
                         Fieldset::make('Invoice Summary')
                             ->schema([
