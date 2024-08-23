@@ -38,6 +38,11 @@ class Quote extends Model
         ];
     }
 
+    public function account(): BelongsTo
+    {
+        return $this->belongsTo(Account::class);
+    }
+
     public function currency(): BelongsTo
     {
         return $this->belongsTo(Currency::class);
@@ -48,11 +53,6 @@ class Quote extends Model
         return $this->belongsTo(Task::class);
     }
 
-    public function invoice(): HasOne
-    {
-        return $this->hasOne(Invoice::class);
-    }
-
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
@@ -61,6 +61,11 @@ class Quote extends Model
     public function vertical(): BelongsTo
     {
         return $this->belongsTo(Vertical::class);
+    }
+
+    public function invoice(): HasOne
+    {
+        return $this->hasOne(Invoice::class);
     }
 
     public function convertCurrency($data)
@@ -109,7 +114,7 @@ class Quote extends Model
 
         $profile = Profile::find(1);
 
-        $bank = Account::where('enabled', true)->first();
+        $bank = $this->account ?? Account::where('enabled', true)->first();
 
         $seller = new Party([
             'name' => $profile->name,

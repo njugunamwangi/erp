@@ -134,11 +134,17 @@ class QuoteResource extends Resource
                                     ->searchPrompt('Search currencies by their symbol, abbreviation or country')
                                     ->required(),
                             ]),
-                        Grid::make(1)
+                        Grid::make(2)
                             ->schema([
                                 ToggleButton::make('mail')
                                     ->label('Send Email to Customer?')
                                     ->default(true),
+                                Select::make('account_id')
+                                    ->label('Account')
+                                    ->relationship('account', 'name')
+                                    ->searchable()
+                                    ->getOptionLabelFromRecordUsing(fn (Model $record) => "{$record->name} - {$record->number}")
+                                    ->preload(),
                             ]),
                         Fieldset::make('Quote Summary')
                             ->schema([

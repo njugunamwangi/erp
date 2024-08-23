@@ -28,7 +28,7 @@ class ViewQuoteController extends Controller
 
         $profile = Profile::find(1);
 
-        $bank = Account::where('enabled', true)->first();
+        $bank = $record->account ?? Account::where('enabled', true)->first();
 
         $seller = new Party([
             'name' => $profile->name,
