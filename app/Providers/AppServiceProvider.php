@@ -4,8 +4,6 @@ namespace App\Providers;
 
 use App\Models\Role;
 use App\Models\User;
-use Filament\Support\Assets\Css;
-use Filament\Support\Facades\FilamentAsset;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 

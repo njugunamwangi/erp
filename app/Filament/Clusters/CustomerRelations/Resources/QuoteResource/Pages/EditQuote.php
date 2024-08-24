@@ -4,11 +4,7 @@ namespace App\Filament\Clusters\CustomerRelations\Resources\QuoteResource\Pages;
 
 use App\Filament\Clusters\CustomerRelations\Resources\QuoteResource;
 use App\Mail\SendQuote;
-use App\Models\Role;
-use App\Models\User;
 use Filament\Actions;
-use Filament\Notifications\Actions\Action;
-use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;

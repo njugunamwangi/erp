@@ -100,7 +100,7 @@ class Invoice extends Model
         $items = [];
 
         foreach ($this->items as $item) {
-            $items[] = (new InvoiceItem())
+            $items[] = (new InvoiceItem)
                 ->title($item['description'])
                 ->pricePerUnit($item['unit_price'])
                 ->subTotalPrice($item['unit_price'] * $item['quantity'])
@@ -160,14 +160,14 @@ class Invoice extends Model
 
             $replaces = ['unit_price' => $item['unit_price'] * $rates[$convertTo]];
 
-            $runner = new FindAndReplaceJson();
+            $runner = new FindAndReplaceJson;
 
             $updatedItem = json_decode($runner->replace($payload, $replaces));
 
             $items[] = $updatedItem;
         }
 
-        $exchangeRateProvider = new ConfigurableProvider();
+        $exchangeRateProvider = new ConfigurableProvider;
         $exchangeRateProvider->setExchangeRate($this->currency->abbr, $convertTo, $rates[$convertTo]);
         $converter = new CurrencyConverter($exchangeRateProvider);
 

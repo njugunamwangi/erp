@@ -40,7 +40,6 @@ use Filament\Resources\Resource;
 use Filament\Support\Colors\Color;
 use Filament\Support\Enums\Alignment;
 use Filament\Tables;
-use Filament\Tables\Actions\Action as ActionsAction;
 use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Table;
@@ -435,7 +434,7 @@ class InvoiceResource extends Resource
                         ->requiresConfirmation()
                         ->action(function ($record) {
 
-                            if(!$record->mail) {
+                            if (! $record->mail) {
 
                                 $record->mail = true;
 

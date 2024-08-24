@@ -57,7 +57,7 @@ class StaffPanelProvider extends PanelProvider
                         hasAvatars: true, // Enables the avatar upload form component (default = false)
                         slug: 'profile' // Sets the slug for the profile page (default = 'my-profile')
                     ),
-                    FilaChatPlugin::make(),
+                FilaChatPlugin::make(),
             ])
             ->navigationGroups([
                 NavigationGroup::make()

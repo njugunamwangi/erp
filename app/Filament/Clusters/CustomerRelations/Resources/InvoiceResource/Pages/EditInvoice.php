@@ -4,11 +4,7 @@ namespace App\Filament\Clusters\CustomerRelations\Resources\InvoiceResource\Page
 
 use App\Filament\Clusters\CustomerRelations\Resources\InvoiceResource;
 use App\Mail\SendInvoice;
-use App\Models\Role;
-use App\Models\User;
 use Filament\Actions;
-use Filament\Notifications\Actions\Action;
-use Filament\Notifications\Notification;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;

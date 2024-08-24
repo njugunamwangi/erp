@@ -24,13 +24,13 @@ class User extends Authenticatable implements FilamentUser
 {
     use HasApiTokens;
     use HasFactory;
+    use HasFilaChat;
     use HasProfilePhoto;
     use HasRoles;
     use HasTeams;
     use Notifiable;
     use SoftDeletes;
     use TwoFactorAuthenticatable;
-    use HasFilaChat;
 
     /**
      * The attributes that are mass assignable.

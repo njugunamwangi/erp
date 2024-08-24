@@ -14,7 +14,6 @@ use App\Models\User;
 use Filament\Actions;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Toggle;
 use Filament\Notifications\Actions\Action as ActionsAction;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ViewRecord;
@@ -76,7 +75,7 @@ class ViewQuote extends ViewRecord
                         'serial' => $data['series'].'-'.str_pad($serial_number, 5, '0', STR_PAD_LEFT),
                         'currency_id' => $record->currency_id,
                         'notes' => Note::find(1)->invoices,
-                        'mail' => $data['send']
+                        'mail' => $data['send'],
                     ]);
 
                     if ($data['send'] == true) {

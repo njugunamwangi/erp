@@ -29,7 +29,6 @@ use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Section as ComponentsSection;
 use Filament\Forms\Components\Select;
-use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Infolists\Components\Actions;
@@ -817,7 +816,7 @@ class UserResource extends Resource
                                                                     Select::make('account_id')
                                                                         ->label('Account')
                                                                         ->searchable()
-                                                                        ->options(Account::all()->pluck('name','id'))
+                                                                        ->options(Account::all()->pluck('name', 'id'))
                                                                         ->default(Account::where('enabled', true)->value('id'))
                                                                         ->createOptionForm(Account::getForm())
                                                                         ->getOptionLabelFromRecordUsing(fn (Model $record) => "{$record->name} - {$record->number}")
