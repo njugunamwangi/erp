@@ -11,6 +11,7 @@ use App\Filament\Resources\UserResource\Pages;
 use App\Filament\Resources\UserResource\RelationManagers\PipelinesRelationManager;
 use App\Mail\RequestFeedbackMail;
 use App\Mail\SendInvoice;
+use App\Models\Account;
 use App\Models\Currency;
 use App\Models\CustomField;
 use App\Models\Equipment;
@@ -813,7 +814,15 @@ class UserResource extends Resource
                                                                         ->searchable()
                                                                         ->preload()
                                                                         ->default(InvoiceSeries::IN2INV->name),
-                                                                    Toggle::make('mail')
+                                                                    Select::make('account_id')
+                                                                        ->label('Account')
+                                                                        ->searchable()
+                                                                        ->options(Account::all()->pluck('name','id'))
+                                                                        ->default(Account::where('enabled', true)->value('id'))
+                                                                        ->createOptionForm(Account::getForm())
+                                                                        ->getOptionLabelFromRecordUsing(fn (Model $record) => "{$record->name} - {$record->number}")
+                                                                        ->preload(),
+                                                                    ToggleButton::make('mail')
                                                                         ->label('Mail invoice to customer?'),
                                                                 ])
                                                                 ->action(function (array $data, $record) {
@@ -827,6 +836,8 @@ class UserResource extends Resource
                                                                         'total' => $record->total,
                                                                         'status' => InvoiceStatus::Unpaid,
                                                                         'series' => $data['series'],
+                                                                        'mail' => $data['mail'],
+                                                                        'account_id' => $data['account_id'],
                                                                         'serial_number' => $serial_number = Invoice::max('serial_number') + 1,
                                                                         'serial' => $data['series'].'-'.str_pad($serial_number, 5, '0', STR_PAD_LEFT),
                                                                         'notes' => Note::find(1)->invoices,
