@@ -9,6 +9,7 @@ use App\Filament\Clusters\CustomerRelations\Resources\TaskResource\Pages;
 use App\Filament\Resources\UserResource;
 use App\Mail\RequestFeedbackMail;
 use App\Mail\SendQuote;
+use App\Models\Account;
 use App\Models\Currency;
 use App\Models\Equipment;
 use App\Models\Expense;
@@ -26,6 +27,7 @@ use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
@@ -46,6 +48,7 @@ use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Table;
 use FilamentTiptapEditor\TiptapEditor;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
@@ -279,6 +282,7 @@ class TaskResource extends Resource
                         ->color('warning')
                         ->modalDescription(fn ($record) => 'Quote for task #'.$record->id)
                         ->visible(fn ($record) => ! $record->quote)
+                        ->modalWidth(MaxWidth::SixExtraLarge)
                         ->icon('heroicon-o-banknotes')
                         ->modalSubmitActionLabel('Generate Quote')
                         ->form([
@@ -306,6 +310,14 @@ class TaskResource extends Resource
                                         ->searchPrompt('Search currencies by their symbol, abbreviation or country')
                                         ->required(),
                                 ]),
+                            Select::make('account_id')
+                                ->label('Account')
+                                ->default(Account::where('enabled', true)->value('id'))
+                                ->options(Account::all()->pluck('name', 'id'))
+                                ->createOptionForm(Account::getForm())
+                                ->searchable()
+                                ->columnSpanFull()
+                                ->preload(),
                             Fieldset::make('Quote Summary')
                                 ->schema([
                                     Section::make()
@@ -319,7 +331,8 @@ class TaskResource extends Resource
                                                         ->required()
                                                         ->live()
                                                         ->default(1),
-                                                    TextInput::make('description')
+                                                    Textarea::make('description')
+                                                        ->rows(2)
                                                         ->required()
                                                         ->placeholder('Aerial Spraying'),
                                                     TextInput::make('unit_price')
@@ -378,6 +391,7 @@ class TaskResource extends Resource
                                 'task' => true,
                                 'user_id' => $record->assigned_for,
                                 'vertical_id' => $record->vertical_id,
+                                'account_id' => $record->account_id,
                                 'subtotal' => $data['subtotal'],
                                 'currency_id' => $data['currency_id'],
                                 'taxes' => $data['taxes'],

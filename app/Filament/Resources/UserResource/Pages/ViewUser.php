@@ -9,6 +9,7 @@ use App\Filament\Clusters\CustomerRelations\Resources\InvoiceResource;
 use App\Filament\Clusters\CustomerRelations\Resources\QuoteResource;
 use App\Filament\Resources\UserResource;
 use App\Filament\Resources\UserResource\Widgets\TasksWidget;
+use App\Models\Account;
 use App\Models\Currency;
 use App\Models\Invoice;
 use App\Models\Note;
@@ -113,19 +114,29 @@ class ViewUser extends ViewRecord
                                     ->preload()
                                     ->default(QuoteSeries::IN2QUT->name),
                             ]),
-                        Select::make('currency_id')
-                            ->label('Currency')
-                            ->default(Profile::find(1)->currency_id)
-                            ->searchable()
-                            ->createOptionForm(Currency::getForm())
-                            ->live()
-                            ->preload()
-                            ->getSearchResultsUsing(fn (string $search): array => Currency::whereAny([
-                                'name', 'abbr', 'symbol', 'code'], 'like', "%{$search}%")->limit(50)->pluck('abbr', 'id')->toArray())
-                            ->getOptionLabelUsing(fn ($value): ?string => Currency::find($value)?->abbr)
-                            ->loadingMessage('Loading currencies...')
-                            ->searchPrompt('Search currencies by their symbol, abbreviation or country')
-                            ->required(),
+                        Grid::make(2)
+                            ->schema([
+                                Select::make('currency_id')
+                                    ->label('Currency')
+                                    ->default(Profile::find(1)->currency_id)
+                                    ->searchable()
+                                    ->createOptionForm(Currency::getForm())
+                                    ->live()
+                                    ->preload()
+                                    ->getSearchResultsUsing(fn (string $search): array => Currency::whereAny([
+                                        'name', 'abbr', 'symbol', 'code'], 'like', "%{$search}%")->limit(50)->pluck('abbr', 'id')->toArray())
+                                    ->getOptionLabelUsing(fn ($value): ?string => Currency::find($value)?->abbr)
+                                    ->loadingMessage('Loading currencies...')
+                                    ->searchPrompt('Search currencies by their symbol, abbreviation or country')
+                                    ->required(),
+                                Select::make('account_id')
+                                    ->label('Account')
+                                    ->default(Account::where('enabled', true)->value('id'))
+                                    ->options(Account::all()->pluck('name', 'id'))
+                                    ->createOptionForm(Account::getForm())
+                                    ->searchable()
+                                    ->preload(),
+                            ]),
                         Fieldset::make('Quote Summary')
                             ->schema([
                                 Section::make()
@@ -197,6 +208,7 @@ class ViewUser extends ViewRecord
                             'vertical_id' => empty($data['task_id']) ? $data['vertical_id'] : Task::find($data['task_id'])->vertical_id,
                             'subtotal' => $data['subtotal'],
                             'currency_id' => $data['currency_id'],
+                            'account_id' => $data['account_id'],
                             'taxes' => $data['taxes'],
                             'total' => $data['total'],
                             'items' => $data['items'],
@@ -245,19 +257,29 @@ class ViewUser extends ViewRecord
                                     ->preload()
                                     ->default(InvoiceSeries::IN2INV->name),
                             ]),
-                        Select::make('currency_id')
-                            ->label('Currency')
-                            ->default(Profile::find(1)->currency_id)
-                            ->searchable()
-                            ->createOptionForm(Currency::getForm())
-                            ->live()
-                            ->preload()
-                            ->getSearchResultsUsing(fn (string $search): array => Currency::whereAny([
-                                'name', 'abbr', 'symbol', 'code'], 'like', "%{$search}%")->limit(50)->pluck('abbr', 'id')->toArray())
-                            ->getOptionLabelUsing(fn ($value): ?string => Currency::find($value)?->abbr)
-                            ->loadingMessage('Loading currencies...')
-                            ->searchPrompt('Search currencies by their symbol, abbreviation or country')
-                            ->required(),
+                        Grid::make(2)
+                            ->schema([
+                                Select::make('currency_id')
+                                    ->label('Currency')
+                                    ->default(Profile::find(1)->currency_id)
+                                    ->searchable()
+                                    ->createOptionForm(Currency::getForm())
+                                    ->live()
+                                    ->preload()
+                                    ->getSearchResultsUsing(fn (string $search): array => Currency::whereAny([
+                                        'name', 'abbr', 'symbol', 'code'], 'like', "%{$search}%")->limit(50)->pluck('abbr', 'id')->toArray())
+                                    ->getOptionLabelUsing(fn ($value): ?string => Currency::find($value)?->abbr)
+                                    ->loadingMessage('Loading currencies...')
+                                    ->searchPrompt('Search currencies by their symbol, abbreviation or country')
+                                    ->required(),
+                                Select::make('account_id')
+                                    ->label('Account')
+                                    ->default(Account::where('enabled', true)->value('id'))
+                                    ->options(Account::all()->pluck('name', 'id'))
+                                    ->createOptionForm(Account::getForm())
+                                    ->searchable()
+                                    ->preload(),
+                            ]),
                         Fieldset::make('Invoice Summary')
                             ->schema([
                                 Section::make()
@@ -327,6 +349,7 @@ class ViewUser extends ViewRecord
                             'status' => $data['status'],
                             'subtotal' => $data['subtotal'],
                             'currency_id' => $data['currency_id'],
+                            'account_id' => $data['account_id'],
                             'taxes' => $data['taxes'],
                             'total' => $data['total'],
                             'items' => $data['items'],
