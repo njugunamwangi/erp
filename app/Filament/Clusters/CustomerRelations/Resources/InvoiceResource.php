@@ -10,6 +10,7 @@ use App\Filament\Clusters\CustomerRelations\Resources\InvoiceResource\Widgets\In
 use App\Filament\Resources\MpesaSTKResource;
 use App\Filament\Resources\UserResource;
 use App\Mail\SendInvoice;
+use App\Models\Account;
 use App\Models\Currency;
 use App\Models\Invoice;
 use App\Models\MpesaSTK;
@@ -130,6 +131,8 @@ class InvoiceResource extends Resource
                                     ->label('Account')
                                     ->relationship('account', 'name')
                                     ->searchable()
+                                    ->default(Account::where('enabled', true)->value('id'))
+                                    ->createOptionForm(Account::getForm())
                                     ->getOptionLabelFromRecordUsing(fn (Model $record) => "{$record->name} - {$record->number}")
                                     ->preload(),
                             ]),

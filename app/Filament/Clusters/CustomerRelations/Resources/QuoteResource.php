@@ -12,6 +12,7 @@ use App\Filament\Clusters\CustomerRelations\Resources\QuoteResource\Widgets\Quot
 use App\Filament\Resources\UserResource;
 use App\Filament\Resources\VerticalResource;
 use App\Mail\SendInvoice;
+use App\Models\Account;
 use App\Models\Currency;
 use App\Models\Invoice;
 use App\Models\Note;
@@ -143,6 +144,8 @@ class QuoteResource extends Resource
                                     ->label('Account')
                                     ->relationship('account', 'name')
                                     ->searchable()
+                                    ->default(Account::where('enabled', true)->value('id'))
+                                    ->createOptionForm(Account::getForm())
                                     ->getOptionLabelFromRecordUsing(fn (Model $record) => "{$record->name} - {$record->number}")
                                     ->preload(),
                             ]),
