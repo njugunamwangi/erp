@@ -42,23 +42,6 @@ class EditInvoice extends EditRecord
 
             Mail::to($invoice->user->email)->send(new SendInvoice($invoice));
 
-            $recipients = User::role(Role::ADMIN)->get();
-
-            foreach ($recipients as $recipient) {
-                Notification::make()
-                    ->warning()
-                    ->icon('heroicon-o-bolt')
-                    ->title('Invoice mailed')
-                    ->body('Invoice mailed to '.$invoice->user->name)
-                    ->actions([
-                        Action::make('view')
-                            ->markAsRead()
-                            ->url(InvoiceResource::getUrl('view', ['record' => $invoice->id]))
-                            ->color('warning'),
-                    ])
-                    ->sendToDatabase($recipient);
-            }
-
             $name = 'invoice_'.$invoice->series->name.'_'.str_pad($invoice->serial_number, 5, '0', STR_PAD_LEFT).'.pdf';
 
             Storage::disk('invoices')->delete($name);

@@ -5,10 +5,13 @@ namespace App\Models;
 use App\Casts\Money;
 use App\Enums\QuoteSeries;
 use App\Enums\Template;
+use App\Filament\Clusters\CustomerRelations\Resources\QuoteResource;
 use Brick\Math\RoundingMode;
 use Brick\Money\CurrencyConverter;
 use Brick\Money\ExchangeRateProvider\ConfigurableProvider;
 use Dcblogdev\FindAndReplaceJson\FindAndReplaceJson;
+use Filament\Notifications\Actions\Action;
+use Filament\Notifications\Notification;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -157,5 +160,21 @@ class Quote extends Model
             ->currencyFraction($this->currency->subunit_name)
             ->notes($this->notes)
             ->save('quotes');
+
+
+        foreach (User::role(Role::ADMIN)->get() as $recipient) {
+            Notification::make()
+                ->warning()
+                ->icon('heroicon-o-bolt')
+                ->title('Quote mailed')
+                ->body('Quote mailed to '.$this->user->name)
+                ->actions([
+                    Action::make('view')
+                        ->markAsRead()
+                        ->url(QuoteResource::getUrl('view', ['record' => $this->id]))
+                        ->color('warning'),
+                ])
+                ->sendToDatabase($recipient);
+        }
     }
 }

@@ -5,10 +5,13 @@ namespace App\Models;
 use App\Casts\Money;
 use App\Enums\InvoiceSeries;
 use App\Enums\InvoiceStatus;
+use App\Filament\Clusters\CustomerRelations\Resources\InvoiceResource;
 use Brick\Math\RoundingMode;
 use Brick\Money\CurrencyConverter;
 use Brick\Money\ExchangeRateProvider\ConfigurableProvider;
 use Dcblogdev\FindAndReplaceJson\FindAndReplaceJson;
+use Filament\Notifications\Actions\Action;
+use Filament\Notifications\Notification;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -125,6 +128,21 @@ class Invoice extends Model
             ->currencyFraction($this->currency->subunit_name)
             ->notes($this->notes)
             ->save('invoices');
+
+        foreach (User::role(Role::ADMIN)->get() as $recipient) {
+            Notification::make()
+                ->warning()
+                ->icon('heroicon-o-bolt')
+                ->title('Invoice mailed')
+                ->body('Invoice mailed to '.$this->user->name)
+                ->actions([
+                    Action::make('view')
+                        ->markAsRead()
+                        ->url(InvoiceResource::getUrl('view', ['record' => $this->id]))
+                        ->color('success'),
+                ])
+                ->sendToDatabase($recipient);
+        }
     }
 
     public function convertCurrency($data)
