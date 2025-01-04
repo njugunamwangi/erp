@@ -69,7 +69,7 @@ class Invoice extends Model
         return $this->hasOne(Payment::class);
     }
 
-    public function savePdf()
+    public function savePdf(): void
     {
         $customer = new Buyer([
             'name' => $this->user->name,
@@ -127,7 +127,7 @@ class Invoice extends Model
             ->save('invoices');
     }
 
-    public function convertCurrency($data)
+    public function convertCurrency($data): void
     {
         $api = Profile::find(1)->exchange_rate_api;
 
