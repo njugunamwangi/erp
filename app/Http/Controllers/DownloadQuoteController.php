@@ -44,7 +44,7 @@ class DownloadQuoteController extends Controller
         $items = [];
 
         foreach ($record->items as $item) {
-            $items[] = (new InvoiceItem())
+            $items[] = (new InvoiceItem)
                 ->title($item['description'])
                 ->pricePerUnit($item['unit_price'])
                 ->subTotalPrice($item['unit_price'] * $item['quantity'])

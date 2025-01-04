@@ -35,7 +35,7 @@ class MPesaSTKPushController extends Controller
 
     public function STKConfirm(Request $request)
     {
-        $stk_push_confirm = (new STKPush())->confirm($request);
+        $stk_push_confirm = (new STKPush)->confirm($request);
 
         if ($stk_push_confirm) {
 

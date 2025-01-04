@@ -30,7 +30,7 @@ class CountyImporter extends Importer
         //     'email' => $this->data['email'],
         // ]);
 
-        return new County();
+        return new County;
     }
 
     public static function getCompletedNotificationBody(Import $import): string

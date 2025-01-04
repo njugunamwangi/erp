@@ -5,11 +5,7 @@ namespace App\Filament\Clusters\CustomerRelations\Resources\QuoteResource\Pages;
 use App\Filament\Clusters\CustomerRelations\Resources\QuoteResource;
 use App\Mail\SendQuote;
 use App\Models\Quote;
-use App\Models\Role;
 use App\Models\Task;
-use App\Models\User;
-use Filament\Notifications\Actions\Action;
-use Filament\Notifications\Notification;
 use Filament\Resources\Pages\CreateRecord;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
@@ -43,23 +39,6 @@ class CreateQuote extends CreateRecord
             $quote->savePdf();
 
             Mail::to($quote->user->email)->send(new SendQuote($quote));
-
-            $recipients = User::role(Role::ADMIN)->get();
-
-            foreach ($recipients as $recipient) {
-                Notification::make()
-                    ->warning()
-                    ->icon('heroicon-o-bolt')
-                    ->title('Quote mailed')
-                    ->body('Quote mailed to '.$quote->user->name)
-                    ->actions([
-                        Action::make('view')
-                            ->markAsRead()
-                            ->url(QuoteResource::getUrl('view', ['record' => $quote->id]))
-                            ->color('warning'),
-                    ])
-                    ->sendToDatabase($recipient);
-            }
 
             $name = 'invoice_'.$quote->series->name.'_'.str_pad($quote->serial_number, 5, '0', STR_PAD_LEFT).'.pdf';
 

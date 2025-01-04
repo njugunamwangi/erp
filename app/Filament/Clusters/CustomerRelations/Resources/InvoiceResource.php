@@ -10,6 +10,7 @@ use App\Filament\Clusters\CustomerRelations\Resources\InvoiceResource\Widgets\In
 use App\Filament\Resources\MpesaSTKResource;
 use App\Filament\Resources\UserResource;
 use App\Mail\SendInvoice;
+use App\Models\Account;
 use App\Models\Currency;
 use App\Models\Invoice;
 use App\Models\MpesaSTK;
@@ -39,7 +40,6 @@ use Filament\Resources\Resource;
 use Filament\Support\Colors\Color;
 use Filament\Support\Enums\Alignment;
 use Filament\Tables;
-use Filament\Tables\Actions\Action as ActionsAction;
 use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Table;
@@ -130,6 +130,8 @@ class InvoiceResource extends Resource
                                     ->label('Account')
                                     ->relationship('account', 'name')
                                     ->searchable()
+                                    ->default(Account::where('enabled', true)->value('id'))
+                                    ->createOptionForm(Account::getForm())
                                     ->getOptionLabelFromRecordUsing(fn (Model $record) => "{$record->name} - {$record->number}")
                                     ->preload(),
                             ]),
@@ -432,7 +434,7 @@ class InvoiceResource extends Resource
                         ->requiresConfirmation()
                         ->action(function ($record) {
 
-                            if(!$record->mail) {
+                            if (! $record->mail) {
 
                                 $record->mail = true;
 
@@ -442,23 +444,6 @@ class InvoiceResource extends Resource
                             $record->savePdf();
 
                             Mail::to($record->user->email)->send(new SendInvoice($record));
-
-                            $recipients = User::role(Role::ADMIN)->get();
-
-                            foreach ($recipients as $recipient) {
-                                Notification::make()
-                                    ->warning()
-                                    ->icon('heroicon-o-bolt')
-                                    ->title('Invoice mailed')
-                                    ->body('Invoice mailed to '.$record->user->name)
-                                    ->actions([
-                                        NotificationsActionsAction::make('view')
-                                            ->markAsRead()
-                                            ->url(InvoiceResource::getUrl('view', ['record' => $record->id]))
-                                            ->color('success'),
-                                    ])
-                                    ->sendToDatabase($recipient);
-                            }
 
                             $name = 'invoice_'.$record->series->name.'_'.str_pad($record->serial_number, 5, '0', STR_PAD_LEFT).'.pdf';
 

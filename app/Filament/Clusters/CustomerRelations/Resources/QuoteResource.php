@@ -12,6 +12,7 @@ use App\Filament\Clusters\CustomerRelations\Resources\QuoteResource\Widgets\Quot
 use App\Filament\Resources\UserResource;
 use App\Filament\Resources\VerticalResource;
 use App\Mail\SendInvoice;
+use App\Models\Account;
 use App\Models\Currency;
 use App\Models\Invoice;
 use App\Models\Note;
@@ -143,6 +144,8 @@ class QuoteResource extends Resource
                                     ->label('Account')
                                     ->relationship('account', 'name')
                                     ->searchable()
+                                    ->default(Account::where('enabled', true)->value('id'))
+                                    ->createOptionForm(Account::getForm())
                                     ->getOptionLabelFromRecordUsing(fn (Model $record) => "{$record->name} - {$record->number}")
                                     ->preload(),
                             ]),
@@ -313,8 +316,26 @@ class QuoteResource extends Resource
                         ->fillForm(fn ($record): array => [
                             'items' => $record?->items,
                             'taxes' => $record?->taxes,
+                            'account_id' => $record?->account_id,
                         ])
                         ->form(fn ($record) => [
+                            Grid::make(2)
+                                ->schema([
+                                    Select::make('series')
+                                        ->default(InvoiceSeries::DEFAULT)
+                                        ->required()
+                                        ->enum(InvoiceSeries::class)
+                                        ->options(InvoiceSeries::class)
+                                        ->searchable()
+                                        ->preload(),
+                                    Select::make('account_id')
+                                        ->label('Account')
+                                        ->options(Account::all()->pluck('name', 'id'))
+                                        ->searchable()
+                                        ->createOptionForm(Account::getForm())
+                                        ->getOptionLabelFromRecordUsing(fn (Model $record) => "{$record->name} - {$record->number}")
+                                        ->preload(),
+                                ]),
                             Fieldset::make('Invoice Summary')
                                 ->schema([
                                     Section::make()
@@ -374,13 +395,6 @@ class QuoteResource extends Resource
                                                 ->prefix($record->currency->abbr),
                                         ])->columnSpan(4),
                                 ])->columns(12),
-                            Select::make('series')
-                                ->default(InvoiceSeries::DEFAULT)
-                                ->required()
-                                ->enum(InvoiceSeries::class)
-                                ->options(InvoiceSeries::class)
-                                ->searchable()
-                                ->preload(),
                             ToggleButton::make('send')
                                 ->label('Send Email to customer?'),
                         ])
@@ -391,6 +405,7 @@ class QuoteResource extends Resource
                                 'status' => InvoiceStatus::Unpaid,
                                 'items' => $record->items,
                                 'subtotal' => $data['subtotal'],
+                                'account_id' => $data['account_id'],
                                 'taxes' => $data['taxes'],
                                 'total' => $data['total'],
                                 'series' => $data['series'],
