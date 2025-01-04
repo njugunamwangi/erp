@@ -18,7 +18,7 @@ return new class extends Migration
             $table->id();
             $table->foreignIdFor(Media::class)->nullable()->constrained()->cascadeOnDelete();
             $table->foreignIdFor(Currency::class)->nullable()->constrained()->cascadeOnDelete();
-            $table->string('exchange_rate_api');
+            $table->string('exchange_rate_api')->nullable();
             $table->string('name')->nullable();
             $table->string('email')->nullable();
             $table->string('phone')->nullable();
